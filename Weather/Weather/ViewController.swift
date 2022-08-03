@@ -16,6 +16,7 @@ final class ViewController: UIViewController {
     private let getMethodString: String = "GET"
     private let baseURL: String = "https://api.openweathermap.org/data/2.5/weather?"
     private let appid = Bundle.main.apiKey
+    private let celsiusString: String = "℃"
     
     private var locationManager: CLLocationManager?
     private var currentLocation: CLLocationCoordinate2D!
@@ -252,12 +253,12 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
             do {
                 let currentWeather = try JSONDecoder().decode(Current.self, from: data)
                 DispatchQueue.main.async {
-                    self.setUpBackgroundImage(weather: currentWeather.weather[0].main)
+                    self.setUpBackgroundImage(weather: currentWeather.weather[0].id)
                     self.weatherLabel.text = String(currentWeather.weather[0].main)
                     self.cityNameLabel.text = currentWeather.name
-                    self.temperatureLabel.text = String(currentWeather.main.temp) + " ℃"
-                    self.highestTemperatureLabel.text! += String(currentWeather.main.temp_max) + " ℃"
-                    self.lowestTemperatureLabel.text! += String(currentWeather.main.temp_min) + " ℃"
+                    self.temperatureLabel.text = String(currentWeather.main.temp) + self.celsiusString
+                    self.highestTemperatureLabel.text! += String(currentWeather.main.temp_max) + self.celsiusString
+                    self.lowestTemperatureLabel.text! += String(currentWeather.main.temp_min) + self.celsiusString
                 }
             }
             catch let DecodingError.dataCorrupted(context) {
@@ -278,36 +279,44 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
         dataTask.resume()
     }
     
-    private func setUpBackgroundImage(weather: String) {
-//        guard let dataAsset: NSDataAsset = NSDataAsset(name: "weatherDescription") else {
-//                        return
-//                }
-//        do {
-//            let abc = try JSONDecoder().decode(WeatherId.self, from: dataAsset.data)
-//        }
-//        catch let DecodingError.dataCorrupted(context) {
-//            print(context)
-//        } catch let DecodingError.keyNotFound(key, context) {
-//            print("Key '\(key)' not found:", context.debugDescription)
-//            print("codingPath:", context.codingPath)
-//        } catch let DecodingError.valueNotFound(value, context) {
-//            print("Value '\(value)' not found:", context.debugDescription)
-//            print("codingPath:", context.codingPath)
-//        } catch let DecodingError.typeMismatch(type, context)  {
-//            print("Type '\(type)' mismatch:", context.debugDescription)
-//            print("codingPath:", context.codingPath)
-//        } catch {
-//            print("error: ", error)
-//        }
+    private func setUpBackgroundImage(weather: Int) {
         switch weather {
-        case self.weather.clear:
-            weatherBackgroundImageView.image = UIImage(named: self.weather.clear)
-        case self.weather.cloudy:
-            weatherBackgroundImageView.image = UIImage(named: self.weather.cloudy)
-        case self.weather.drizzle:
-            weatherBackgroundImageView.image = UIImage(named: self.weather.drizzle)
-        case self.weather.rainy:
+        case 200...232:
+            weatherBackgroundImageView.image = UIImage(named: self.weather.thunder)
+        case 300...531:
             weatherBackgroundImageView.image = UIImage(named: self.weather.rainy)
+        case 600...622:
+            weatherBackgroundImageView.image = UIImage(named: self.weather.snow)
+        case 701...721:
+            weatherBackgroundImageView.image = UIImage(named: self.weather.mist)
+        case 731:
+            weatherBackgroundImageView.image = UIImage(named: self.weather.dust)
+        case 741:
+            weatherBackgroundImageView.image = UIImage(named: self.weather.mist)
+        case 751...761:
+            weatherBackgroundImageView.image = UIImage(named: self.weather.dust)
+        case 762:
+            weatherBackgroundImageView.image = UIImage(named: self.weather.volcanicAsh)
+        case 771...781:
+            weatherBackgroundImageView.image = UIImage(named: self.weather.squalls)
+        case 800:
+            weatherBackgroundImageView.image = UIImage(named: self.weather.clear)
+        case 801...804:
+            weatherBackgroundImageView.image = UIImage(named: self.weather.cloudy)
+        case 900...902:
+            weatherBackgroundImageView.image = UIImage(named: self.weather.squalls)
+        case 903:
+            weatherBackgroundImageView.image = UIImage(named: self.weather.cold)
+        case 904:
+            weatherBackgroundImageView.image = UIImage(named: self.weather.hot)
+        case 905:
+            weatherBackgroundImageView.image = UIImage(named: self.weather.windy)
+        case 906:
+            weatherBackgroundImageView.image = UIImage(named: self.weather.hail)
+        case 951...956:
+            weatherBackgroundImageView.image = UIImage(named: self.weather.clear)
+        case 957...962:
+            weatherBackgroundImageView.image = UIImage(named: self.weather.squalls)
         default:
             weatherBackgroundImageView.image = UIImage(named: self.weather.clear)
         }
