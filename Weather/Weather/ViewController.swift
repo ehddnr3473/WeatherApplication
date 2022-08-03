@@ -10,6 +10,7 @@ import CoreLocation
 
 final class ViewController: UIViewController {
     
+    // MARK: - Properties
     var weather: [Current] = []
     private let titleForHeader: String = "일주일 간의 날씨"
     private let getMethodString: String = "GET"
@@ -28,7 +29,7 @@ final class ViewController: UIViewController {
         return imageView
     }()
     
-    private lazy var mainStackView: UIStackView = {
+    private lazy var currentWeatherStackView: UIStackView = {
         let stackView: UIStackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -86,6 +87,7 @@ final class ViewController: UIViewController {
         let label: UILabel = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
+        label.text = "최고: "
         label.textColor = UIColor.black
         label.textAlignment = NSTextAlignment.center
         
@@ -96,6 +98,7 @@ final class ViewController: UIViewController {
         let label: UILabel = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
 
+        label.text = "최저: "
         label.textColor = UIColor.black
         label.textAlignment = NSTextAlignment.center
         
@@ -111,6 +114,7 @@ final class ViewController: UIViewController {
         return tableView
     }()
     
+    // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -129,12 +133,12 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
     }
     
     private func setUpHierachy() {
-        [weatherBackgroundImageView, mainStackView, extremeTemperatureStackView, weekLongWeatherTableView].forEach {
+        [weatherBackgroundImageView, currentWeatherStackView, extremeTemperatureStackView, weekLongWeatherTableView].forEach {
             view.addSubview($0)
         }
         
-        [cityNameLabel, temperatureLabel, weatherLabel, extremeTemperatureStackView].forEach {
-            mainStackView.addArrangedSubview($0)
+        [cityNameLabel, temperatureLabel, weatherLabel].forEach {
+            currentWeatherStackView.addArrangedSubview($0)
         }
         
         [highestTemperatureLabel, lowestTemperatureLabel].forEach {
@@ -144,15 +148,18 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
     
     private func setUpLayout() {
         NSLayoutConstraint.activate([
-            weatherBackgroundImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            weatherBackgroundImageView.widthAnchor.constraint(equalTo: view.widthAnchor),
-            weatherBackgroundImageView.heightAnchor.constraint(equalTo: view.heightAnchor),
-            mainStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            mainStackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 100),
-            mainStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5),
-            mainStackView.heightAnchor.constraint(equalTo: mainStackView.widthAnchor),
+            weatherBackgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
+            weatherBackgroundImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            weatherBackgroundImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            weatherBackgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            currentWeatherStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            currentWeatherStackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 100),
+            currentWeatherStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.3),
+            currentWeatherStackView.heightAnchor.constraint(equalTo: currentWeatherStackView.widthAnchor),
+            extremeTemperatureStackView.topAnchor.constraint(equalTo: currentWeatherStackView.bottomAnchor, constant: 8),
+            extremeTemperatureStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             weekLongWeatherTableView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            weekLongWeatherTableView.topAnchor.constraint(equalTo: mainStackView.bottomAnchor, constant: 8),
+            weekLongWeatherTableView.topAnchor.constraint(equalTo: extremeTemperatureStackView.bottomAnchor, constant: 8),
             weekLongWeatherTableView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9),
             weekLongWeatherTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
@@ -215,16 +222,14 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
     private func getURL() {
         guard let lat = latitude else { return }
         guard let lon = longitude else { return }
-        guard let url: URL = URL(string: baseURL + "lat=" + lat + "&lon=" + lon + "&appid=" + appid) else {
+        guard let url: URL = URL(string: baseURL + "lat=" + lat + "&lon=" + lon + "&appid=" + appid + "&units=metric") else {
             print("getURL error")
             return
         }
-        print(url)
         getRequest(url: url)
     }
     
     private func getRequest(url: URL) {
-        print(url)
         var request = URLRequest(url: url)
         request.httpMethod = getMethodString
         
@@ -243,13 +248,17 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
                 print("Error: HTTP request failed")
                 return
             }
-            print(String(data: data, encoding: .utf8)!)
             do {
                 let currentWeather = try JSONDecoder().decode(Current.self, from: data)
                 self.weather.append(currentWeather)
-//                DispatchQueue.main.async {
-//                    self.weekLongWeatherTableView.reloadData()
-//                }
+                DispatchQueue.main.async {
+                    self.weatherLabel.text = String(self.weather[0].weather[0].main)
+                    self.cityNameLabel.text = self.weather[0].name
+                    self.temperatureLabel.text = String(self.weather[0].main.temp) + " ℃"
+                    self.highestTemperatureLabel.text! += String(self.weather[0].main.temp_max) + " ℃"
+                    self.lowestTemperatureLabel.text! += String(self.weather[0].main.temp_min) + " ℃"
+//                   self.weekLongWeatherTableView.reloadData()
+                }
             }
             catch let DecodingError.dataCorrupted(context) {
                 print(context)

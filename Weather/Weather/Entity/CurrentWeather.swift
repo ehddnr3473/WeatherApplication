@@ -6,18 +6,19 @@
 //
 
 import Foundation
+import CoreLocation
 
 struct Current: Codable {
     
-    let coorId: CoorId
-    let weather: Weather
+    let coord: Coord
+    let weather: [Weather]
     let main: Main
     let wind: Wind
     let clouds: Clouds
     let sys: Sys
     
     let base: String
-    let visibility: String
+    let visibility: Int
     let dt: Int
     
     let timezone: Int
@@ -25,9 +26,9 @@ struct Current: Codable {
     let name: String
     let cod: Int
     
-    struct CoorId: Codable {
-        let lon: Int
-        let lat: Int
+    struct Coord: Codable {
+        let lon: Double
+        let lat: Double
     }
     // 배열?
     struct Weather: Codable {
@@ -38,21 +39,21 @@ struct Current: Codable {
     }
     
     struct Main: Codable {
-        let temp: Int
-        let feels_like: Int
-        let temp_min: Int
-        let temp_max: Int
-        let pressure: Int
-        let humidity: Int
+        let temp: Double
+        let feels_like: Double
+        let temp_min: Double
+        let temp_max: Double
+        let pressure: Double
+        let humidity: Double
     }
     
     struct Wind: Codable {
-        let speed: Int
-        let deg: Int
+        let speed: Double
+        let deg: Double
     }
     
     struct Clouds: Codable {
-        let all: Int
+        let all: Double
     }
     
     struct Sys: Codable {
