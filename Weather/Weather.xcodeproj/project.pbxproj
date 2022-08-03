@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6B01EEED289A74DF007C5B30 /* Weather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B01EEEC289A74DF007C5B30 /* Weather.swift */; };
+		6B01EEEF289A7CA9007C5B30 /* WeatherId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B01EEEE289A7CA9007C5B30 /* WeatherId.swift */; };
 		6B9242982898EDE300E29CF8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B9242972898EDE300E29CF8 /* AppDelegate.swift */; };
 		6B92429A2898EDE300E29CF8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B9242992898EDE300E29CF8 /* SceneDelegate.swift */; };
 		6B92429C2898EDE300E29CF8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B92429B2898EDE300E29CF8 /* ViewController.swift */; };
@@ -19,6 +21,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6B01EEEC289A74DF007C5B30 /* Weather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weather.swift; sourceTree = "<group>"; };
+		6B01EEEE289A7CA9007C5B30 /* WeatherId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherId.swift; sourceTree = "<group>"; };
 		6B9242942898EDE300E29CF8 /* Weather.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Weather.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6B9242972898EDE300E29CF8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6B9242992898EDE300E29CF8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -88,6 +92,8 @@
 			isa = PBXGroup;
 			children = (
 				6B9242AE2898F33000E29CF8 /* CurrentWeather.swift */,
+				6B01EEEC289A74DF007C5B30 /* Weather.swift */,
+				6B01EEEE289A7CA9007C5B30 /* WeatherId.swift */,
 			);
 			path = Entity;
 			sourceTree = "<group>";
@@ -169,6 +175,8 @@
 				6B92429C2898EDE300E29CF8 /* ViewController.swift in Sources */,
 				6B9242982898EDE300E29CF8 /* AppDelegate.swift in Sources */,
 				6B92429A2898EDE300E29CF8 /* SceneDelegate.swift in Sources */,
+				6B01EEED289A74DF007C5B30 /* Weather.swift in Sources */,
+				6B01EEEF289A7CA9007C5B30 /* WeatherId.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

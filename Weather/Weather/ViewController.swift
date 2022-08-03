@@ -11,7 +11,7 @@ import CoreLocation
 final class ViewController: UIViewController {
     
     // MARK: - Properties
-    var weather: [Current] = []
+    private var weather = Weather()
     private let titleForHeader: String = "일주일 간의 날씨"
     private let getMethodString: String = "GET"
     private let baseURL: String = "https://api.openweathermap.org/data/2.5/weather?"
@@ -161,7 +161,7 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
             weekLongWeatherTableView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             weekLongWeatherTableView.topAnchor.constraint(equalTo: extremeTemperatureStackView.bottomAnchor, constant: 8),
             weekLongWeatherTableView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9),
-            weekLongWeatherTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            weekLongWeatherTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50)
         ])
     }
     
@@ -248,16 +248,16 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
                 print("Error: HTTP request failed")
                 return
             }
+            print(String(data: data, encoding: .utf8)!)
             do {
                 let currentWeather = try JSONDecoder().decode(Current.self, from: data)
-                self.weather.append(currentWeather)
                 DispatchQueue.main.async {
-                    self.weatherLabel.text = String(self.weather[0].weather[0].main)
-                    self.cityNameLabel.text = self.weather[0].name
-                    self.temperatureLabel.text = String(self.weather[0].main.temp) + " ℃"
-                    self.highestTemperatureLabel.text! += String(self.weather[0].main.temp_max) + " ℃"
-                    self.lowestTemperatureLabel.text! += String(self.weather[0].main.temp_min) + " ℃"
-//                   self.weekLongWeatherTableView.reloadData()
+                    self.setUpBackgroundImage(weather: currentWeather.weather[0].main)
+                    self.weatherLabel.text = String(currentWeather.weather[0].main)
+                    self.cityNameLabel.text = currentWeather.name
+                    self.temperatureLabel.text = String(currentWeather.main.temp) + " ℃"
+                    self.highestTemperatureLabel.text! += String(currentWeather.main.temp_max) + " ℃"
+                    self.lowestTemperatureLabel.text! += String(currentWeather.main.temp_min) + " ℃"
                 }
             }
             catch let DecodingError.dataCorrupted(context) {
@@ -276,5 +276,40 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
             }
         }
         dataTask.resume()
+    }
+    
+    private func setUpBackgroundImage(weather: String) {
+//        guard let dataAsset: NSDataAsset = NSDataAsset(name: "weatherDescription") else {
+//                        return
+//                }
+//        do {
+//            let abc = try JSONDecoder().decode(WeatherId.self, from: dataAsset.data)
+//        }
+//        catch let DecodingError.dataCorrupted(context) {
+//            print(context)
+//        } catch let DecodingError.keyNotFound(key, context) {
+//            print("Key '\(key)' not found:", context.debugDescription)
+//            print("codingPath:", context.codingPath)
+//        } catch let DecodingError.valueNotFound(value, context) {
+//            print("Value '\(value)' not found:", context.debugDescription)
+//            print("codingPath:", context.codingPath)
+//        } catch let DecodingError.typeMismatch(type, context)  {
+//            print("Type '\(type)' mismatch:", context.debugDescription)
+//            print("codingPath:", context.codingPath)
+//        } catch {
+//            print("error: ", error)
+//        }
+        switch weather {
+        case self.weather.clear:
+            weatherBackgroundImageView.image = UIImage(named: self.weather.clear)
+        case self.weather.cloudy:
+            weatherBackgroundImageView.image = UIImage(named: self.weather.cloudy)
+        case self.weather.drizzle:
+            weatherBackgroundImageView.image = UIImage(named: self.weather.drizzle)
+        case self.weather.rainy:
+            weatherBackgroundImageView.image = UIImage(named: self.weather.rainy)
+        default:
+            weatherBackgroundImageView.image = UIImage(named: self.weather.clear)
+        }
     }
 }
