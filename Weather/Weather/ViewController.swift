@@ -12,10 +12,9 @@ final class ViewController: UIViewController {
     
     // MARK: - Properties
     private var weather = Weather()
+    private var apiManager = FetchData()
     private let titleForHeader: String = "일주일 간의 날씨"
     private let getMethodString: String = "GET"
-    private let baseURL: String = "https://api.openweathermap.org/data/2.5/weather?"
-    private let appid = Bundle.main.apiKey
     private let celsiusString: String = "℃"
     
     private var locationManager: CLLocationManager?
@@ -23,14 +22,15 @@ final class ViewController: UIViewController {
     private var latitude: String?
     private var longitude: String?
     
-    private lazy var weatherBackgroundImageView: UIImageView = {
+    
+    private var weatherBackgroundImageView: UIImageView = {
         let imageView: UIImageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         return imageView
     }()
     
-    private lazy var currentWeatherStackView: UIStackView = {
+    private var currentWeatherStackView: UIStackView = {
         let stackView: UIStackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -42,37 +42,40 @@ final class ViewController: UIViewController {
         return stackView
     }()
     
-    private lazy var cityNameLabel: UILabel = {
+    private var cityNameLabel: UILabel = {
         let label: UILabel = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.textColor = UIColor.black
+        label.textColor = UIColor.white
         label.textAlignment = NSTextAlignment.center
+        label.font = UIFont.boldSystemFont(ofSize: 40)
         
         return label
     }()
     
-    private lazy var temperatureLabel: UILabel = {
+    private var temperatureLabel: UILabel = {
         let label: UILabel = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.textColor = UIColor.black
+        label.textColor = UIColor.white
         label.textAlignment = NSTextAlignment.center
+        label.font = UIFont.boldSystemFont(ofSize: 50)
         
         return label
     }()
     
-    private lazy var weatherLabel: UILabel = {
+    private var weatherLabel: UILabel = {
         let label: UILabel = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.textColor = UIColor.black
+        label.textColor = UIColor.white
         label.textAlignment = NSTextAlignment.center
+        label.font = UIFont.boldSystemFont(ofSize: 40)
         
         return label
     }()
     
-    private lazy var extremeTemperatureStackView: UIStackView = {
+    private var extremeTemperatureStackView: UIStackView = {
         let stackView: UIStackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -84,36 +87,47 @@ final class ViewController: UIViewController {
         return stackView
     }()
     
-    private lazy var highestTemperatureLabel: UILabel = {
+    private var highestTemperatureLabel: UILabel = {
         let label: UILabel = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.text = "최고: "
-        label.textColor = UIColor.black
+        label.textColor = UIColor.white
         label.textAlignment = NSTextAlignment.center
         
         return label
     }()
     
-    private lazy var lowestTemperatureLabel: UILabel = {
+    private var lowestTemperatureLabel: UILabel = {
         let label: UILabel = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
 
-        label.text = "최저: "
-        label.textColor = UIColor.black
+        label.textColor = UIColor.white
         label.textAlignment = NSTextAlignment.center
         
         return label
     }()
     
-    private lazy var weekLongWeatherTableView: UITableView = {
+    private var weekLongWeatherTableView: UITableView = {
         let tableView: UITableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
+        
+        tableView.backgroundColor = UIColor.clear.withAlphaComponent(0.5)
         
         tableView.register(WeekLongWeatherTableViewCell.self, forCellReuseIdentifier: WeekLongWeatherTableViewCell.identifier)
         
         return tableView
     }()
+    
+    private var searchOtherCityButton: UIButton = {
+        let button: UIButton = UIButton(type: UIButton.ButtonType.contactAdd)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        button.tintColor = UIColor.white
+        button.addTarget(ViewController.self, action: #selector(touchUpSearchOtherCityButton(_:)), for: UIControl.Event.touchUpInside)
+        
+        return button
+    }()
+    
     
     // MARK: - LifeCycle
     override func viewDidLoad() {
@@ -122,7 +136,7 @@ final class ViewController: UIViewController {
         
         setUpUI()
         configure()
-        getURL()
+        requestCurrentWeather()
     }
 }
 
@@ -134,7 +148,7 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
     }
     
     private func setUpHierachy() {
-        [weatherBackgroundImageView, currentWeatherStackView, extremeTemperatureStackView, weekLongWeatherTableView].forEach {
+        [weatherBackgroundImageView, currentWeatherStackView, extremeTemperatureStackView, weekLongWeatherTableView, searchOtherCityButton].forEach {
             view.addSubview($0)
         }
         
@@ -142,9 +156,9 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
             currentWeatherStackView.addArrangedSubview($0)
         }
         
-        [highestTemperatureLabel, lowestTemperatureLabel].forEach {
-            extremeTemperatureStackView.addArrangedSubview($0)
-        }
+//        [highestTemperatureLabel, lowestTemperatureLabel].forEach {
+//            extremeTemperatureStackView.addArrangedSubview($0)
+//        }
     }
     
     private func setUpLayout() {
@@ -154,26 +168,35 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
             weatherBackgroundImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             weatherBackgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             currentWeatherStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            currentWeatherStackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 100),
-            currentWeatherStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.3),
+            currentWeatherStackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 60),
+            currentWeatherStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.4),
             currentWeatherStackView.heightAnchor.constraint(equalTo: currentWeatherStackView.widthAnchor),
-            extremeTemperatureStackView.topAnchor.constraint(equalTo: currentWeatherStackView.bottomAnchor, constant: 8),
-            extremeTemperatureStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+//            extremeTemperatureStackView.topAnchor.constraint(equalTo: currentWeatherStackView.bottomAnchor, constant: 8),
+//            extremeTemperatureStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             weekLongWeatherTableView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            weekLongWeatherTableView.topAnchor.constraint(equalTo: extremeTemperatureStackView.bottomAnchor, constant: 8),
+            weekLongWeatherTableView.topAnchor.constraint(equalTo: currentWeatherStackView.bottomAnchor, constant: 20),
             weekLongWeatherTableView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9),
-            weekLongWeatherTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50)
+            weekLongWeatherTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
+            searchOtherCityButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
+            searchOtherCityButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30)
         ])
+    }
+    
+    @IBAction func touchUpSearchOtherCityButton(_ sender: UIButton) {
+        let nextViewController = OtherCityViewController()
+        navigationController?.pushViewController(nextViewController, animated: true)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: WeekLongWeatherTableViewCell.identifier, for: indexPath) as? WeekLongWeatherTableViewCell else { return UITableViewCell() }
         cell.dayLabel.text = "임시"
+        cell.dayLabel.textColor = UIColor.white
+        cell.dayLabel.font = .boldSystemFont(ofSize: 20)
         return cell
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
+        return 7
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -184,6 +207,10 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
         return 50
     }
     
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cell.backgroundColor = UIColor.clear
+    }
+    
     private func configure() {
         requestAuthorization()
         weekLongWeatherTableView.dataSource = self
@@ -191,7 +218,6 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
     }
     
     // MARK: - CoreLocation
-    
     private func requestAuthorization() {
         if locationManager == nil {
             locationManager = CLLocationManager()
@@ -218,65 +244,22 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
     }
     
     // MARK: - REQUEST
-    // 열거형을 이용해 URL 조합
-    // (현재 날씨, 일주일 간의 날씨)에 따라 url이 달라지게
-    private func getURL() {
-        guard let lat = latitude else { return }
-        guard let lon = longitude else { return }
-        guard let url: URL = URL(string: baseURL + "lat=" + lat + "&lon=" + lon + "&appid=" + appid + "&units=metric") else {
-            print("getURL error")
-            return
-        }
-        getRequest(url: url)
+    private func requestCurrentWeather() {
+        guard let lat = latitude else { fatalError() }
+        guard let lon = longitude else { fatalError() }
+        
+        guard let url: URL = apiManager.getCurrentWeatherURL(lat: lat, lon: lon) else { return }
+        requestData(url: url)
     }
     
-    private func getRequest(url: URL) {
-        var request = URLRequest(url: url)
-        request.httpMethod = getMethodString
-        
-        let session: URLSession = URLSession(configuration: .default)
-        let dataTask: URLSessionDataTask = session.dataTask(with: request) { data, response, error in
-            guard error == nil else {
-                print("Error: error calling GET")
-                print(error!)
-                return
+    private func requestData(url: URL) {
+        apiManager.requestData(url: url, completion: { (isSuccess, data) in
+            if isSuccess {
+                guard let currentWeather = DecodingManager.decode(with: data, modelType: Current.self) else { return }
+                self.setUpBackgroundImage(weather: currentWeather.weather[0].id)
+                self.setCurrentWeather(weather: currentWeather.weather[0].description, cityName: currentWeather.name, temperature: currentWeather.main.temp)
             }
-            guard let data = data else {
-                print("Error: Did not receive data")
-                return
-            }
-            guard let response = response as? HTTPURLResponse, (200 ..< 300) ~= response.statusCode else {
-                print("Error: HTTP request failed")
-                return
-            }
-            print(String(data: data, encoding: .utf8)!)
-            do {
-                let currentWeather = try JSONDecoder().decode(Current.self, from: data)
-                DispatchQueue.main.async {
-                    self.setUpBackgroundImage(weather: currentWeather.weather[0].id)
-                    self.weatherLabel.text = String(currentWeather.weather[0].main)
-                    self.cityNameLabel.text = currentWeather.name
-                    self.temperatureLabel.text = String(currentWeather.main.temp) + self.celsiusString
-                    self.highestTemperatureLabel.text! += String(currentWeather.main.temp_max) + self.celsiusString
-                    self.lowestTemperatureLabel.text! += String(currentWeather.main.temp_min) + self.celsiusString
-                }
-            }
-            catch let DecodingError.dataCorrupted(context) {
-                print(context)
-            } catch let DecodingError.keyNotFound(key, context) {
-                print("Key '\(key)' not found:", context.debugDescription)
-                print("codingPath:", context.codingPath)
-            } catch let DecodingError.valueNotFound(value, context) {
-                print("Value '\(value)' not found:", context.debugDescription)
-                print("codingPath:", context.codingPath)
-            } catch let DecodingError.typeMismatch(type, context)  {
-                print("Type '\(type)' mismatch:", context.debugDescription)
-                print("codingPath:", context.codingPath)
-            } catch {
-                print("error: ", error)
-            }
-        }
-        dataTask.resume()
+        })
     }
     
     private func setUpBackgroundImage(weather: Int) {
@@ -320,5 +303,11 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
         default:
             weatherBackgroundImageView.image = UIImage(named: self.weather.clear)
         }
+    }
+    
+    private func setCurrentWeather(weather: String, cityName: String, temperature: Double) {
+        self.weatherLabel.text = weather
+        self.cityNameLabel.text = cityName
+        self.temperatureLabel.text = String(Int(temperature)) + celsiusString
     }
 }
