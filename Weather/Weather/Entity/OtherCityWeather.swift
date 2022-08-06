@@ -1,25 +1,23 @@
 //
-//  CurrentWeather.swift
+//  OtherCityWeather.swift
 //  Weather
 //
-//  Created by 김동욱 on 2022/08/02.
+//  Created by 김동욱 on 2022/08/06.
 //
 
 import Foundation
+import UIKit
 
-struct Current: Codable {
-    
+struct OtherCityWeather: Codable {
     let coord: Coord
     let weather: [Weather]
+    let base: String
     let main: Main
+    let visibility: Int
     let wind: Wind
     let clouds: Clouds
-    let sys: Sys
-    
-    let base: String
-    let visibility: Int
     let dt: Int
-    
+    let sys: Sys
     let timezone: Int
     let id: Int
     let name: String
@@ -29,7 +27,7 @@ struct Current: Codable {
         let lon: Double
         let lat: Double
     }
-    // 배열?
+    
     struct Weather: Codable {
         let id: Int
         let main: String
@@ -42,8 +40,10 @@ struct Current: Codable {
         let feelsLike: Double
         let tempMin: Double
         let tempMax: Double
-        let pressure: Double
-        let humidity: Double
+        let pressure: Int
+        let humidity: Int
+        let seaLevel: Int?
+        let groundLevel: Int?
         
         enum CodingKeys: String, CodingKey {
             case temp
@@ -52,21 +52,22 @@ struct Current: Codable {
             case tempMax = "temp_max"
             case pressure
             case humidity
+            case seaLevel = "sea_level"
+            case groundLevel = "grnd_level"
         }
     }
     
     struct Wind: Codable {
         let speed: Double
-        let deg: Double
+        let deg: Int
+        let gust: Double?
     }
     
     struct Clouds: Codable {
-        let all: Double
+        let all: Int
     }
     
     struct Sys: Codable {
-        let type: Int
-        let id: Int
         let country: String
         let sunrise: Int
         let sunset: Int

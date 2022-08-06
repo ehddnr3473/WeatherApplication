@@ -36,7 +36,7 @@ final class ViewController: UIViewController {
         
         stackView.axis = .vertical
         stackView.alignment = .fill
-        stackView.distribution = .equalSpacing
+        stackView.distribution = .fillEqually
         stackView.spacing = 8
         
         return stackView
@@ -70,42 +70,42 @@ final class ViewController: UIViewController {
         
         label.textColor = UIColor.white
         label.textAlignment = NSTextAlignment.center
-        label.font = UIFont.boldSystemFont(ofSize: 40)
+        label.font = UIFont.boldSystemFont(ofSize: 30)
         
         return label
     }()
     
-    private var extremeTemperatureStackView: UIStackView = {
-        let stackView: UIStackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        stackView.axis = .horizontal
-        stackView.alignment = .fill
-        stackView.distribution = .equalSpacing
-        stackView.spacing = 8
-        
-        return stackView
-    }()
-    
-    private var highestTemperatureLabel: UILabel = {
-        let label: UILabel = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        
-        label.textColor = UIColor.white
-        label.textAlignment = NSTextAlignment.center
-        
-        return label
-    }()
-    
-    private var lowestTemperatureLabel: UILabel = {
-        let label: UILabel = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-
-        label.textColor = UIColor.white
-        label.textAlignment = NSTextAlignment.center
-        
-        return label
-    }()
+//    private var extremeTemperatureStackView: UIStackView = {
+//        let stackView: UIStackView = UIStackView()
+//        stackView.translatesAutoresizingMaskIntoConstraints = false
+//
+//        stackView.axis = .horizontal
+//        stackView.alignment = .fill
+//        stackView.distribution = .equalSpacing
+//        stackView.spacing = 8
+//
+//        return stackView
+//    }()
+//
+//    private var highestTemperatureLabel: UILabel = {
+//        let label: UILabel = UILabel()
+//        label.translatesAutoresizingMaskIntoConstraints = false
+//
+//        label.textColor = UIColor.white
+//        label.textAlignment = NSTextAlignment.center
+//
+//        return label
+//    }()
+//
+//    private var lowestTemperatureLabel: UILabel = {
+//        let label: UILabel = UILabel()
+//        label.translatesAutoresizingMaskIntoConstraints = false
+//
+//        label.textColor = UIColor.white
+//        label.textAlignment = NSTextAlignment.center
+//
+//        return label
+//    }()
     
     private var weekLongWeatherTableView: UITableView = {
         let tableView: UITableView = UITableView()
@@ -118,12 +118,12 @@ final class ViewController: UIViewController {
         return tableView
     }()
     
-    private var searchOtherCityButton: UIButton = {
+    private lazy var searchOtherCityButton: UIButton = {
         let button: UIButton = UIButton(type: UIButton.ButtonType.contactAdd)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         button.tintColor = UIColor.white
-        button.addTarget(ViewController.self, action: #selector(touchUpSearchOtherCityButton(_:)), for: UIControl.Event.touchUpInside)
+        button.addTarget(self, action: #selector(touchUpSearchOtherCityButton(_:)), for: UIControl.Event.touchUpInside)
         
         return button
     }()
@@ -148,17 +148,13 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
     }
     
     private func setUpHierachy() {
-        [weatherBackgroundImageView, currentWeatherStackView, extremeTemperatureStackView, weekLongWeatherTableView, searchOtherCityButton].forEach {
+        [weatherBackgroundImageView, currentWeatherStackView, weekLongWeatherTableView, searchOtherCityButton].forEach {
             view.addSubview($0)
         }
         
         [cityNameLabel, temperatureLabel, weatherLabel].forEach {
             currentWeatherStackView.addArrangedSubview($0)
         }
-        
-//        [highestTemperatureLabel, lowestTemperatureLabel].forEach {
-//            extremeTemperatureStackView.addArrangedSubview($0)
-//        }
     }
     
     private func setUpLayout() {
@@ -169,17 +165,23 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
             weatherBackgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             currentWeatherStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             currentWeatherStackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 60),
-            currentWeatherStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.4),
-            currentWeatherStackView.heightAnchor.constraint(equalTo: currentWeatherStackView.widthAnchor),
-//            extremeTemperatureStackView.topAnchor.constraint(equalTo: currentWeatherStackView.bottomAnchor, constant: 8),
-//            extremeTemperatureStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            weekLongWeatherTableView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            currentWeatherStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.6),
+            currentWeatherStackView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.3),
             weekLongWeatherTableView.topAnchor.constraint(equalTo: currentWeatherStackView.bottomAnchor, constant: 20),
-            weekLongWeatherTableView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9),
+            weekLongWeatherTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            weekLongWeatherTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
             weekLongWeatherTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
-            searchOtherCityButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
-            searchOtherCityButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30)
+//            searchOtherCityButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
+//            searchOtherCityButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30)
+            searchOtherCityButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            searchOtherCityButton.topAnchor.constraint(equalTo: weekLongWeatherTableView.bottomAnchor, constant: 8)
         ])
+    }
+    
+    private func configure() {
+        requestAuthorization()
+        weekLongWeatherTableView.dataSource = self
+        weekLongWeatherTableView.delegate = self
     }
     
     @IBAction func touchUpSearchOtherCityButton(_ sender: UIButton) {
@@ -209,12 +211,6 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         cell.backgroundColor = UIColor.clear
-    }
-    
-    private func configure() {
-        requestAuthorization()
-        weekLongWeatherTableView.dataSource = self
-        weekLongWeatherTableView.delegate = self
     }
     
     // MARK: - CoreLocation

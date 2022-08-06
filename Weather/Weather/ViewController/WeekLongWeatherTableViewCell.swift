@@ -11,7 +11,7 @@ import UIKit
 class WeekLongWeatherTableViewCell: UITableViewCell {
     static let identifier: String = "WeekLongWeatherTableViewCell"
     
-    lazy var dayLabel: UILabel = {
+    var dayLabel: UILabel = {
         let label: UILabel = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -21,7 +21,7 @@ class WeekLongWeatherTableViewCell: UITableViewCell {
         return label
     }()
     
-    lazy var rateStackView: UIStackView = {
+    var rateStackView: UIStackView = {
         let stackView: UIStackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -33,14 +33,14 @@ class WeekLongWeatherTableViewCell: UITableViewCell {
         return stackView
     }()
     
-    lazy var weatherImageVIew: UIImageView = {
+    var weatherImageVIew: UIImageView = {
         let imageView: UIImageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         return imageView
     }()
     
-    lazy var rateLabel: UILabel = {
+    var rateLabel: UILabel = {
         let label: UILabel = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -50,7 +50,7 @@ class WeekLongWeatherTableViewCell: UITableViewCell {
         return label
     }()
     
-    lazy var extremeTemperatureStackView: UIStackView = {
+    var extremeTemperatureStackView: UIStackView = {
         let stackView: UIStackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -62,7 +62,7 @@ class WeekLongWeatherTableViewCell: UITableViewCell {
         return stackView
     }()
     
-    lazy var highestTemperatureLabel: UILabel = {
+    var highestTemperatureLabel: UILabel = {
         let label: UILabel = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -72,7 +72,7 @@ class WeekLongWeatherTableViewCell: UITableViewCell {
         return label
     }()
     
-    lazy var lowestTemperatureLabel: UILabel = {
+    var lowestTemperatureLabel: UILabel = {
         let label: UILabel = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         

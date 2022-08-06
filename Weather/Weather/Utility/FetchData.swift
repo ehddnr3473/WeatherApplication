@@ -23,8 +23,15 @@ struct FetchData {
         return baseURL?.url
     }
     
-    func getOtherCityWeatherURL() {
+    func getCityWeatherURL(cityName: String) -> URL? {
+        var baseURL = URLComponents(string: "https://api.openweathermap.org/data/2.5/weather?")
+        let cityName = URLQueryItem(name: "q", value: cityName)
+        let language = URLQueryItem(name: "lang", value: "kr")
+        let key = URLQueryItem(name: "appid", value: appid)
+        let units = URLQueryItem(name: "units", value: "metric")
         
+        baseURL?.queryItems = [cityName, language, key, units]
+        return baseURL?.url
     }
     
     func requestData(url: URL, completion: @escaping (Bool, Data) -> Void) {

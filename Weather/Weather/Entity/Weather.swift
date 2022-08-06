@@ -22,6 +22,4 @@ struct Weather {
     let hot: String = "Hot"
     let windy: String = "Windy"
     let hail: String = "Hail"
-    
-    
 }
