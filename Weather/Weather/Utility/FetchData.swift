@@ -41,16 +41,22 @@ struct FetchData {
         let session: URLSession = URLSession(configuration: .default)
         let dataTask: URLSessionDataTask = session.dataTask(with: request, completionHandler: { (data, response, error) in
             guard error == nil else {
+                #if DEBUG
                 print("Error: error calling GET")
                 print(error!)
+                #endif
                 return
             }
             guard let data = data else {
+                #if DEBUG
                 print("Error: Did not receive data")
+                #endif
                 return
             }
             guard let response = response as? HTTPURLResponse, (200 ..< 300) ~= response.statusCode else {
+                #if DEBUG
                 print("Error: HTTP request failed")
+                #endif
                 return
             }
             DispatchQueue.main.async {
