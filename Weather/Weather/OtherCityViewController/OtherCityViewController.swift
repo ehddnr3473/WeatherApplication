@@ -14,7 +14,7 @@ final class OtherCityViewController: UIViewController {
     private var mainLabelText: String = "도시의 날씨"
     private let searchTextFieldPlaceholder: String = "도시명으로 검색"
     private let searchButtonTitle: String = "추가"
-    private var cities: [OtherCityWeather] = []
+    private var cities: [WeatherOfCity] = []
     
     private lazy var mainLabel: UILabel = {
         let label: UILabel = UILabel()
@@ -163,7 +163,7 @@ extension OtherCityViewController: UITableViewDataSource, UITableViewDelegate, U
     private func requestData(url: URL) {
         apiManager.requestData(url: url, completion: { (isSuccess, data) in
             if isSuccess {
-                guard let otherCityWeather = DecodingManager.decode(with: data, modelType: OtherCityWeather.self) else { return }
+                guard let otherCityWeather = DecodingManager.decode(with: data, modelType: WeatherOfCity.self) else { return }
                 self.cities.append(otherCityWeather)
                 self.cityWeatherTableView.reloadData()
             }

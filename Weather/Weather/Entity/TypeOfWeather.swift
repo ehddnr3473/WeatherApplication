@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Weather {
+struct TypeOfWeather {
     let clear: String = "Clear"
     let cloudy: String = "Clouds"
     let thunder: String = "Thunder"

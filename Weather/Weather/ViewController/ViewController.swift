@@ -11,9 +11,9 @@ import CoreLocation
 final class ViewController: UIViewController {
     
     // MARK: - Properties
-    private var weather = Weather()
+    private var typeOfWeather = TypeOfWeather()
     private var apiManager = FetchData()
-    private let titleForHeader: String = "일주일 간의 날씨"
+    private let titleForHeader: String = "5일 간의 날씨 예보"
     private let getMethodString: String = "GET"
     private let celsiusString: String = "℃"
     
@@ -75,45 +75,13 @@ final class ViewController: UIViewController {
         return label
     }()
     
-//    private var extremeTemperatureStackView: UIStackView = {
-//        let stackView: UIStackView = UIStackView()
-//        stackView.translatesAutoresizingMaskIntoConstraints = false
-//
-//        stackView.axis = .horizontal
-//        stackView.alignment = .fill
-//        stackView.distribution = .equalSpacing
-//        stackView.spacing = 8
-//
-//        return stackView
-//    }()
-//
-//    private var highestTemperatureLabel: UILabel = {
-//        let label: UILabel = UILabel()
-//        label.translatesAutoresizingMaskIntoConstraints = false
-//
-//        label.textColor = UIColor.white
-//        label.textAlignment = NSTextAlignment.center
-//
-//        return label
-//    }()
-//
-//    private var lowestTemperatureLabel: UILabel = {
-//        let label: UILabel = UILabel()
-//        label.translatesAutoresizingMaskIntoConstraints = false
-//
-//        label.textColor = UIColor.white
-//        label.textAlignment = NSTextAlignment.center
-//
-//        return label
-//    }()
-    
-    private var weekLongWeatherTableView: UITableView = {
+    private var weatherForecastTableView: UITableView = {
         let tableView: UITableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         tableView.backgroundColor = UIColor.clear.withAlphaComponent(0.5)
         
-        tableView.register(WeekLongWeatherTableViewCell.self, forCellReuseIdentifier: WeekLongWeatherTableViewCell.identifier)
+        tableView.register(WeatherForecastTableViewCell.self, forCellReuseIdentifier: WeatherForecastTableViewCell.identifier)
         
         return tableView
     }()
@@ -142,13 +110,13 @@ final class ViewController: UIViewController {
 
 extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocationManagerDelegate {
     private func setUpUI() {
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = UIColor.black
         setUpHierachy()
         setUpLayout()
     }
     
     private func setUpHierachy() {
-        [weatherBackgroundImageView, currentWeatherStackView, weekLongWeatherTableView, searchOtherCityButton].forEach {
+        [weatherBackgroundImageView, currentWeatherStackView, weatherForecastTableView, searchOtherCityButton].forEach {
             view.addSubview($0)
         }
         
@@ -167,21 +135,19 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
             currentWeatherStackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 60),
             currentWeatherStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.6),
             currentWeatherStackView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.3),
-            weekLongWeatherTableView.topAnchor.constraint(equalTo: currentWeatherStackView.bottomAnchor, constant: 20),
-            weekLongWeatherTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            weekLongWeatherTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            weekLongWeatherTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
-//            searchOtherCityButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
-//            searchOtherCityButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30)
+            weatherForecastTableView.topAnchor.constraint(equalTo: currentWeatherStackView.bottomAnchor, constant: 20),
+            weatherForecastTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            weatherForecastTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
+            weatherForecastTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
             searchOtherCityButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            searchOtherCityButton.topAnchor.constraint(equalTo: weekLongWeatherTableView.bottomAnchor, constant: 8)
+            searchOtherCityButton.topAnchor.constraint(equalTo: weatherForecastTableView.bottomAnchor, constant: 8)
         ])
     }
     
     private func configure() {
         requestAuthorization()
-        weekLongWeatherTableView.dataSource = self
-        weekLongWeatherTableView.delegate = self
+        weatherForecastTableView.dataSource = self
+        weatherForecastTableView.delegate = self
     }
     
     @IBAction func touchUpSearchOtherCityButton(_ sender: UIButton) {
@@ -190,7 +156,7 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: WeekLongWeatherTableViewCell.identifier, for: indexPath) as? WeekLongWeatherTableViewCell else { return UITableViewCell() }
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: WeatherForecastTableViewCell.identifier, for: indexPath) as? WeatherForecastTableViewCell else { return UITableViewCell() }
         cell.dayLabel.text = "임시"
         cell.dayLabel.textColor = UIColor.white
         cell.dayLabel.font = .boldSystemFont(ofSize: 20)
@@ -241,69 +207,91 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
     
     // MARK: - REQUEST
     private func requestCurrentWeather() {
-        guard let lat = latitude else { fatalError() }
-        guard let lon = longitude else { fatalError() }
+        guard let lat = latitude else { return }
+        guard let lon = longitude else { return }
         
-        guard let url: URL = apiManager.getCurrentWeatherURL(lat: lat, lon: lon) else { return }
-        requestData(url: url)
+        guard let url: URL = apiManager.getReverseGeocodingURL(lat: lat, lon: lon) else { return }
+        requestCityName(url: url)
     }
     
-    private func requestData(url: URL) {
+    private func requestCityName(url: URL) {
         apiManager.requestData(url: url, completion: { (isSuccess, data) in
             if isSuccess {
-                guard let currentWeather = DecodingManager.decode(with: data, modelType: Current.self) else { return }
-                self.setUpBackgroundImage(weather: currentWeather.weather[0].id)
-                self.setCurrentWeather(weather: currentWeather.weather[0].description, cityName: currentWeather.name, temperature: currentWeather.main.temp)
+                guard let city = DecodingManager.decode(with: data, modelType: [CityName].self) else { return }
+                self.setCityName(cityName: city[0].koreanNameOfCity.cityName)
+                // 도시 이름을 이용해 requestWeatherForecast(cityName: city[0].koreanNameOfCity.ascii ?? city[0].name) - 비동기로 실행?
+                guard let url: URL = self.apiManager.getCityWeatherURL(cityName: city[0].koreanNameOfCity.ascii ?? city[0].name) else { return }
+                self.requestWeatherDataOfCity(url: url)
             }
         })
     }
     
+    private func requestWeatherDataOfCity(url: URL) {
+        apiManager.requestData(url: url, completion: { (isSuccess, data) in
+            if isSuccess {
+                guard let currentWeatherOfCity = DecodingManager.decode(with: data, modelType: WeatherOfCity.self) else { return }
+                self.setUpBackgroundImage(weather: currentWeatherOfCity.weather[0].id)
+                self.setCurrentWeather(weather: currentWeatherOfCity.weather[0].description, temperature: currentWeatherOfCity.main.temp)
+            }
+        })
+    }
+    
+//    private func requestWeatherForecast(cityName: String) {
+//        guard let url: URL = apiManager.getWeatherForecastURL(cityName: cityName) else { return }
+//        apiManager.requestData(url: url, completion: { (isSuccess, data) in
+//
+//        })
+//    }
+    
     private func setUpBackgroundImage(weather: Int) {
         switch weather {
         case 200...232:
-            weatherBackgroundImageView.image = UIImage(named: self.weather.thunder)
+            weatherBackgroundImageView.image = UIImage(named: self.typeOfWeather.thunder)
         case 300...531:
-            weatherBackgroundImageView.image = UIImage(named: self.weather.rainy)
+            weatherBackgroundImageView.image = UIImage(named: self.typeOfWeather.rainy)
         case 600...622:
-            weatherBackgroundImageView.image = UIImage(named: self.weather.snow)
+            weatherBackgroundImageView.image = UIImage(named: self.typeOfWeather.snow)
         case 701...721:
-            weatherBackgroundImageView.image = UIImage(named: self.weather.mist)
+            weatherBackgroundImageView.image = UIImage(named: self.typeOfWeather.mist)
         case 731:
-            weatherBackgroundImageView.image = UIImage(named: self.weather.dust)
+            weatherBackgroundImageView.image = UIImage(named: self.typeOfWeather.dust)
         case 741:
-            weatherBackgroundImageView.image = UIImage(named: self.weather.mist)
+            weatherBackgroundImageView.image = UIImage(named: self.typeOfWeather.mist)
         case 751...761:
-            weatherBackgroundImageView.image = UIImage(named: self.weather.dust)
+            weatherBackgroundImageView.image = UIImage(named: self.typeOfWeather.dust)
         case 762:
-            weatherBackgroundImageView.image = UIImage(named: self.weather.volcanicAsh)
+            weatherBackgroundImageView.image = UIImage(named: self.typeOfWeather.volcanicAsh)
         case 771...781:
-            weatherBackgroundImageView.image = UIImage(named: self.weather.squalls)
+            weatherBackgroundImageView.image = UIImage(named: self.typeOfWeather.squalls)
         case 800:
-            weatherBackgroundImageView.image = UIImage(named: self.weather.clear)
+            weatherBackgroundImageView.image = UIImage(named: self.typeOfWeather.clear)
         case 801...804:
-            weatherBackgroundImageView.image = UIImage(named: self.weather.cloudy)
+            weatherBackgroundImageView.image = UIImage(named: self.typeOfWeather.cloudy)
         case 900...902:
-            weatherBackgroundImageView.image = UIImage(named: self.weather.squalls)
+            weatherBackgroundImageView.image = UIImage(named: self.typeOfWeather.squalls)
         case 903:
-            weatherBackgroundImageView.image = UIImage(named: self.weather.cold)
+            weatherBackgroundImageView.image = UIImage(named: self.typeOfWeather.cold)
         case 904:
-            weatherBackgroundImageView.image = UIImage(named: self.weather.hot)
+            weatherBackgroundImageView.image = UIImage(named: self.typeOfWeather.hot)
         case 905:
-            weatherBackgroundImageView.image = UIImage(named: self.weather.windy)
+            weatherBackgroundImageView.image = UIImage(named: self.typeOfWeather.windy)
         case 906:
-            weatherBackgroundImageView.image = UIImage(named: self.weather.hail)
+            weatherBackgroundImageView.image = UIImage(named: self.typeOfWeather.hail)
         case 951...956:
-            weatherBackgroundImageView.image = UIImage(named: self.weather.clear)
+            weatherBackgroundImageView.image = UIImage(named: self.typeOfWeather.clear)
         case 957...962:
-            weatherBackgroundImageView.image = UIImage(named: self.weather.squalls)
+            weatherBackgroundImageView.image = UIImage(named: self.typeOfWeather.squalls)
         default:
-            weatherBackgroundImageView.image = UIImage(named: self.weather.clear)
+            weatherBackgroundImageView.image = UIImage(named: self.typeOfWeather.clear)
         }
     }
     
-    private func setCurrentWeather(weather: String, cityName: String, temperature: Double) {
-        self.weatherLabel.text = weather
+    private func setCityName(cityName: String) {
         self.cityNameLabel.text = cityName
+    }
+    
+    private func setCurrentWeather(weather: String, temperature: Double) {
+        self.weatherLabel.text = weather
         self.temperatureLabel.text = String(Int(temperature)) + celsiusString
     }
 }

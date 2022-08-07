@@ -11,20 +11,29 @@ struct FetchData {
     private let getMethodString: String = "GET"
     private let appid = Bundle.main.apiKey
     
-    func getCurrentWeatherURL(lat: String, lon: String) -> URL? {
+    func getCityWeatherURL(cityName: String) -> URL? {
         var baseURL = URLComponents(string: "https://api.openweathermap.org/data/2.5/weather?")
-        let latitude = URLQueryItem(name: "lat", value: lat)
-        let longitude = URLQueryItem(name: "lon", value: lon)
+        let cityName = URLQueryItem(name: "q", value: cityName)
         let language = URLQueryItem(name: "lang", value: "kr")
         let key = URLQueryItem(name: "appid", value: appid)
         let units = URLQueryItem(name: "units", value: "metric")
         
-        baseURL?.queryItems = [latitude, longitude, language, key, units]
+        baseURL?.queryItems = [cityName, language, key, units]
         return baseURL?.url
     }
     
-    func getCityWeatherURL(cityName: String) -> URL? {
-        var baseURL = URLComponents(string: "https://api.openweathermap.org/data/2.5/weather?")
+    func getReverseGeocodingURL(lat: String, lon: String) -> URL? {
+        var baseURL = URLComponents(string: "https://api.openweathermap.org/geo/1.0/reverse?")
+        let latitude = URLQueryItem(name: "lat", value: lat)
+        let longitude = URLQueryItem(name: "lon", value: lon)
+        let key = URLQueryItem(name: "appid", value: appid)
+        
+        baseURL?.queryItems = [latitude, longitude, key]
+        return baseURL?.url
+    }
+    
+    func getWeatherForecastURL(cityName: String) -> URL? {
+        var baseURL = URLComponents(string: "api.openweathermap.org/data/2.5/forecast?")
         let cityName = URLQueryItem(name: "q", value: cityName)
         let language = URLQueryItem(name: "lang", value: "kr")
         let key = URLQueryItem(name: "appid", value: appid)
