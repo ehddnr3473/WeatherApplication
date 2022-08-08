@@ -13,7 +13,7 @@ final class ViewController: UIViewController {
     // MARK: - Properties
     private var typeOfWeather = TypeOfWeather()
     private var apiManager = FetchData()
-    private let titleForHeader: String = "5일 간의 날씨 예보"
+    private let titleForWeatherForecastTableViewHeader: String = "5일 간의 날씨 예보"
     private let getMethodString: String = "GET"
     private let celsiusString: String = "℃"
     
@@ -75,6 +75,20 @@ final class ViewController: UIViewController {
         return label
     }()
     
+    private var todayWeatherForecastCollectionView: UICollectionView = {
+        let flowLayout = UICollectionViewFlowLayout()
+        flowLayout.scrollDirection = .horizontal
+        
+        let collectionView: UICollectionView = UICollectionView(frame: .init(x: 0, y: 0, width: 100, height: 100), collectionViewLayout: flowLayout)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        
+        collectionView.backgroundColor = UIColor.clear.withAlphaComponent(0.5)
+        
+        collectionView.register(TodayWeatherForecastCollectionViewCell.self, forCellWithReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier)
+        
+        return collectionView
+    }()
+    
     private var weatherForecastTableView: UITableView = {
         let tableView: UITableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -108,7 +122,7 @@ final class ViewController: UIViewController {
     }
 }
 
-extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocationManagerDelegate {
+extension ViewController: UITableViewDataSource, UITableViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     private func setUpUI() {
         view.backgroundColor = UIColor.black
         setUpHierachy()
@@ -116,7 +130,7 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
     }
     
     private func setUpHierachy() {
-        [weatherBackgroundImageView, currentWeatherStackView, weatherForecastTableView, searchOtherCityButton].forEach {
+        [weatherBackgroundImageView, currentWeatherStackView, todayWeatherForecastCollectionView,weatherForecastTableView, searchOtherCityButton].forEach {
             view.addSubview($0)
         }
         
@@ -135,7 +149,11 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
             currentWeatherStackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 60),
             currentWeatherStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.6),
             currentWeatherStackView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.3),
-            weatherForecastTableView.topAnchor.constraint(equalTo: currentWeatherStackView.bottomAnchor, constant: 20),
+            todayWeatherForecastCollectionView.topAnchor.constraint(equalTo: currentWeatherStackView.bottomAnchor, constant: 20),
+            todayWeatherForecastCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            todayWeatherForecastCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
+            todayWeatherForecastCollectionView.heightAnchor.constraint(equalToConstant: 100),
+            weatherForecastTableView.topAnchor.constraint(equalTo: todayWeatherForecastCollectionView.bottomAnchor, constant: 20),
             weatherForecastTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
             weatherForecastTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
             weatherForecastTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
@@ -146,6 +164,8 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
     
     private func configure() {
         requestAuthorization()
+        todayWeatherForecastCollectionView.dataSource = self
+        todayWeatherForecastCollectionView.delegate = self
         weatherForecastTableView.dataSource = self
         weatherForecastTableView.delegate = self
     }
@@ -155,6 +175,25 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
         navigationController?.pushViewController(nextViewController, animated: true)
     }
     
+    // MARK: - todayWeatherForecastCollectionView
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier, for: indexPath) as? TodayWeatherForecastCollectionViewCell else { return UICollectionViewCell() }
+        cell.timeLabel.text = "18:00"
+        cell.weatherImageView.image = UIImage(named: "temp")
+        cell.weatherLabel.text = "흐림"
+        cell.temperatureLabel.text = "10℃"
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 10
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 100, height: 100)
+    }
+    
+    // MARK: - weatherForecastTableView
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: WeatherForecastTableViewCell.identifier, for: indexPath) as? WeatherForecastTableViewCell else { return UITableViewCell() }
         cell.dayLabel.text = "임시"
@@ -164,11 +203,11 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 7
+        return 3
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return titleForHeader
+        return titleForWeatherForecastTableViewHeader
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -178,70 +217,6 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         cell.backgroundColor = UIColor.clear
     }
-    
-    // MARK: - CoreLocation
-    private func requestAuthorization() {
-        if locationManager == nil {
-            locationManager = CLLocationManager()
-            locationManager!.desiredAccuracy = kCLLocationAccuracyBest
-            locationManager!.requestWhenInUseAuthorization()
-            locationManager!.delegate = self
-            locationManagerDidChangeAuthorization(locationManager!)
-        } else {
-            // 사용자의 위치가 바뀌고있는지 확인하는 메서드
-            locationManager!.startMonitoringSignificantLocationChanges()
-        }
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print(error)
-    }
-    
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        if manager.authorizationStatus == .authorizedWhenInUse {
-            currentLocation = locationManager!.location?.coordinate
-            latitude = String(currentLocation.latitude)
-            longitude = String(currentLocation.longitude)
-        }
-    }
-    
-    // MARK: - REQUEST
-    private func requestCurrentWeather() {
-        guard let lat = latitude else { return }
-        guard let lon = longitude else { return }
-        
-        guard let url: URL = apiManager.getReverseGeocodingURL(lat: lat, lon: lon) else { return }
-        requestCityName(url: url)
-    }
-    
-    private func requestCityName(url: URL) {
-        apiManager.requestData(url: url, completion: { (isSuccess, data) in
-            if isSuccess {
-                guard let city = DecodingManager.decode(with: data, modelType: [CityName].self) else { return }
-                self.setCityName(cityName: city[0].koreanNameOfCity.cityName)
-                // 도시 이름을 이용해 requestWeatherForecast(cityName: city[0].koreanNameOfCity.ascii ?? city[0].name) - 비동기로 실행?
-                guard let url: URL = self.apiManager.getCityWeatherURL(cityName: city[0].koreanNameOfCity.ascii ?? city[0].name) else { return }
-                self.requestWeatherDataOfCity(url: url)
-            }
-        })
-    }
-    
-    private func requestWeatherDataOfCity(url: URL) {
-        apiManager.requestData(url: url, completion: { (isSuccess, data) in
-            if isSuccess {
-                guard let currentWeatherOfCity = DecodingManager.decode(with: data, modelType: WeatherOfCity.self) else { return }
-                self.setUpBackgroundImage(weather: currentWeatherOfCity.weather[0].id)
-                self.setCurrentWeather(weather: currentWeatherOfCity.weather[0].description, temperature: currentWeatherOfCity.main.temp)
-            }
-        })
-    }
-    
-//    private func requestWeatherForecast(cityName: String) {
-//        guard let url: URL = apiManager.getWeatherForecastURL(cityName: cityName) else { return }
-//        apiManager.requestData(url: url, completion: { (isSuccess, data) in
-//
-//        })
-//    }
     
     private func setUpBackgroundImage(weather: Int) {
         switch weather {
@@ -294,4 +269,72 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, CLLocation
         self.weatherLabel.text = weather
         self.temperatureLabel.text = String(Int(temperature)) + celsiusString
     }
+}
+
+// MARK: - CoreLocation
+extension ViewController: CLLocationManagerDelegate {
+    private func requestAuthorization() {
+        if locationManager == nil {
+            locationManager = CLLocationManager()
+            locationManager!.desiredAccuracy = kCLLocationAccuracyBest
+            locationManager!.requestWhenInUseAuthorization()
+            locationManager!.delegate = self
+            locationManagerDidChangeAuthorization(locationManager!)
+        } else {
+            // 사용자의 위치가 바뀌고있는지 확인하는 메서드
+            locationManager!.startMonitoringSignificantLocationChanges()
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print(error)
+    }
+    
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        if manager.authorizationStatus == .authorizedWhenInUse {
+            currentLocation = locationManager!.location?.coordinate
+            latitude = String(currentLocation.latitude)
+            longitude = String(currentLocation.longitude)
+        }
+    }
+}
+
+extension ViewController {
+    // MARK: - REQUEST
+    private func requestCurrentWeather() {
+        guard let lat = latitude else { return }
+        guard let lon = longitude else { return }
+        
+        guard let url: URL = apiManager.getReverseGeocodingURL(lat: lat, lon: lon) else { return }
+        requestCityName(url: url)
+    }
+    
+    private func requestCityName(url: URL) {
+        apiManager.requestData(url: url, completion: { (isSuccess, data) in
+            if isSuccess {
+                guard let city = DecodingManager.decode(with: data, modelType: [CityName].self) else { return }
+                self.setCityName(cityName: city[0].koreanNameOfCity.cityName)
+                // 도시 이름을 이용해 requestWeatherForecast(cityName: city[0].koreanNameOfCity.ascii ?? city[0].name) - 비동기로 실행?
+                guard let url: URL = self.apiManager.getCityWeatherURL(cityName: city[0].koreanNameOfCity.ascii ?? city[0].name) else { return }
+                self.requestWeatherDataOfCity(url: url)
+            }
+        })
+    }
+    
+    private func requestWeatherDataOfCity(url: URL) {
+        apiManager.requestData(url: url, completion: { (isSuccess, data) in
+            if isSuccess {
+                guard let currentWeatherOfCity = DecodingManager.decode(with: data, modelType: WeatherOfCity.self) else { return }
+                self.setUpBackgroundImage(weather: currentWeatherOfCity.weather[0].id)
+                self.setCurrentWeather(weather: currentWeatherOfCity.weather[0].description, temperature: currentWeatherOfCity.main.temp)
+            }
+        })
+    }
+    
+//    private func requestWeatherForecast(cityName: String) {
+//        guard let url: URL = apiManager.getWeatherForecastURL(cityName: cityName) else { return }
+//        apiManager.requestData(url: url, completion: { (isSuccess, data) in
+//
+//        })
+//    }
 }

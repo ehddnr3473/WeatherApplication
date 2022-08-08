@@ -21,6 +21,7 @@
 		6B9242B328990C0100E29CF8 /* Weather++Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B9242B228990C0100E29CF8 /* Weather++Bundle.swift */; };
 		6BB587C9289FF0A100CBCF92 /* CityName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BB587C8289FF0A000CBCF92 /* CityName.swift */; };
 		6BCED14D289CF64D00F8A305 /* FetchData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BCED14C289CF64D00F8A305 /* FetchData.swift */; };
+		6BEAF02D28A1370500D0BB6D /* TodayWeatherForecastCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BEAF02C28A1370500D0BB6D /* TodayWeatherForecastCollectionViewCell.swift */; };
 		6BEC6C60289EC5B800EFF342 /* CityWeatherTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BEC6C5F289EC5B800EFF342 /* CityWeatherTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
@@ -41,6 +42,7 @@
 		6B9242B228990C0100E29CF8 /* Weather++Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Weather++Bundle.swift"; sourceTree = "<group>"; };
 		6BB587C8289FF0A000CBCF92 /* CityName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityName.swift; sourceTree = "<group>"; };
 		6BCED14C289CF64D00F8A305 /* FetchData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchData.swift; sourceTree = "<group>"; };
+		6BEAF02C28A1370500D0BB6D /* TodayWeatherForecastCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayWeatherForecastCollectionViewCell.swift; sourceTree = "<group>"; };
 		6BEC6C5F289EC5B800EFF342 /* CityWeatherTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityWeatherTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -129,6 +131,7 @@
 			children = (
 				6B9242AB2898EED000E29CF8 /* WeatherForecastTableViewCell.swift */,
 				6B92429B2898EDE300E29CF8 /* ViewController.swift */,
+				6BEAF02C28A1370500D0BB6D /* TodayWeatherForecastCollectionViewCell.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -213,6 +216,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6BEAF02D28A1370500D0BB6D /* TodayWeatherForecastCollectionViewCell.swift in Sources */,
 				6B9242B328990C0100E29CF8 /* Weather++Bundle.swift in Sources */,
 				6BEC6C60289EC5B800EFF342 /* CityWeatherTableViewCell.swift in Sources */,
 				6B9242AC2898EED000E29CF8 /* WeatherForecastTableViewCell.swift in Sources */,
