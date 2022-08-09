@@ -33,7 +33,7 @@ struct FetchData {
     }
     
     func getWeatherForecastURL(cityName: String) -> URL? {
-        var baseURL = URLComponents(string: "api.openweathermap.org/data/2.5/forecast?")
+        var baseURL = URLComponents(string: "https://api.openweathermap.org/data/2.5/forecast?")
         let cityName = URLQueryItem(name: "q", value: cityName)
         let language = URLQueryItem(name: "lang", value: "kr")
         let key = URLQueryItem(name: "appid", value: appid)

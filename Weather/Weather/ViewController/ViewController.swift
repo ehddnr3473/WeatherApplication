@@ -16,6 +16,7 @@ final class ViewController: UIViewController {
     private let titleForWeatherForecastTableViewHeader: String = "5일 간의 날씨 예보"
     private let getMethodString: String = "GET"
     private let celsiusString: String = "℃"
+    private var forecast: [Forecast] = []
     
     private var locationManager: CLLocationManager?
     private var currentLocation: CLLocationCoordinate2D!
@@ -78,6 +79,7 @@ final class ViewController: UIViewController {
     private var todayWeatherForecastCollectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.scrollDirection = .horizontal
+        flowLayout.sectionInset = .init(top: 0, left: 10, bottom: 0, right: 10)
         
         let collectionView: UICollectionView = UICollectionView(frame: .init(x: 0, y: 0, width: 100, height: 100), collectionViewLayout: flowLayout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -178,15 +180,53 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate, UICollecti
     // MARK: - todayWeatherForecastCollectionView
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier, for: indexPath) as? TodayWeatherForecastCollectionViewCell else { return UICollectionViewCell() }
-        cell.timeLabel.text = "18:00"
-        cell.weatherImageView.image = UIImage(named: "temp")
-        cell.weatherLabel.text = "흐림"
-        cell.temperatureLabel.text = "10℃"
+        cell.timeLabel.text = getTimeText(time: forecast[0].list[indexPath.row].time)
+        cell.weatherImageView.image = setForecastImage(weather: forecast[0].list[indexPath.row].weather[0].id).withRenderingMode(.alwaysTemplate)
+        cell.weatherLabel.text = forecast[0].list[indexPath.row].weather[0].description
+        cell.temperatureLabel.text = String(Int(forecast[0].list[indexPath.row].main.temp)) + celsiusString
+        
         return cell
     }
     
+    private func getTimeText(time: String) -> String {
+        var result: String
+        var temp: Int
+        let startIndex = time.index(time.startIndex, offsetBy: 11)
+        let endIndex = time.index(time.endIndex, offsetBy: -7)
+        temp = Int(String(time[startIndex...endIndex]))!
+        
+        if temp < 12 {
+            result = "오전 "
+        } else {
+            result = "오후 "
+        }
+        
+        if temp == 0 {
+            temp = 12
+        } else if temp > 12 {
+            temp -= 12
+        }
+        
+        result += String(temp) + "시"
+        
+        return result
+    }
+    
+    private func setForecastImage(weather: Int) -> UIImage {
+        switch weather {
+        case 300...531:
+            return UIImage(named: "Rainy2")!
+        default:
+            return UIImage(named: "Clear2")!
+        }
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        if forecast.isEmpty {
+            return 0
+        } else {
+            return 8
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -315,6 +355,9 @@ extension ViewController {
                 guard let city = DecodingManager.decode(with: data, modelType: [CityName].self) else { return }
                 self.setCityName(cityName: city[0].koreanNameOfCity.cityName)
                 // 도시 이름을 이용해 requestWeatherForecast(cityName: city[0].koreanNameOfCity.ascii ?? city[0].name) - 비동기로 실행?
+                DispatchQueue.main.async {
+                    self.requestWeatherForecast(cityName: city[0].koreanNameOfCity.ascii ?? city[0].name)
+                }
                 guard let url: URL = self.apiManager.getCityWeatherURL(cityName: city[0].koreanNameOfCity.ascii ?? city[0].name) else { return }
                 self.requestWeatherDataOfCity(url: url)
             }
@@ -331,10 +374,17 @@ extension ViewController {
         })
     }
     
-//    private func requestWeatherForecast(cityName: String) {
-//        guard let url: URL = apiManager.getWeatherForecastURL(cityName: cityName) else { return }
-//        apiManager.requestData(url: url, completion: { (isSuccess, data) in
-//
-//        })
-//    }
+    private func requestWeatherForecast(cityName: String) {
+        guard let url: URL = apiManager.getWeatherForecastURL(cityName: cityName) else { return }
+        apiManager.requestData(url: url, completion: { (isSuccess, data) in
+            if isSuccess {
+                guard let todayWeatherOfCity = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
+                self.forecast.append(todayWeatherOfCity)
+                self.forecast[0].list.removeSubrange(0...2)
+                DispatchQueue.main.async {
+                    self.todayWeatherForecastCollectionView.reloadData()
+                }
+            }
+        })
+    }
 }

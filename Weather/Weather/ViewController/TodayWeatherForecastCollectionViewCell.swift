@@ -11,18 +11,6 @@ import UIKit
 class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
     static let identifier: String = "TodayWeatherForecastCollectionViewCell"
     
-    var todayStackView: UIStackView = {
-        let stackView: UIStackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        stackView.axis = .vertical
-        stackView.alignment = .fill
-        stackView.distribution = .fill
-        stackView.spacing = 5
-        
-        return stackView
-    }()
-    
     var timeLabel: UILabel = {
         let label: UILabel = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -37,6 +25,8 @@ class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
     var weatherImageView: UIImageView = {
         let imageView: UIImageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        imageView.tintColor = UIColor.white
         
         return imageView
     }()
@@ -75,20 +65,23 @@ class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
     }
     
     func setUpHierachy() {
-        [todayStackView].forEach {
-            contentView.addSubview($0)
-        }
         [timeLabel, weatherImageView, weatherLabel, temperatureLabel].forEach {
-            todayStackView.addArrangedSubview($0)
+            contentView.addSubview($0)
         }
     }
     
     func setUpLayout() {
         NSLayoutConstraint.activate([
-            todayStackView.topAnchor.constraint(equalTo: self.topAnchor),
-            todayStackView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            todayStackView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            todayStackView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+            timeLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            timeLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 5),
+            weatherImageView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            weatherImageView.topAnchor.constraint(equalTo: timeLabel.bottomAnchor, constant: 5),
+            weatherImageView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.4),
+            weatherImageView.heightAnchor.constraint(equalTo: weatherImageView.widthAnchor),
+            weatherLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            weatherLabel.topAnchor.constraint(equalTo: weatherImageView.bottomAnchor, constant: 5),
+            temperatureLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            temperatureLabel.topAnchor.constraint(equalTo: weatherLabel.bottomAnchor, constant: 5)
         ])
     }
 }
