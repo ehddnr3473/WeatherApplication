@@ -68,9 +68,7 @@ struct FetchData {
                 #endif
                 return
             }
-            DispatchQueue.main.async {
-                completion(true, data)
-            }
+            completion(true, data)
         })
         dataTask.resume()
     }

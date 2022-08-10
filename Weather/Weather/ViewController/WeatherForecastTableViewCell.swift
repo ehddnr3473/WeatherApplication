@@ -15,39 +15,24 @@ class WeatherForecastTableViewCell: UITableViewCell {
         let label: UILabel = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.textColor = UIColor.black
-        label.textAlignment = NSTextAlignment.center
+        label.textColor = UIColor.white
+        label.font = UIFont.boldSystemFont(ofSize: 15)
         
         return label
     }()
-    
-    var rateStackView: UIStackView = {
-        let stackView: UIStackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
+    var forecastCollectionView: UICollectionView = {
+        let flowLayout = UICollectionViewFlowLayout()
+        flowLayout.scrollDirection = .horizontal
+        flowLayout.sectionInset = .zero
         
-        stackView.axis = .vertical
-        stackView.alignment = .fill
-        stackView.distribution = .equalSpacing
-        stackView.spacing = 8
+        let collectionVIew: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
+        collectionVIew.translatesAutoresizingMaskIntoConstraints = false
         
-        return stackView
-    }()
-    
-    var weatherImageVIew: UIImageView = {
-        let imageView: UIImageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
+        collectionVIew.backgroundColor = UIColor.clear
         
-        return imageView
-    }()
-    
-    var rateLabel: UILabel = {
-        let label: UILabel = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
+        collectionVIew.register(TodayWeatherForecastCollectionViewCell.self, forCellWithReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier)
         
-        label.textColor = UIColor.black
-        label.textAlignment = NSTextAlignment.center
-        
-        return label
+        return collectionVIew
     }()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -55,6 +40,7 @@ class WeatherForecastTableViewCell: UITableViewCell {
         
         setUpHierachy()
         setUpLayout()
+        configure()
     }
     
     required init?(coder: NSCoder) {
@@ -62,19 +48,40 @@ class WeatherForecastTableViewCell: UITableViewCell {
     }
     
     func setUpHierachy() {
-        [dayLabel, rateStackView].forEach {
+        [dayLabel, forecastCollectionView].forEach {
             contentView.addSubview($0)
         }
     }
     
     func setUpLayout() {
         NSLayoutConstraint.activate([
-            dayLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 8),
             dayLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-            dayLabel.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.2),
-            rateStackView.leadingAnchor.constraint(equalTo: dayLabel.trailingAnchor, constant: 8),
-            rateStackView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-            rateStackView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.2)
+            dayLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 8),
+            forecastCollectionView.topAnchor.constraint(equalTo: self.topAnchor),
+            forecastCollectionView.leadingAnchor.constraint(equalTo: dayLabel.trailingAnchor, constant: 5),
+            forecastCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            forecastCollectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
         ])
+    }
+}
+
+extension WeatherForecastTableViewCell: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    private func configure() {
+        forecastCollectionView.dataSource = self
+        forecastCollectionView.delegate = self
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier, for: indexPath) as? TodayWeatherForecastCollectionViewCell else { return UICollectionViewCell() }
+        cell.backgroundColor = UIColor.red
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 5
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 130, height: 150)
     }
 }

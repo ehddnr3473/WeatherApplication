@@ -11,10 +11,18 @@ final class OtherCityViewController: UIViewController {
 
     // MARK: - Properties
     private let apiManager = FetchData()
-    private var mainLabelText: String = "도시의 날씨"
+    private let mainLabelText: String = "도시의 날씨"
     private let searchTextFieldPlaceholder: String = "도시명으로 검색"
     private let searchButtonTitle: String = "추가"
     private var cities: [WeatherOfCity] = []
+    static var forecasts: [Forecast] = []
+    
+    private var backgroundImageView: UIImageView = {
+        let imageView: UIImageView = UIImageView(image: UIImage(named: "CityBackground"))
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
+    }()
     
     private lazy var mainLabel: UILabel = {
         let label: UILabel = UILabel()
@@ -85,7 +93,7 @@ extension OtherCityViewController: UITableViewDataSource, UITableViewDelegate, U
     }
     
     private func setUpHierachy() {
-        [mainLabel, searchTextField, searchButton, cityWeatherTableView].forEach {
+        [backgroundImageView, mainLabel, searchTextField, searchButton, cityWeatherTableView].forEach {
             view.addSubview($0)
         }
     }
@@ -98,16 +106,24 @@ extension OtherCityViewController: UITableViewDataSource, UITableViewDelegate, U
     
     private func setUpLayout() {
         NSLayoutConstraint.activate([
+            backgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
+            backgroundImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            backgroundImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            backgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
             mainLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 100),
             mainLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            
             searchTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
             searchTextField.topAnchor.constraint(equalTo: mainLabel.bottomAnchor, constant: 8),
             searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
             searchTextField.heightAnchor.constraint(equalToConstant: 30),
+            
             searchButton.topAnchor.constraint(equalTo: searchTextField.topAnchor),
             searchButton.bottomAnchor.constraint(equalTo: searchTextField.bottomAnchor),
             searchButton.leadingAnchor.constraint(equalTo: searchTextField.trailingAnchor, constant: 8),
             searchButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
+            
             cityWeatherTableView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: 20),
             cityWeatherTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
             cityWeatherTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
@@ -122,50 +138,71 @@ extension OtherCityViewController: UITableViewDataSource, UITableViewDelegate, U
         cell.cityNameLabel.text = cities[indexPath.row].name
         cell.weatherLabel.text = cities[indexPath.row].weather[0].description
         cell.temperatureLabel.text = String(Int(cities[indexPath.row].main.temp))
+        cell.forecastCollectionView.reloadData()
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        //return cities.count
         return cities.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 100
+        return 250
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         cell.backgroundColor = UIColor.clear
     }
     
-//    func textFieldDidBeginEditing(_ textField: UITextField) {
-//        if verifyTextField() {
-//            searchButton.isEnabled = true
-//        }
-//    }
-//
-//    private func verifyTextField() -> Bool {
-//        return searchTextField.hasText
-//    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        touchUpTableViewItem()
+    }
+    
+    func touchUpTableViewItem() {
+        
+    }
 
     @IBAction func touchUpSearchButton(_ sender: UIButton) {
         let cityName: String = searchTextField.text ?? ""
-        requestCityWeather(cityName: cityName)
+        requestCurrentWeatherOfCity(cityName: cityName)
+        DispatchQueue.global().async {
+            self.requestForecastWeatherOfCity(cityName: cityName)
+        }
     }
     
     // MARK: - REQUEST
-    private func requestCityWeather(cityName: String) {
+    private func requestCurrentWeatherOfCity(cityName: String) {
         guard let url: URL = apiManager.getCityWeatherURL(cityName: cityName) else { return }
-        requestData(url: url)
+        requestCurrentWeatherOfCityData(url: url)
     }
     
-    private func requestData(url: URL) {
-        apiManager.requestData(url: url, completion: { (isSuccess, data) in
+    private func requestCurrentWeatherOfCityData(url: URL) {
+        apiManager.requestData(url: url, completion: { [weak self] (isSuccess, data) in
             if isSuccess {
-                guard let otherCityWeather = DecodingManager.decode(with: data, modelType: WeatherOfCity.self) else { return }
-                self.cities.append(otherCityWeather)
-                self.cityWeatherTableView.reloadData()
+                guard let self = self, let weatherOfCity = DecodingManager.decode(with: data, modelType: WeatherOfCity.self) else { return }
+                self.cities.append(weatherOfCity)
+                DispatchQueue.main.async {
+                    self.cityWeatherTableView.reloadData()
+                }
+            }
+        })
+    }
+    
+    private func requestForecastWeatherOfCity(cityName: String) {
+        guard let url: URL = apiManager.getWeatherForecastURL(cityName: cityName) else { return }
+        requestForecastWeatherOfCityData(url: url)
+    }
+    
+    private func requestForecastWeatherOfCityData(url: URL) {
+        apiManager.requestData(url: url, completion: { [weak self] (isSuccess, data) in
+            if isSuccess {
+                guard let self = self, let forecastWeatherOfCity = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
+                OtherCityViewController.forecasts.append(forecastWeatherOfCity)
+                ViewController.count += 1
+                DispatchQueue.main.async {
+                    self.cityWeatherTableView.reloadData()
+                }
             }
         })
     }
