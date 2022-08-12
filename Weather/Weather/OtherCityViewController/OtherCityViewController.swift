@@ -17,6 +17,12 @@ final class OtherCityViewController: UIViewController {
     private var cities: [WeatherOfCity] = []
     static var forecasts: [Forecast] = []
     
+    private var dataSourcesOfTableView: [UITableViewDataSource] = []
+    private var delegatesOfTableView: [UITableViewDelegate] = []
+    private let cityWeatherTableViewDataSource = CityWeatherTableViewDataSource()
+    private let cityWeatherTableViewDelegate = CityWeatherTableViewDelegate()
+    private let cell = CityWeatherTableViewCell()
+    
     private var backgroundImageView: UIImageView = {
         let imageView: UIImageView = UIImageView(image: UIImage(named: "CityBackground"))
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -85,11 +91,10 @@ final class OtherCityViewController: UIViewController {
     }
 }
 
-extension OtherCityViewController: UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate {
+extension OtherCityViewController: UITextFieldDelegate {
     private func setUpUI() {
         setUpHierachy()
         setUpLayout()
-        view.backgroundColor = UIColor.black
     }
     
     private func setUpHierachy() {
@@ -99,8 +104,10 @@ extension OtherCityViewController: UITableViewDataSource, UITableViewDelegate, U
     }
     
     private func configure() {
-        cityWeatherTableView.dataSource = self
-        cityWeatherTableView.delegate = self
+        dataSourcesOfTableView = [cityWeatherTableViewDataSource]
+        cityWeatherTableView.dataSource = dataSourcesOfTableView[0]
+        delegatesOfTableView = [cityWeatherTableViewDelegate]
+        cityWeatherTableView.delegate = delegatesOfTableView[0]
         searchTextField.delegate = self
     }
     
@@ -130,38 +137,6 @@ extension OtherCityViewController: UITableViewDataSource, UITableViewDelegate, U
             cityWeatherTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50)
         ])
     }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: CityWeatherTableViewCell.identifier, for: indexPath) as? CityWeatherTableViewCell else {
-            return UITableViewCell()
-        }
-        cell.cityNameLabel.text = cities[indexPath.row].name
-        cell.weatherLabel.text = cities[indexPath.row].weather[0].description
-        cell.temperatureLabel.text = String(Int(cities[indexPath.row].main.temp))
-        cell.forecastCollectionView.reloadData()
-        
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return cities.count
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 250
-    }
-    
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cell.backgroundColor = UIColor.clear
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        touchUpTableViewItem()
-    }
-    
-    func touchUpTableViewItem() {
-        
-    }
 
     @IBAction func touchUpSearchButton(_ sender: UIButton) {
         let cityName: String = searchTextField.text ?? ""
@@ -170,7 +145,9 @@ extension OtherCityViewController: UITableViewDataSource, UITableViewDelegate, U
             self.requestForecastWeatherOfCity(cityName: cityName)
         }
     }
-    
+}
+
+extension OtherCityViewController {
     // MARK: - REQUEST
     private func requestCurrentWeatherOfCity(cityName: String) {
         guard let url: URL = apiManager.getCityWeatherURL(cityName: cityName) else { return }
@@ -182,6 +159,7 @@ extension OtherCityViewController: UITableViewDataSource, UITableViewDelegate, U
             if isSuccess {
                 guard let self = self, let weatherOfCity = DecodingManager.decode(with: data, modelType: WeatherOfCity.self) else { return }
                 self.cities.append(weatherOfCity)
+                self.cityWeatherTableViewDataSource.cities = self.cities
                 DispatchQueue.main.async {
                     self.cityWeatherTableView.reloadData()
                 }
@@ -197,14 +175,14 @@ extension OtherCityViewController: UITableViewDataSource, UITableViewDelegate, U
     private func requestForecastWeatherOfCityData(url: URL) {
         apiManager.requestData(url: url, completion: { [weak self] (isSuccess, data) in
             if isSuccess {
-                guard let self = self, let forecastWeatherOfCity = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
+                guard let self = self, var forecastWeatherOfCity = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
+                forecastWeatherOfCity.list.removeSubrange(0...2)
+                forecastWeatherOfCity.list.removeSubrange(8...)
                 OtherCityViewController.forecasts.append(forecastWeatherOfCity)
-                ViewController.count += 1
                 DispatchQueue.main.async {
                     self.cityWeatherTableView.reloadData()
                 }
             }
         })
     }
-    
 }

@@ -12,16 +12,26 @@ final class ViewController: UIViewController {
     
     // MARK: - Properties
     private var apiManager = FetchData()
-    private let titleForWeatherForecastTableViewHeader: String = "5일간의 예보"
+    private let titleForWeatherForecastTableViewHeader: String = "3일간의 예보"
     private let getMethodString: String = "GET"
     private let celsiusString: String = "℃"
     private var forecast: Forecast?
-    static var count: Int = -1
+    static var forecasts: [Forecast] = []
     
     private var locationManager: CLLocationManager?
     private var currentLocation: CLLocationCoordinate2D!
     private var latitude: String?
     private var longitude: String?
+    
+    private var dataSourcesOfTableView: [UITableViewDataSource] = []
+    private var delegatesOfTableView: [UITableViewDelegate] = []
+    private let weatherForecastTableViewDataSource = WeatherForecastTableViewDataSource()
+    private let weatherForecastTableViewDelegate = WeatherForecastTableViewDelegate()
+    
+    private var dataSourcesOfCollectionView: [UICollectionViewDataSource] = []
+    private var delegatesOfCollectionView: [UICollectionViewDelegate] = []
+    private let todayWeatherForecastCollectionViewDataSource = TodayWeatherForecastCollectionViewDataSource()
+    private let todayWeatherForecastCollectionViewDelegate = TodayWeatherForecastCollectionViewDelegate()
     
     
     private var weatherBackgroundImageView: UIImageView = {
@@ -119,15 +129,10 @@ final class ViewController: UIViewController {
         configure()
         requestCurrentWeather()
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        ViewController.count = -1
-    }
 }
 
-extension ViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+// MARK: - View
+extension ViewController {
     private func setUpUI() {
         view.backgroundColor = UIColor.black
         setUpHierachy()
@@ -173,43 +178,24 @@ extension ViewController: UICollectionViewDataSource, UICollectionViewDelegateFl
     
     private func configure() {
         requestAuthorization()
-        todayWeatherForecastCollectionView.dataSource = self
-        todayWeatherForecastCollectionView.delegate = self
-        weatherForecastTableView.dataSource = self
-        weatherForecastTableView.delegate = self
+        
+        dataSourcesOfCollectionView = [todayWeatherForecastCollectionViewDataSource]
+        todayWeatherForecastCollectionView.dataSource = dataSourcesOfCollectionView[0]
+        
+        delegatesOfCollectionView = [todayWeatherForecastCollectionViewDelegate]
+        todayWeatherForecastCollectionView.delegate = delegatesOfCollectionView[0]
+        
+        dataSourcesOfTableView = [weatherForecastTableViewDataSource]
+        weatherForecastTableView.dataSource = dataSourcesOfTableView[0]
+        
+        delegatesOfTableView = [weatherForecastTableViewDelegate]
+        weatherForecastTableView.delegate = delegatesOfTableView[0]
     }
     
     @IBAction func touchUpSearchOtherCityButton(_ sender: UIButton) {
         let nextViewController = OtherCityViewController()
         navigationController?.pushViewController(nextViewController, animated: true)
     }
-    
-    // MARK: - todayWeatherForecastCollectionView
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier, for: indexPath) as? TodayWeatherForecastCollectionViewCell else { return UICollectionViewCell() }
-        
-        guard let forecast = forecast else { return UICollectionViewCell() }
-        
-        cell.timeLabel.text = FetchTimeText.getTimeText(time: forecast.list[indexPath.row].time)
-        cell.weatherImageView.image = UIImage(named: FetchImageName.setForecastImage(weather: forecast.list[indexPath.row].weather[0].id))?.withRenderingMode(.alwaysTemplate)
-        cell.weatherLabel.text = forecast.list[indexPath.row].weather[0].description
-        cell.temperatureLabel.text = String(Int(forecast.list[indexPath.row].main.temp)) + celsiusString
-        
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if forecast == nil {
-            return 0
-        } else {
-            return 8
-        }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 130, height: 150)
-    }
-    
     
     private func setCityName(cityName: String) {
         self.cityNameLabel.text = cityName
@@ -221,30 +207,6 @@ extension ViewController: UICollectionViewDataSource, UICollectionViewDelegateFl
     }
 }
 
-// MARK: - weatherForecastTableView
-extension ViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: WeatherForecastTableViewCell.identifier, for: indexPath) as? WeatherForecastTableViewCell else { return UITableViewCell() }
-        
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
-    }
-    
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return titleForWeatherForecastTableViewHeader
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 150
-    }
-    
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cell.backgroundColor = UIColor.clear
-    }
-}
 // MARK: - CoreLocation
 extension ViewController: CLLocationManagerDelegate {
     private func requestAuthorization() {
@@ -319,14 +281,28 @@ extension ViewController {
         guard let url: URL = apiManager.getWeatherForecastURL(cityName: cityName) else { return }
         apiManager.requestData(url: url, completion: { [weak self] (isSuccess, data) in
             if isSuccess {
-                guard let self = self, let todayWeatherOfCity = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
+                guard let self = self, var todayWeatherOfCity = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
+                todayWeatherOfCity.list.removeSubrange(0...2)
                 self.forecast = todayWeatherOfCity
-                guard var forecast = self.forecast else { return }
-                forecast.list.removeSubrange(0...2)
+                self.todayWeatherForecastCollectionViewDataSource.forecast = self.forecast
+                
+                self.makeArray(forecast: todayWeatherOfCity)
+                
                 DispatchQueue.main.async {
                     self.todayWeatherForecastCollectionView.reloadData()
+                    self.weatherForecastTableView.reloadData()
                 }
             }
         })
+    }
+    
+    private func makeArray(forecast: Forecast) {
+        var forecast = forecast
+        forecast.list.removeSubrange(0...8)
+        ViewController.forecasts.append(forecast)
+        forecast.list.removeSubrange(0...8)
+        ViewController.forecasts.append(forecast)
+        forecast.list.removeSubrange(0...8)
+        ViewController.forecasts.append(forecast)
     }
 }

@@ -10,6 +10,9 @@ import UIKit
 
 class WeatherForecastTableViewCell: UITableViewCell {
     static let identifier: String = "WeatherForecastTableViewCell"
+    private let celsiusString: String = "℃"
+    private var dataSources: [UICollectionViewDataSource] = []
+    private let forecastCollectionViewDataSource = ForecastCollectionViewDataSource()
     
     var dayLabel: UILabel = {
         let label: UILabel = UILabel()
@@ -57,6 +60,7 @@ class WeatherForecastTableViewCell: UITableViewCell {
         NSLayoutConstraint.activate([
             dayLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             dayLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 8),
+            
             forecastCollectionView.topAnchor.constraint(equalTo: self.topAnchor),
             forecastCollectionView.leadingAnchor.constraint(equalTo: dayLabel.trailingAnchor, constant: 5),
             forecastCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
@@ -65,21 +69,13 @@ class WeatherForecastTableViewCell: UITableViewCell {
     }
 }
 
-extension WeatherForecastTableViewCell: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension WeatherForecastTableViewCell: UICollectionViewDelegateFlowLayout {
     private func configure() {
-        forecastCollectionView.dataSource = self
+        dataSources = [forecastCollectionViewDataSource]
+        forecastCollectionView.dataSource = dataSources[0]
         forecastCollectionView.delegate = self
     }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier, for: indexPath) as? TodayWeatherForecastCollectionViewCell else { return UICollectionViewCell() }
-        cell.backgroundColor = UIColor.red
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
-    }
+
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: 130, height: 150)

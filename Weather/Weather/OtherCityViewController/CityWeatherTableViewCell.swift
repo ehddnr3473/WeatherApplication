@@ -10,7 +10,8 @@ import UIKit
 
 class CityWeatherTableViewCell: UITableViewCell {
     static let identifier: String = "CityWeatherTableViewCell"
-    private let celsiusString: String = "℃"
+    private let forecastOfCityCollectionViewDataSource = ForecastOfCityCollectionViewDataSource()
+    private let forecastOfCityCollectionViewDelegate = TodayWeatherForecastCollectionViewDelegate()
     
     // 날씨 백그라운드 이미지뷰, 도시이름 레이블, 날씨 레이블, 온도 레이블
     var backgroundImageView: UIImageView = {
@@ -49,7 +50,7 @@ class CityWeatherTableViewCell: UITableViewCell {
         return label
     }()
     
-    var forecastCollectionView: UICollectionView = {
+    var forecastOfCityCollectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.scrollDirection = .horizontal
         flowLayout.sectionInset = .zero
@@ -77,13 +78,13 @@ class CityWeatherTableViewCell: UITableViewCell {
         fatalError("")
     }
     
-    func setUpHierachy() {
-        [backgroundImageView, cityNameLabel, weatherLabel, temperatureLabel, forecastCollectionView].forEach {
+    private func setUpHierachy() {
+        [backgroundImageView, cityNameLabel, weatherLabel, temperatureLabel, forecastOfCityCollectionView].forEach {
             contentView.addSubview($0)
         }
     }
     
-    func setUpLayout() {
+    private func setUpLayout() {
         NSLayoutConstraint.activate([
             backgroundImageView.topAnchor.constraint(equalTo: self.topAnchor),
             backgroundImageView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
@@ -99,40 +100,15 @@ class CityWeatherTableViewCell: UITableViewCell {
             temperatureLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
             temperatureLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -75),
             
-            forecastCollectionView.topAnchor.constraint(equalTo: weatherLabel.bottomAnchor),
-            forecastCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            forecastCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            forecastCollectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
-            
+            forecastOfCityCollectionView.topAnchor.constraint(equalTo: weatherLabel.bottomAnchor),
+            forecastOfCityCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            forecastOfCityCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            forecastOfCityCollectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
         ])
     }
-}
-
-extension CityWeatherTableViewCell: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    func configure() {
-        forecastCollectionView.dataSource = self
-        forecastCollectionView.delegate = self
-    }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier, for: indexPath) as? TodayWeatherForecastCollectionViewCell else { return UICollectionViewCell() }
-        cell.timeLabel.text = FetchTimeText.getTimeText(time: OtherCityViewController.forecasts[ViewController.count].list[indexPath.row].time)
-        cell.weatherImageView.image = UIImage(named: FetchImageName.setForecastImage(weather: OtherCityViewController.forecasts[ViewController.count].list[indexPath.row].weather[0].id))?.withRenderingMode(.alwaysTemplate)
-        cell.weatherLabel.text = OtherCityViewController.forecasts[ViewController.count].list[indexPath.row].weather[0].description
-        cell.temperatureLabel.text = String(Int(OtherCityViewController.forecasts[ViewController.count].list[indexPath.row].main.temp)) + celsiusString
-        
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if OtherCityViewController.forecasts.isEmpty {
-            return 0
-        } else {
-            return 8
-        }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 130, height: 150)
+    private func configure() {
+        forecastOfCityCollectionView.dataSource = forecastOfCityCollectionViewDataSource
+        forecastOfCityCollectionView.delegate = forecastOfCityCollectionViewDelegate
     }
 }
