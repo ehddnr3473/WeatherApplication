@@ -10,7 +10,6 @@ import UIKit
 
 class WeatherForecastTableViewCell: UITableViewCell {
     static let identifier: String = "WeatherForecastTableViewCell"
-    private let celsiusString: String = "℃"
     private var dataSources: [UICollectionViewDataSource] = []
     private let forecastCollectionViewDataSource = ForecastCollectionViewDataSource()
     
@@ -78,6 +77,6 @@ extension WeatherForecastTableViewCell: UICollectionViewDelegateFlowLayout {
 
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 130, height: 150)
+        return CGSize(width: 100, height: 130)
     }
 }

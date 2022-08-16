@@ -7,27 +7,29 @@
 
 import Foundation
 
-struct FetchTimeText {
+struct AppText {
+    static let celsiusString: String = "℃"
+    
     static func getTimeText(time: String) -> String {
         var result: String
-        var temp: Int
+        var hour: Int
         let startIndex = time.index(time.startIndex, offsetBy: 11)
         let endIndex = time.index(time.endIndex, offsetBy: -7)
-        temp = Int(String(time[startIndex...endIndex]))!
+        hour = Int(String(time[startIndex...endIndex]))!
         
-        if temp < 12 {
+        if hour < 12 {
             result = "오전 "
         } else {
             result = "오후 "
         }
         
-        if temp == 0 {
-            temp = 12
-        } else if temp > 12 {
-            temp -= 12
+        if hour == 0 {
+            hour = 12
+        } else if hour > 12 {
+            hour -= 12
         }
         
-        result += String(temp) + "시"
+        result += String(hour) + "시"
         
         return result
     }

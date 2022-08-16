@@ -8,7 +8,7 @@
 import UIKit
 
 final class OtherCityViewController: UIViewController {
-
+    
     // MARK: - Properties
     private let apiManager = FetchData()
     private let mainLabelText: String = "도시의 날씨"
@@ -21,7 +21,6 @@ final class OtherCityViewController: UIViewController {
     private var delegatesOfTableView: [UITableViewDelegate] = []
     private let cityWeatherTableViewDataSource = CityWeatherTableViewDataSource()
     private let cityWeatherTableViewDelegate = CityWeatherTableViewDelegate()
-    private let cell = CityWeatherTableViewCell()
     
     private var backgroundImageView: UIImageView = {
         let imageView: UIImageView = UIImageView(image: UIImage(named: "CityBackground"))
@@ -64,7 +63,6 @@ final class OtherCityViewController: UIViewController {
         
         button.setTitle(searchButtonTitle, for: UIControl.State.normal)
         button.tintColor = UIColor.lightGray
-//        button.isEnabled = false
         
         button.addTarget(self, action: #selector(touchUpSearchButton(_:)), for: UIControl.Event.touchUpInside)
         
@@ -81,6 +79,17 @@ final class OtherCityViewController: UIViewController {
         return tableView
     }()
     
+    private let alert: UIAlertController = {
+        let alert: UIAlertController = UIAlertController(title: "추가 실패", message: "", preferredStyle: UIAlertController.Style.alert)
+        return alert
+    }()
+    
+    private let okAction: UIAlertAction = {
+        let action: UIAlertAction = UIAlertAction(title: "확인", style: UIAlertAction.Style.default)
+        
+        return action
+    }()
+    
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -91,7 +100,7 @@ final class OtherCityViewController: UIViewController {
     }
 }
 
-extension OtherCityViewController: UITextFieldDelegate {
+extension OtherCityViewController {
     private func setUpUI() {
         setUpHierachy()
         setUpLayout()
@@ -108,7 +117,8 @@ extension OtherCityViewController: UITextFieldDelegate {
         cityWeatherTableView.dataSource = dataSourcesOfTableView[0]
         delegatesOfTableView = [cityWeatherTableViewDelegate]
         cityWeatherTableView.delegate = delegatesOfTableView[0]
-        searchTextField.delegate = self
+        
+        alert.addAction(okAction)
     }
     
     private func setUpLayout() {
@@ -140,10 +150,31 @@ extension OtherCityViewController: UITextFieldDelegate {
 
     @IBAction func touchUpSearchButton(_ sender: UIButton) {
         let cityName: String = searchTextField.text ?? ""
-        requestCurrentWeatherOfCity(cityName: cityName)
-        DispatchQueue.global().async {
-            self.requestForecastWeatherOfCity(cityName: cityName)
+        if verifyCityName(cityName: cityName) {
+            requestCurrentWeatherOfCity(cityName: cityName)
+            DispatchQueue.global().async {
+                self.requestForecastWeatherOfCity(cityName: cityName)
+            }
+            searchTextField.text = ""
+        } else {
+            alert.message = "이미 추가된 도시입니다."
+            present(alert, animated: true, completion: nil)
+            searchTextField.text = ""
         }
+    }
+    
+    private func verifyCityName(cityName: String) -> Bool {
+        let cityName = cityName.capitalized
+        if cities.isEmpty {
+            return true
+        }
+        
+        for i in 0..<cities.count {
+            if cities[i].name == cityName {
+                return false
+            }
+        }
+        return true
     }
 }
 
@@ -155,13 +186,33 @@ extension OtherCityViewController {
     }
     
     private func requestCurrentWeatherOfCityData(url: URL) {
-        apiManager.requestData(url: url, completion: { [weak self] (isSuccess, data) in
-            if isSuccess {
+        apiManager.requestData(url: url, completion: { [weak self] result in
+            switch result {
+            case .success(let data):
                 guard let self = self, let weatherOfCity = DecodingManager.decode(with: data, modelType: WeatherOfCity.self) else { return }
                 self.cities.append(weatherOfCity)
                 self.cityWeatherTableViewDataSource.cities = self.cities
                 DispatchQueue.main.async {
                     self.cityWeatherTableView.reloadData()
+                }
+            case .failure(let error):
+                guard let self = self else { return }
+                switch error {
+                case .apiKeyError:
+                    DispatchQueue.main.async {
+                        self.alert.message = "api key 에러가 발생하였습니다."
+                        self.present(self.alert, animated: true, completion: nil)
+                    }
+                case .cityNameError:
+                    DispatchQueue.main.async {
+                        self.alert.message = "도시 이름을 다시 확인해주세요."
+                        self.present(self.alert, animated: true, completion: nil)
+                    }
+                case .unknown:
+                    DispatchQueue.main.async {
+                        self.alert.message = "알 수 없는 오류가 발생하였습니다."
+                        self.present(self.alert, animated: true, completion: nil)
+                    }
                 }
             }
         })
@@ -173,14 +224,34 @@ extension OtherCityViewController {
     }
     
     private func requestForecastWeatherOfCityData(url: URL) {
-        apiManager.requestData(url: url, completion: { [weak self] (isSuccess, data) in
-            if isSuccess {
+        apiManager.requestData(url: url, completion: { [weak self] result in
+            switch result {
+            case .success(let data):
                 guard let self = self, var forecastWeatherOfCity = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
                 forecastWeatherOfCity.list.removeSubrange(0...2)
                 forecastWeatherOfCity.list.removeSubrange(8...)
                 OtherCityViewController.forecasts.append(forecastWeatherOfCity)
                 DispatchQueue.main.async {
                     self.cityWeatherTableView.reloadData()
+                }
+            case .failure(let error):
+                guard let self = self else { return }
+                switch error {
+                case .apiKeyError:
+                    DispatchQueue.main.async {
+                        self.alert.message = "알 수 없는 오류가 발생하였습니다."
+                        self.present(self.alert, animated: true, completion: nil)
+                    }
+                case .cityNameError:
+                    DispatchQueue.main.async {
+                        self.alert.message = "도시 이름을 다시 확인해주세요."
+                        self.present(self.alert, animated: true, completion: nil)
+                    }
+                case .unknown:
+                    DispatchQueue.main.async {
+                        self.alert.message = "알 수 없는 오류가 발생하였습니다."
+                        self.present(self.alert, animated: true, completion: nil)
+                    }
                 }
             }
         })

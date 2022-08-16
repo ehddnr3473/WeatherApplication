@@ -11,6 +11,7 @@ import UIKit
 class WeatherForecastTableViewDataSource: NSObject, UITableViewDataSource {
     private let titleForWeatherForecastTableViewHeader: String = "3일간의 예보"
     static var indexPathOfTableView: IndexPath?
+    var dayList: [String] = []
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if ViewController.forecasts.isEmpty {
@@ -23,6 +24,8 @@ class WeatherForecastTableViewDataSource: NSObject, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: WeatherForecastTableViewCell.identifier, for: indexPath) as? WeatherForecastTableViewCell else { return UITableViewCell() }
         WeatherForecastTableViewDataSource.indexPathOfTableView = indexPath
+        cell.dayLabel.text = dayList[indexPath.row]
+        
         return cell
     }
     

@@ -13,8 +13,6 @@ final class ViewController: UIViewController {
     // MARK: - Properties
     private var apiManager = FetchData()
     private let titleForWeatherForecastTableViewHeader: String = "3일간의 예보"
-    private let getMethodString: String = "GET"
-    private let celsiusString: String = "℃"
     private var forecast: Forecast?
     static var forecasts: [Forecast] = []
     
@@ -32,6 +30,10 @@ final class ViewController: UIViewController {
     private var delegatesOfCollectionView: [UICollectionViewDelegate] = []
     private let todayWeatherForecastCollectionViewDataSource = TodayWeatherForecastCollectionViewDataSource()
     private let todayWeatherForecastCollectionViewDelegate = TodayWeatherForecastCollectionViewDelegate()
+    
+    var dayList: [String] = []
+    private var today: String?
+    private var startOfTomorrowIndex: Int?
     
     
     private var weatherBackgroundImageView: UIImageView = {
@@ -119,6 +121,17 @@ final class ViewController: UIViewController {
         return button
     }()
     
+    private let alert: UIAlertController = {
+        let alert: UIAlertController = UIAlertController(title: "오류", message: "", preferredStyle: UIAlertController.Style.alert)
+        return alert
+    }()
+    
+    private let okAction: UIAlertAction = {
+        let action: UIAlertAction = UIAlertAction(title: "확인", style: UIAlertAction.Style.default)
+        
+        return action
+    }()
+    
     
     // MARK: - LifeCycle
     override func viewDidLoad() {
@@ -190,6 +203,8 @@ extension ViewController {
         
         delegatesOfTableView = [weatherForecastTableViewDelegate]
         weatherForecastTableView.delegate = delegatesOfTableView[0]
+        
+        alert.addAction(okAction)
     }
     
     @IBAction func touchUpSearchOtherCityButton(_ sender: UIButton) {
@@ -203,7 +218,7 @@ extension ViewController {
     
     private func setCurrentWeather(weather: String, temperature: Double) {
         self.weatherLabel.text = weather
-        self.temperatureLabel.text = String(Int(temperature)) + celsiusString
+        self.temperatureLabel.text = String(Int(temperature)) + AppText.celsiusString
     }
 }
 
@@ -246,8 +261,9 @@ extension ViewController {
     }
     
     private func requestCityName(url: URL) {
-        apiManager.requestData(url: url, completion: { [weak self] (isSuccess, data) in
-            if isSuccess {
+        apiManager.requestData(url: url, completion: { [weak self] result in
+            switch result {
+            case .success(let data):
                 guard let self = self, let city = DecodingManager.decode(with: data, modelType: [CityName].self) else { return }
                 
                 DispatchQueue.main.async {
@@ -260,18 +276,37 @@ extension ViewController {
                 
                 guard let url: URL = self.apiManager.getCityWeatherURL(cityName: city[0].koreanNameOfCity.ascii ?? city[0].name) else { return }
                 self.requestWeatherDataOfCity(url: url)
+            case .failure(let error):
+                switch error {
+                default:
+                    guard let self = self else { return }
+                    DispatchQueue.main.async {
+                        self.alert.message = "위치정보를 가져올 수 없습니다."
+                        self.present(self.alert, animated: true, completion: nil)
+                    }
+                }
             }
         })
     }
     
     private func requestWeatherDataOfCity(url: URL) {
-        apiManager.requestData(url: url, completion: { [weak self] (isSuccess, data) in
-            if isSuccess {
+        apiManager.requestData(url: url, completion: { [weak self] result in
+            switch result {
+            case .success(let data):
                 guard let self = self, let currentWeatherOfCity = DecodingManager.decode(with: data, modelType: WeatherOfCity.self) else { return }
                 
                 DispatchQueue.main.async {
                     self.weatherBackgroundImageView.image = UIImage(named: FetchImageName.setUpBackgroundImage(weather: currentWeatherOfCity.weather[0].id))
                     self.setCurrentWeather(weather: currentWeatherOfCity.weather[0].description, temperature: currentWeatherOfCity.main.temp)
+                }
+            case .failure(let error):
+                switch error {
+                default:
+                    guard let self = self else { return }
+                    DispatchQueue.main.async {
+                        self.alert.message = "날씨 정보를 가져올 수 없습니다."
+                        self.present(self.alert, animated: true, completion: nil)
+                    }
                 }
             }
         })
@@ -279,30 +314,96 @@ extension ViewController {
     
     private func requestWeatherForecast(cityName: String) {
         guard let url: URL = apiManager.getWeatherForecastURL(cityName: cityName) else { return }
-        apiManager.requestData(url: url, completion: { [weak self] (isSuccess, data) in
-            if isSuccess {
+        apiManager.requestData(url: url, completion: { [weak self] result in
+            switch result {
+            case .success(let data):
                 guard let self = self, var todayWeatherOfCity = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
                 todayWeatherOfCity.list.removeSubrange(0...2)
                 self.forecast = todayWeatherOfCity
                 self.todayWeatherForecastCollectionViewDataSource.forecast = self.forecast
                 
                 self.makeArray(forecast: todayWeatherOfCity)
+                self.weatherForecastTableViewDataSource.dayList = self.dayList
                 
                 DispatchQueue.main.async {
                     self.todayWeatherForecastCollectionView.reloadData()
                     self.weatherForecastTableView.reloadData()
                 }
+            case .failure(let error):
+                guard let self = self else { return }
+                switch error {
+                case .apiKeyError:
+                    DispatchQueue.main.async {
+                        self.alert.message = "알 수 없는 오류가 발생하였습니다."
+                        self.present(self.alert, animated: true, completion: nil)
+                    }
+                case .cityNameError:
+                    DispatchQueue.main.async {
+                        self.alert.message = "도시 이름을 다시 확인해주세요."
+                        self.present(self.alert, animated: true, completion: nil)
+                    }
+                case .unknown:
+                    DispatchQueue.main.async {
+                        self.alert.message = "알 수 없는 오류가 발생하였습니다."
+                        self.present(self.alert, animated: true, completion: nil)
+                    }
+                }
             }
         })
     }
     
+    private func appendDayList(time: String) {
+        var result: String
+        var day: Int
+        let startIndex = time.index(time.startIndex, offsetBy: 8)
+        let endIndex = time.index(time.endIndex, offsetBy: -10)
+        day = Int(String(time[startIndex...endIndex]))!
+        
+        result = String(day) + "일"
+        dayList.append(result)
+    }
+    
+    private func setUpToday(time: String) {
+        var day: String
+        let startIndex = time.index(time.startIndex, offsetBy: 8)
+        let endIndex = time.index(time.endIndex, offsetBy: -10)
+        day = String(time[startIndex...endIndex])
+        
+        today = day
+    }
+    
+    private func getTomorrowString(time: String) -> String {
+        var day: String
+        let startIndex = time.index(time.startIndex, offsetBy: 8)
+        let endIndex = time.index(time.endIndex, offsetBy: -10)
+        day = String(time[startIndex...endIndex])
+        
+        return day
+    }
+    
+    private func setUpTomorrow(forecast: Forecast) {
+        for i in 0..<forecast.list.count {
+            if getTomorrowString(time: forecast.list[i].time) != today {
+                startOfTomorrowIndex = i
+                break
+            }
+        }
+    }
+    
     private func makeArray(forecast: Forecast) {
         var forecast = forecast
-        forecast.list.removeSubrange(0...8)
+        setUpToday(time: forecast.list[0].time)
+        setUpTomorrow(forecast: forecast)
+        guard let startOfTomorrowIndex = startOfTomorrowIndex else { return }
+        forecast.list.removeSubrange(0..<startOfTomorrowIndex)
+
         ViewController.forecasts.append(forecast)
-        forecast.list.removeSubrange(0...8)
+        appendDayList(time: forecast.list[0].time)
+        forecast.list.removeSubrange(0...7)
         ViewController.forecasts.append(forecast)
-        forecast.list.removeSubrange(0...8)
+        appendDayList(time: forecast.list[0].time)
+        forecast.list.removeSubrange(0...7)
         ViewController.forecasts.append(forecast)
+        appendDayList(time: forecast.list[0].time)
     }
 }

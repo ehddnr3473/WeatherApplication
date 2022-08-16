@@ -9,16 +9,15 @@ import Foundation
 import UIKit
 
 class ForecastCollectionViewDataSource: NSObject, UICollectionViewDataSource {
-    private let celsiusString: String = "℃"
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier, for: indexPath) as? TodayWeatherForecastCollectionViewCell else { return UICollectionViewCell() }
         guard let indexPathOfTableView = WeatherForecastTableViewDataSource.indexPathOfTableView else { return UICollectionViewCell() }
         
-        cell.timeLabel.text = FetchTimeText.getTimeText(time: ViewController.forecasts[indexPathOfTableView.row].list[indexPath.row].time)
+        cell.timeLabel.text = AppText.getTimeText(time: ViewController.forecasts[indexPathOfTableView.row].list[indexPath.row].time)
         cell.weatherImageView.image = UIImage(named: FetchImageName.setForecastImage(weather: ViewController.forecasts[indexPathOfTableView.row].list[indexPath.row].weather[0].id))?.withRenderingMode(.alwaysTemplate)
         cell.weatherLabel.text = ViewController.forecasts[indexPathOfTableView.row].list[indexPath.row].weather[0].description
-        cell.temperatureLabel.text = String(Int(ViewController.forecasts[indexPathOfTableView.row].list[indexPath.row].main.temp)) + celsiusString
+        cell.temperatureLabel.text = String(Int(ViewController.forecasts[indexPathOfTableView.row].list[indexPath.row].main.temp)) + AppText.celsiusString
         
         return cell
     }

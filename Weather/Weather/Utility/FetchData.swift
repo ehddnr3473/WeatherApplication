@@ -8,6 +8,13 @@
 import Foundation
 
 struct FetchData {
+    
+    enum FetchError: Error {
+        case apiKeyError
+        case cityNameError
+        case unknown
+    }
+    
     private let getMethodString: String = "GET"
     private let appid = Bundle.main.apiKey
     
@@ -43,7 +50,7 @@ struct FetchData {
         return baseURL?.url
     }
     
-    func requestData(url: URL, completion: @escaping (Bool, Data) -> Void) {
+    func requestData(url: URL, completion: @escaping (Result<Data, FetchError>) -> Void) {
         var request = URLRequest(url: url)
         request.httpMethod = getMethodString
         
@@ -62,13 +69,18 @@ struct FetchData {
                 #endif
                 return
             }
-            guard let response = response as? HTTPURLResponse, (200 ..< 300) ~= response.statusCode else {
-                #if DEBUG
-                print("Error: HTTP request failed")
-                #endif
-                return
+            guard let response = response as? HTTPURLResponse else { return }
+            if !(response.statusCode == 200) {
+                switch response.statusCode {
+                case 401:
+                    completion(.failure(FetchError.apiKeyError))
+                case 404:
+                    completion(.failure(FetchError.cityNameError))
+                default:
+                    completion(.failure(FetchError.unknown))
+                }
             }
-            completion(true, data)
+            completion(.success(data))
         })
         dataTask.resume()
     }

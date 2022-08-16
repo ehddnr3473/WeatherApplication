@@ -14,9 +14,7 @@ class ForecastOfCityCollectionViewDataSource: NSObject, UICollectionViewDataSour
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier, for: indexPath) as? TodayWeatherForecastCollectionViewCell else { return UICollectionViewCell() }
         
-//        guard let indexPathOfTableView = CityWeatherTableViewDataSource.indexPathOfTableView else { return UICollectionViewCell() }
-        
-        cell.timeLabel.text = FetchTimeText.getTimeText(time: OtherCityViewController.forecasts[CityWeatherTableViewDataSource.indexPathOfTableView].list[indexPath.row].time)
+        cell.timeLabel.text = AppText.getTimeText(time: OtherCityViewController.forecasts[CityWeatherTableViewDataSource.indexPathOfTableView].list[indexPath.row].time)
         cell.weatherImageView.image = UIImage(named: FetchImageName.setForecastImage(weather: OtherCityViewController.forecasts[CityWeatherTableViewDataSource.indexPathOfTableView].list[indexPath.row].weather[0].id))?.withRenderingMode(.alwaysTemplate)
         cell.weatherLabel.text = OtherCityViewController.forecasts[CityWeatherTableViewDataSource.indexPathOfTableView].list[indexPath.row].weather[0].description
         cell.temperatureLabel.text = String(Int(OtherCityViewController.forecasts[CityWeatherTableViewDataSource.indexPathOfTableView].list[indexPath.row].main.temp)) + celsiusString

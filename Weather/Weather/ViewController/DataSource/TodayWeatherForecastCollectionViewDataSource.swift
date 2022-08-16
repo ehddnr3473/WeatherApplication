@@ -10,16 +10,15 @@ import UIKit
 
 class TodayWeatherForecastCollectionViewDataSource: NSObject, UICollectionViewDataSource {
     var forecast: Forecast?
-    private let celsiusString: String = "℃"
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier, for: indexPath) as? TodayWeatherForecastCollectionViewCell else { return UICollectionViewCell() }
         guard let forecast = forecast else { return UICollectionViewCell() }
 
-        cell.timeLabel.text = FetchTimeText.getTimeText(time: forecast.list[indexPath.row].time)
+        cell.timeLabel.text = AppText.getTimeText(time: forecast.list[indexPath.row].time)
         cell.weatherImageView.image = UIImage(named: FetchImageName.setForecastImage(weather: forecast.list[indexPath.row].weather[0].id))?.withRenderingMode(.alwaysTemplate)
         cell.weatherLabel.text = forecast.list[indexPath.row].weather[0].description
-        cell.temperatureLabel.text = String(Int(forecast.list[indexPath.row].main.temp)) + celsiusString
+        cell.temperatureLabel.text = String(Int(forecast.list[indexPath.row].main.temp)) + AppText.celsiusString
         
         return cell
     }
