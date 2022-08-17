@@ -140,13 +140,6 @@ final class ViewController: UIViewController {
         
         setUpUI()
         configure()
-        requestCurrentWeather()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        weatherForecastTableView.reloadData()
     }
 }
 
@@ -240,24 +233,24 @@ extension ViewController: CLLocationManagerDelegate {
         }
     }
     
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print(error)
-    }
-    
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         switch manager.authorizationStatus {
         case .authorizedAlways:
-            currentLocation = locationManager!.location?.coordinate
+            currentLocation = manager.location?.coordinate
             latitude = String(currentLocation.latitude)
             longitude = String(currentLocation.longitude)
+            requestCurrentWeather()
         case .authorizedWhenInUse:
-            currentLocation = locationManager!.location?.coordinate
+            currentLocation = manager.location?.coordinate
             latitude = String(currentLocation.latitude)
             longitude = String(currentLocation.longitude)
+            requestCurrentWeather()
         case .denied:
+            alert.message = "애플리케이션을 실행하기 위해서는 위치 정보 제공이 필요합니다."
+            present(alert, animated: true, completion: nil)
             requestAuthorization()
         case .notDetermined:
-            requestAuthorization()
+            manager.requestWhenInUseAuthorization()
         case .restricted:
             alert.message = "설정에서 애플리케이션의 위치 사용 설정을 허용해주시기를 바랍니다."
             present(alert, animated: true, completion: nil)
@@ -265,6 +258,11 @@ extension ViewController: CLLocationManagerDelegate {
             alert.message = "알 수 없는 오류가 발생하였습니다."
             present(alert, animated: true, completion: nil)
         }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
+        alert.message = "위치 설정 오류가 발생하였습니다."
+        present(alert, animated: true, completion: nil)
     }
 }
 
