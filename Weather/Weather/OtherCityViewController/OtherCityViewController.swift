@@ -68,7 +68,11 @@ final class OtherCityViewController: UIViewController {
         let tableView: UITableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
-        tableView.backgroundColor = UIColor.clear.withAlphaComponent(0.5)
+        tableView.backgroundColor = AppStyles.Colors.backgroundColor
+        tableView.layer.cornerRadius = AppStyles.cornerRadius
+        tableView.layer.borderWidth = AppStyles.borderWidth
+        tableView.layer.borderColor = AppStyles.Colors.mainColor.cgColor
+        
         tableView.register(CityWeatherTableViewCell.self, forCellReuseIdentifier: CityWeatherTableViewCell.identifier)
         
         return tableView
@@ -257,7 +261,7 @@ extension OtherCityViewController: UITableViewDelegate, UITableViewDataSource {
         }
         cell.cityNameLabel.text = cities[indexPath.row].name
         cell.weatherLabel.text = cities[indexPath.row].weather[0].description
-        cell.temperatureLabel.text = String(Int(cities[indexPath.row].main.temp))
+        cell.temperatureLabel.text = String(Int(cities[indexPath.row].main.temp)) + AppText.celsiusString
         cell.prepare(forecast: forecasts[indexPath.row])
         
         return cell
@@ -273,5 +277,7 @@ extension OtherCityViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         cell.backgroundColor = UIColor.clear
+        cell.layer.borderWidth = AppStyles.borderWidth
+        cell.layer.borderColor = AppStyles.Colors.mainColor.cgColor
     }
 }

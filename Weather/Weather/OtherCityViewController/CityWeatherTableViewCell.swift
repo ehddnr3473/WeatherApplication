@@ -55,14 +55,14 @@ class CityWeatherTableViewCell: UITableViewCell {
         flowLayout.scrollDirection = .horizontal
         flowLayout.sectionInset = .zero
         
-        let collectionVIew: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
-        collectionVIew.translatesAutoresizingMaskIntoConstraints = false
+        let collectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
         
-        collectionVIew.backgroundColor = UIColor.clear
+        collectionView.backgroundColor = UIColor.clear
         
-        collectionVIew.register(TodayWeatherForecastCollectionViewCell.self, forCellWithReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier)
+        collectionView.register(TodayWeatherForecastCollectionViewCell.self, forCellWithReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier)
         
-        return collectionVIew
+        return collectionView
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -106,7 +106,7 @@ class CityWeatherTableViewCell: UITableViewCell {
             cityNameLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 15),
             
             weatherLabel.topAnchor.constraint(equalTo: cityNameLabel.bottomAnchor, constant: 15),
-            weatherLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 15),
+            weatherLabel.centerXAnchor.constraint(equalTo: cityNameLabel.centerXAnchor),
             
             temperatureLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
             temperatureLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -50),

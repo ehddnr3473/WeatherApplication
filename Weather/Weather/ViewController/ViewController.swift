@@ -82,7 +82,10 @@ final class ViewController: UIViewController {
         let collectionView: UICollectionView = UICollectionView(frame: .zero , collectionViewLayout: flowLayout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         
-        collectionView.backgroundColor = UIColor.clear.withAlphaComponent(0.5)
+        collectionView.backgroundColor = AppStyles.Colors.backgroundColor
+        collectionView.layer.cornerRadius = AppStyles.cornerRadius
+        collectionView.layer.borderWidth = AppStyles.borderWidth
+        collectionView.layer.borderColor = AppStyles.Colors.mainColor.cgColor
         
         collectionView.register(TodayWeatherForecastCollectionViewCell.self, forCellWithReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier)
         
@@ -104,7 +107,10 @@ final class ViewController: UIViewController {
         let tableView: UITableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
-        tableView.backgroundColor = UIColor.clear.withAlphaComponent(0.5)
+        tableView.backgroundColor = AppStyles.Colors.backgroundColor
+        tableView.layer.cornerRadius = AppStyles.cornerRadius
+        tableView.layer.borderWidth = AppStyles.borderWidth
+        tableView.layer.borderColor = AppStyles.Colors.mainColor.cgColor
         
         tableView.register(WeatherForecastTableViewCell.self, forCellReuseIdentifier: WeatherForecastTableViewCell.identifier)
         
@@ -179,7 +185,7 @@ extension ViewController {
             todayWeatherForecastCollectionView.heightAnchor.constraint(equalToConstant: 100),
             
             titleLabel.topAnchor.constraint(equalTo: todayWeatherForecastCollectionView.bottomAnchor, constant: 20),
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 15),
             
             weatherForecastTableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
             weatherForecastTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
@@ -187,7 +193,7 @@ extension ViewController {
             weatherForecastTableView.heightAnchor.constraint(equalToConstant: 300),
             
             searchOtherCityButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            searchOtherCityButton.topAnchor.constraint(equalTo: weatherForecastTableView.bottomAnchor, constant: 8)
+            searchOtherCityButton.topAnchor.constraint(equalTo: weatherForecastTableView.bottomAnchor, constant: 20)
         ])
     }
     
@@ -471,5 +477,7 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         cell.backgroundColor = UIColor.clear
+        cell.layer.borderWidth = AppStyles.borderWidth
+        cell.layer.borderColor = AppStyles.Colors.mainColor.cgColor
     }
 }

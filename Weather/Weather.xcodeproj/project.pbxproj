@@ -26,6 +26,7 @@
 		6BCED14D289CF64D00F8A305 /* FetchData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BCED14C289CF64D00F8A305 /* FetchData.swift */; };
 		6BEAF02D28A1370500D0BB6D /* TodayWeatherForecastCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BEAF02C28A1370500D0BB6D /* TodayWeatherForecastCollectionViewCell.swift */; };
 		6BEC6C60289EC5B800EFF342 /* CityWeatherTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BEC6C5F289EC5B800EFF342 /* CityWeatherTableViewCell.swift */; };
+		6BF4C6F328AC9ABF009FC118 /* AppStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BF4C6F228AC9ABF009FC118 /* AppStyles.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +51,7 @@
 		6BCED14C289CF64D00F8A305 /* FetchData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchData.swift; sourceTree = "<group>"; };
 		6BEAF02C28A1370500D0BB6D /* TodayWeatherForecastCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayWeatherForecastCollectionViewCell.swift; sourceTree = "<group>"; };
 		6BEC6C5F289EC5B800EFF342 /* CityWeatherTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityWeatherTableViewCell.swift; sourceTree = "<group>"; };
+		6BF4C6F228AC9ABF009FC118 /* AppStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStyles.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,6 +133,7 @@
 				6BCED14C289CF64D00F8A305 /* FetchData.swift */,
 				6B84DA2A28A40C1A002EF4DC /* FetchImageName.swift */,
 				6B84DA2C28A40E69002EF4DC /* AppText.swift */,
+				6BF4C6F228AC9ABF009FC118 /* AppStyles.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -229,6 +232,7 @@
 				6B9242B328990C0100E29CF8 /* Weather++Bundle.swift in Sources */,
 				6B58B49C28A181E500BA9F71 /* Forecast.swift in Sources */,
 				6BEC6C60289EC5B800EFF342 /* CityWeatherTableViewCell.swift in Sources */,
+				6BF4C6F328AC9ABF009FC118 /* AppStyles.swift in Sources */,
 				6B9242AC2898EED000E29CF8 /* WeatherForecastTableViewCell.swift in Sources */,
 				6BCED14D289CF64D00F8A305 /* FetchData.swift in Sources */,
 				6BB587C9289FF0A100CBCF92 /* CityName.swift in Sources */,
