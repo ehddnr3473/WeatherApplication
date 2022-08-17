@@ -10,8 +10,7 @@ import UIKit
 
 class WeatherForecastTableViewCell: UITableViewCell {
     static let identifier: String = "WeatherForecastTableViewCell"
-    private var dataSources: [UICollectionViewDataSource] = []
-    private let forecastCollectionViewDataSource = ForecastCollectionViewDataSource()
+    private var forecast: Forecast?
     
     var dayLabel: UILabel = {
         let label: UILabel = UILabel()
@@ -45,6 +44,18 @@ class WeatherForecastTableViewCell: UITableViewCell {
         configure()
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        guard let forecast = forecast else {
+            return
+        }
+        prepare(forecast: forecast)
+    }
+    
+    func prepare(forecast: Forecast) {
+        self.forecast = forecast
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("")
     }
@@ -68,15 +79,33 @@ class WeatherForecastTableViewCell: UITableViewCell {
     }
 }
 
-extension WeatherForecastTableViewCell: UICollectionViewDelegateFlowLayout {
+extension WeatherForecastTableViewCell: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     private func configure() {
-        dataSources = [forecastCollectionViewDataSource]
-        forecastCollectionView.dataSource = dataSources[0]
+        forecastCollectionView.dataSource = self
         forecastCollectionView.delegate = self
     }
-
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier, for: indexPath) as? TodayWeatherForecastCollectionViewCell else { return UICollectionViewCell() }
+        guard let forecast = forecast else { return UICollectionViewCell() }
+        
+        cell.timeLabel.text = AppText.getTimeText(time: forecast.list[indexPath.row].time)
+        cell.weatherImageView.image = UIImage(named: FetchImageName.setForecastImage(weather: forecast.list[indexPath.row].weather[0].id))?.withRenderingMode(.alwaysTemplate)
+        cell.weatherLabel.text = forecast.list[indexPath.row].weather[0].description
+        cell.temperatureLabel.text = String(Int(forecast.list[indexPath.row].main.temp)) + AppText.celsiusString
+        
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if forecast == nil {
+            return 0
+        } else {
+            return 8
+        }
+    }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 100, height: 130)
+        return CGSize(width: 80, height: 100)
     }
 }

@@ -10,8 +10,8 @@ import UIKit
 
 class CityWeatherTableViewCell: UITableViewCell {
     static let identifier: String = "CityWeatherTableViewCell"
-    private let forecastOfCityCollectionViewDataSource = ForecastOfCityCollectionViewDataSource()
-    private let forecastOfCityCollectionViewDelegate = TodayWeatherForecastCollectionViewDelegate()
+    var cities: [WeatherOfCity] = []
+    private var forecast: Forecast?
     
     // 날씨 백그라운드 이미지뷰, 도시이름 레이블, 날씨 레이블, 온도 레이블
     var backgroundImageView: UIImageView = {
@@ -71,7 +71,18 @@ class CityWeatherTableViewCell: UITableViewCell {
         setUpHierachy()
         setUpLayout()
         configure()
-        
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        guard let forecast = forecast else {
+            return
+        }
+        prepare(forecast: forecast)
+    }
+    
+    func prepare(forecast: Forecast) {
+        self.forecast = forecast
     }
     
     required init?(coder: NSCoder) {
@@ -98,7 +109,7 @@ class CityWeatherTableViewCell: UITableViewCell {
             weatherLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 15),
             
             temperatureLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
-            temperatureLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -75),
+            temperatureLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -50),
             
             forecastOfCityCollectionView.topAnchor.constraint(equalTo: weatherLabel.bottomAnchor),
             forecastOfCityCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
@@ -108,7 +119,33 @@ class CityWeatherTableViewCell: UITableViewCell {
     }
     
     private func configure() {
-        forecastOfCityCollectionView.dataSource = forecastOfCityCollectionViewDataSource
-        forecastOfCityCollectionView.delegate = forecastOfCityCollectionViewDelegate
+        forecastOfCityCollectionView.dataSource = self
+        forecastOfCityCollectionView.delegate = self
+    }
+}
+
+extension CityWeatherTableViewCell: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier, for: indexPath) as? TodayWeatherForecastCollectionViewCell else { return UICollectionViewCell() }
+        guard let forecast = forecast else { return UICollectionViewCell() }
+        
+        cell.timeLabel.text = AppText.getTimeText(time: forecast.list[indexPath.row].time)
+        cell.weatherImageView.image = UIImage(named: FetchImageName.setForecastImage(weather: forecast.list[indexPath.row].weather[0].id))?.withRenderingMode(.alwaysTemplate)
+        cell.weatherLabel.text = forecast.list[indexPath.row].weather[0].description
+        cell.temperatureLabel.text = String(Int(forecast.list[indexPath.row].main.temp)) + AppText.celsiusString
+        
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if forecast == nil {
+            return 0
+        } else {
+            return 8
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 100, height: 100)
     }
 }

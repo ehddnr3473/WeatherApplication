@@ -15,12 +15,7 @@ final class OtherCityViewController: UIViewController {
     private let searchTextFieldPlaceholder: String = "도시명으로 검색"
     private let searchButtonTitle: String = "추가"
     private var cities: [WeatherOfCity] = []
-    static var forecasts: [Forecast] = []
-    
-    private var dataSourcesOfTableView: [UITableViewDataSource] = []
-    private var delegatesOfTableView: [UITableViewDelegate] = []
-    private let cityWeatherTableViewDataSource = CityWeatherTableViewDataSource()
-    private let cityWeatherTableViewDelegate = CityWeatherTableViewDelegate()
+    private var forecasts: [Forecast] = []
     
     private var backgroundImageView: UIImageView = {
         let imageView: UIImageView = UIImageView(image: UIImage(named: "CityBackground"))
@@ -113,10 +108,8 @@ extension OtherCityViewController {
     }
     
     private func configure() {
-        dataSourcesOfTableView = [cityWeatherTableViewDataSource]
-        cityWeatherTableView.dataSource = dataSourcesOfTableView[0]
-        delegatesOfTableView = [cityWeatherTableViewDelegate]
-        cityWeatherTableView.delegate = delegatesOfTableView[0]
+        cityWeatherTableView.dataSource = self
+        cityWeatherTableView.delegate = self
         
         alert.addAction(okAction)
     }
@@ -191,7 +184,6 @@ extension OtherCityViewController {
             case .success(let data):
                 guard let self = self, let weatherOfCity = DecodingManager.decode(with: data, modelType: WeatherOfCity.self) else { return }
                 self.cities.append(weatherOfCity)
-                self.cityWeatherTableViewDataSource.cities = self.cities
                 DispatchQueue.main.async {
                     self.cityWeatherTableView.reloadData()
                 }
@@ -230,7 +222,7 @@ extension OtherCityViewController {
                 guard let self = self, var forecastWeatherOfCity = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
                 forecastWeatherOfCity.list.removeSubrange(0...2)
                 forecastWeatherOfCity.list.removeSubrange(8...)
-                OtherCityViewController.forecasts.append(forecastWeatherOfCity)
+                self.forecasts.append(forecastWeatherOfCity)
                 DispatchQueue.main.async {
                     self.cityWeatherTableView.reloadData()
                 }
@@ -255,5 +247,31 @@ extension OtherCityViewController {
                 }
             }
         })
+    }
+}
+
+extension OtherCityViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: CityWeatherTableViewCell.identifier, for: indexPath) as? CityWeatherTableViewCell else {
+            return UITableViewCell()
+        }
+        cell.cityNameLabel.text = cities[indexPath.row].name
+        cell.weatherLabel.text = cities[indexPath.row].weather[0].description
+        cell.temperatureLabel.text = String(Int(cities[indexPath.row].main.temp))
+        cell.prepare(forecast: forecasts[indexPath.row])
+        
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return forecasts.count
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 200
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cell.backgroundColor = UIColor.clear
     }
 }

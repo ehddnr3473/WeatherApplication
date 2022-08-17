@@ -17,7 +17,7 @@ class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
         
         label.textAlignment = NSTextAlignment.center
         label.textColor = UIColor.white
-        label.font = UIFont.boldSystemFont(ofSize: 15)
+        label.font = UIFont.boldSystemFont(ofSize: 10)
         
         return label
     }()
@@ -37,7 +37,7 @@ class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
         
         label.textAlignment = NSTextAlignment.center
         label.textColor = UIColor.white
-        label.font = UIFont.boldSystemFont(ofSize: 15)
+        label.font = UIFont.boldSystemFont(ofSize: 10)
         
         return label
     }()
@@ -48,7 +48,7 @@ class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
         
         label.textAlignment = NSTextAlignment.center
         label.textColor = UIColor.white
-        label.font = UIFont.boldSystemFont(ofSize: 15)
+        label.font = UIFont.boldSystemFont(ofSize: 10)
         
         return label
     }()
@@ -73,18 +73,18 @@ class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
     func setUpLayout() {
         NSLayoutConstraint.activate([
             timeLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            timeLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 8),
+            timeLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 10),
             
             weatherImageView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            weatherImageView.topAnchor.constraint(equalTo: timeLabel.bottomAnchor, constant: 8),
-            weatherImageView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.4),
+            weatherImageView.topAnchor.constraint(equalTo: timeLabel.bottomAnchor, constant: 5),
+            weatherImageView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.3),
             weatherImageView.heightAnchor.constraint(equalTo: weatherImageView.widthAnchor),
             
             weatherLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            weatherLabel.topAnchor.constraint(equalTo: weatherImageView.bottomAnchor, constant: 8),
+            weatherLabel.topAnchor.constraint(equalTo: weatherImageView.bottomAnchor, constant: 5),
             
             temperatureLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            temperatureLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -8)
+            temperatureLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10)
         ])
     }
 }

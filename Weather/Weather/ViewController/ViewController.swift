@@ -12,24 +12,13 @@ final class ViewController: UIViewController {
     
     // MARK: - Properties
     private var apiManager = FetchData()
-    private let titleForWeatherForecastTableViewHeader: String = "3일간의 예보"
     private var forecast: Forecast?
-    static var forecasts: [Forecast] = []
+    private var forecasts: [Forecast] = []
     
     private var locationManager: CLLocationManager?
     private var currentLocation: CLLocationCoordinate2D!
     private var latitude: String?
     private var longitude: String?
-    
-    private var dataSourcesOfTableView: [UITableViewDataSource] = []
-    private var delegatesOfTableView: [UITableViewDelegate] = []
-    private let weatherForecastTableViewDataSource = WeatherForecastTableViewDataSource()
-    private let weatherForecastTableViewDelegate = WeatherForecastTableViewDelegate()
-    
-    private var dataSourcesOfCollectionView: [UICollectionViewDataSource] = []
-    private var delegatesOfCollectionView: [UICollectionViewDelegate] = []
-    private let todayWeatherForecastCollectionViewDataSource = TodayWeatherForecastCollectionViewDataSource()
-    private let todayWeatherForecastCollectionViewDelegate = TodayWeatherForecastCollectionViewDelegate()
     
     var dayList: [String] = []
     private var today: String?
@@ -100,6 +89,17 @@ final class ViewController: UIViewController {
         return collectionView
     }()
     
+    private var titleLabel: UILabel = {
+        let label: UILabel = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        label.textColor = UIColor.white
+        label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.text = "3일간의 예보"
+        
+        return label
+    }()
+    
     private var weatherForecastTableView: UITableView = {
         let tableView: UITableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -142,6 +142,12 @@ final class ViewController: UIViewController {
         configure()
         requestCurrentWeather()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        weatherForecastTableView.reloadData()
+    }
 }
 
 // MARK: - View
@@ -153,7 +159,7 @@ extension ViewController {
     }
     
     private func setUpHierachy() {
-        [weatherBackgroundImageView, currentWeatherStackView, todayWeatherForecastCollectionView,weatherForecastTableView, searchOtherCityButton].forEach {
+        [weatherBackgroundImageView, currentWeatherStackView, todayWeatherForecastCollectionView, titleLabel, weatherForecastTableView, searchOtherCityButton].forEach {
             view.addSubview($0)
         }
         
@@ -177,12 +183,15 @@ extension ViewController {
             todayWeatherForecastCollectionView.topAnchor.constraint(equalTo: currentWeatherStackView.bottomAnchor, constant: 20),
             todayWeatherForecastCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
             todayWeatherForecastCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            todayWeatherForecastCollectionView.heightAnchor.constraint(equalToConstant: 150),
+            todayWeatherForecastCollectionView.heightAnchor.constraint(equalToConstant: 100),
             
-            weatherForecastTableView.topAnchor.constraint(equalTo: todayWeatherForecastCollectionView.bottomAnchor, constant: 20),
+            titleLabel.topAnchor.constraint(equalTo: todayWeatherForecastCollectionView.bottomAnchor, constant: 20),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            
+            weatherForecastTableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
             weatherForecastTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
             weatherForecastTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            weatherForecastTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
+            weatherForecastTableView.heightAnchor.constraint(equalToConstant: 300),
             
             searchOtherCityButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             searchOtherCityButton.topAnchor.constraint(equalTo: weatherForecastTableView.bottomAnchor, constant: 8)
@@ -192,17 +201,11 @@ extension ViewController {
     private func configure() {
         requestAuthorization()
         
-        dataSourcesOfCollectionView = [todayWeatherForecastCollectionViewDataSource]
-        todayWeatherForecastCollectionView.dataSource = dataSourcesOfCollectionView[0]
+        todayWeatherForecastCollectionView.dataSource = self
+        todayWeatherForecastCollectionView.delegate = self
         
-        delegatesOfCollectionView = [todayWeatherForecastCollectionViewDelegate]
-        todayWeatherForecastCollectionView.delegate = delegatesOfCollectionView[0]
-        
-        dataSourcesOfTableView = [weatherForecastTableViewDataSource]
-        weatherForecastTableView.dataSource = dataSourcesOfTableView[0]
-        
-        delegatesOfTableView = [weatherForecastTableViewDelegate]
-        weatherForecastTableView.delegate = delegatesOfTableView[0]
+        weatherForecastTableView.dataSource = self
+        weatherForecastTableView.delegate = self
         
         alert.addAction(okAction)
     }
@@ -242,10 +245,25 @@ extension ViewController: CLLocationManagerDelegate {
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        if manager.authorizationStatus == .authorizedWhenInUse {
+        switch manager.authorizationStatus {
+        case .authorizedAlways:
             currentLocation = locationManager!.location?.coordinate
             latitude = String(currentLocation.latitude)
             longitude = String(currentLocation.longitude)
+        case .authorizedWhenInUse:
+            currentLocation = locationManager!.location?.coordinate
+            latitude = String(currentLocation.latitude)
+            longitude = String(currentLocation.longitude)
+        case .denied:
+            requestAuthorization()
+        case .notDetermined:
+            requestAuthorization()
+        case .restricted:
+            alert.message = "설정에서 애플리케이션의 위치 사용 설정을 허용해주시기를 바랍니다."
+            present(alert, animated: true, completion: nil)
+        @unknown default:
+            alert.message = "알 수 없는 오류가 발생하였습니다."
+            present(alert, animated: true, completion: nil)
         }
     }
 }
@@ -320,11 +338,7 @@ extension ViewController {
                 guard let self = self, var todayWeatherOfCity = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
                 todayWeatherOfCity.list.removeSubrange(0...2)
                 self.forecast = todayWeatherOfCity
-                self.todayWeatherForecastCollectionViewDataSource.forecast = self.forecast
-                
                 self.makeArray(forecast: todayWeatherOfCity)
-                self.weatherForecastTableViewDataSource.dayList = self.dayList
-                
                 DispatchQueue.main.async {
                     self.todayWeatherForecastCollectionView.reloadData()
                     self.weatherForecastTableView.reloadData()
@@ -397,13 +411,67 @@ extension ViewController {
         guard let startOfTomorrowIndex = startOfTomorrowIndex else { return }
         forecast.list.removeSubrange(0..<startOfTomorrowIndex)
 
-        ViewController.forecasts.append(forecast)
+        forecasts.append(forecast)
         appendDayList(time: forecast.list[0].time)
         forecast.list.removeSubrange(0...7)
-        ViewController.forecasts.append(forecast)
+        forecasts.append(forecast)
         appendDayList(time: forecast.list[0].time)
         forecast.list.removeSubrange(0...7)
-        ViewController.forecasts.append(forecast)
+        forecasts.append(forecast)
         appendDayList(time: forecast.list[0].time)
+    }
+}
+
+extension ViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier, for: indexPath) as? TodayWeatherForecastCollectionViewCell else { return UICollectionViewCell() }
+        guard let forecast = forecast else { return UICollectionViewCell() }
+
+        cell.timeLabel.text = AppText.getTimeText(time: forecast.list[indexPath.row].time)
+        cell.weatherImageView.image = UIImage(named: FetchImageName.setForecastImage(weather: forecast.list[indexPath.row].weather[0].id))?.withRenderingMode(.alwaysTemplate)
+        cell.weatherLabel.text = forecast.list[indexPath.row].weather[0].description
+        cell.temperatureLabel.text = String(Int(forecast.list[indexPath.row].main.temp)) + AppText.celsiusString
+        
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if forecast == nil {
+            return 0
+        } else {
+            return 8
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 100, height: 100)
+    }
+}
+
+extension ViewController: UITableViewDataSource, UITableViewDelegate {
+   
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: WeatherForecastTableViewCell.identifier, for: indexPath) as? WeatherForecastTableViewCell else { return UITableViewCell() }
+        
+        cell.dayLabel.text = dayList[indexPath.row]
+        cell.prepare(forecast: forecasts[indexPath.row])
+        
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if forecasts.isEmpty {
+            return 0
+        } else {
+            return 3
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 100
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cell.backgroundColor = UIColor.clear
     }
 }
