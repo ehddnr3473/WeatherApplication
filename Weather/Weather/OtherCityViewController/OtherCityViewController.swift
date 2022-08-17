@@ -12,7 +12,7 @@ final class OtherCityViewController: UIViewController {
     // MARK: - Properties
     private let apiManager = FetchData()
     private let mainLabelText: String = "도시의 날씨"
-    private let searchTextFieldPlaceholder: String = "도시명으로 검색"
+    private let searchTextFieldPlaceholder: String = "도시명을 영어로 검색"
     private let searchButtonTitle: String = "추가"
     private var cities: [WeatherOfCity] = []
     private var forecasts: [Forecast] = []
