@@ -155,15 +155,25 @@ extension OtherCityViewController {
             }
             searchTextField.text = ""
         } else {
-            alert.title = AppText.AlertTitle.appendFail
-            alert.message = AppText.AlertMessage.appendFailMessage
-            present(alert, animated: true, completion: nil)
-            searchTextField.text = ""
+            if !alert.isBeingPresented {
+                alert.title = AppText.AlertTitle.appendFail
+                alert.message = AppText.AlertMessage.appendFailMessage
+                present(alert, animated: true, completion: nil)
+                searchTextField.text = ""
+            }
         }
     }
     
     private func verifyCityName(cityName: String) -> Bool {
+        if cityName == "" && !alert.isBeingPresented {
+            alert.title = AppText.AlertTitle.appendFail
+            alert.message = AppText.AlertMessage.emptyText
+            present(alert, animated: true, completion: nil)
+            return false
+        }
+        
         let cityName = cityName.capitalized
+        
         if cities.isEmpty {
             return true
         }
@@ -261,5 +271,21 @@ extension OtherCityViewController: UITableViewDelegate, UITableViewDataSource {
         cell.backgroundColor = UIColor.clear
         cell.layer.borderWidth = AppStyles.borderWidth
         cell.layer.borderColor = AppStyles.Colors.mainColor.cgColor
+    }
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            removeCell(at: indexPath, to: tableView)
+        }
+    }
+    
+    func removeCell(at indexPath: IndexPath, to tableView: UITableView) {
+        forecasts.remove(at: indexPath.row)
+        cities.remove(at: indexPath.row)
+        tableView.reloadData()
     }
 }

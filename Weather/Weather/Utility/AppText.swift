@@ -22,6 +22,7 @@ struct AppText {
     
     enum AlertMessage {
         static let appendFailMessage: String = "이미 추가된 도시입니다."
+        static let emptyText: String = "도시명을 입력해주세요."
         static let denied: String = "애플리케이션을 실행하기 위해서는 위치 정보 제공이 필요합니다."
         static let restricted: String = "설정에서 애플리케이션의 위치 사용 설정을 허용해주시기를 바랍니다."
         static let undefined: String = "알 수 없는 오류가 발생하였습니다."
