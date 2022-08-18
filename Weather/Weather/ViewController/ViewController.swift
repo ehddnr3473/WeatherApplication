@@ -129,6 +129,7 @@ final class ViewController: UIViewController {
     
     private let alert: UIAlertController = {
         let alert: UIAlertController = UIAlertController(title: "오류", message: "", preferredStyle: UIAlertController.Style.alert)
+        
         return alert
     }()
     
@@ -251,22 +252,22 @@ extension ViewController: CLLocationManagerDelegate {
             longitude = String(currentLocation.longitude)
             requestCurrentWeather()
         case .denied:
-            alert.message = "애플리케이션을 실행하기 위해서는 위치 정보 제공이 필요합니다."
+            alert.message = AppText.AlertMessage.denied
             present(alert, animated: true, completion: nil)
             requestAuthorization()
         case .notDetermined:
             manager.requestWhenInUseAuthorization()
         case .restricted:
-            alert.message = "설정에서 애플리케이션의 위치 사용 설정을 허용해주시기를 바랍니다."
+            alert.message = AppText.AlertMessage.restricted
             present(alert, animated: true, completion: nil)
         @unknown default:
-            alert.message = "알 수 없는 오류가 발생하였습니다."
+            alert.message = AppText.AlertMessage.undefined
             present(alert, animated: true, completion: nil)
         }
     }
     
     func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
-        alert.message = "위치 설정 오류가 발생하였습니다."
+        alert.message = AppText.AlertMessage.fail
         present(alert, animated: true, completion: nil)
     }
 }
@@ -366,7 +367,7 @@ extension ViewController {
         let endIndex = time.index(time.endIndex, offsetBy: -10)
         day = Int(String(time[startIndex...endIndex]))!
         
-        result = String(day) + "일"
+        result = String(day) + AppText.day
         dayList.append(result)
     }
     

@@ -80,6 +80,7 @@ final class OtherCityViewController: UIViewController {
     
     private let alert: UIAlertController = {
         let alert: UIAlertController = UIAlertController(title: "오류", message: "", preferredStyle: UIAlertController.Style.alert)
+        
         return alert
     }()
     
@@ -154,8 +155,8 @@ extension OtherCityViewController {
             }
             searchTextField.text = ""
         } else {
-            alert.title = "추가 실패"
-            alert.message = "이미 추가된 도시입니다."
+            alert.title = AppText.AlertTitle.appendFail
+            alert.message = AppText.AlertMessage.appendFailMessage
             present(alert, animated: true, completion: nil)
             searchTextField.text = ""
         }
@@ -196,6 +197,7 @@ extension OtherCityViewController {
                 guard let self = self else { return }
                 DispatchQueue.main.async {
                     if !self.alert.isBeingPresented {
+                        self.alert.title = AppText.AlertTitle.error
                         self.alert.message = self.apiManager.errorHandler(error: error)
                         self.present(self.alert, animated: true, completion: nil)
                     }
@@ -224,6 +226,7 @@ extension OtherCityViewController {
                 guard let self = self else { return }
                 DispatchQueue.main.async {
                     if !self.alert.isBeingPresented {
+                        self.alert.title = AppText.AlertTitle.error
                         self.alert.message = self.apiManager.errorHandler(error: error)
                         self.present(self.alert, animated: true, completion: nil)
                     }
