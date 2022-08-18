@@ -57,7 +57,7 @@ class WeatherForecastTableViewCell: UITableViewCell {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("")
+        super.init(coder: coder)
     }
     
     func setUpHierachy() {

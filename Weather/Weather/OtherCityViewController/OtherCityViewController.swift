@@ -79,7 +79,7 @@ final class OtherCityViewController: UIViewController {
     }()
     
     private let alert: UIAlertController = {
-        let alert: UIAlertController = UIAlertController(title: "추가 실패", message: "", preferredStyle: UIAlertController.Style.alert)
+        let alert: UIAlertController = UIAlertController(title: "오류", message: "", preferredStyle: UIAlertController.Style.alert)
         return alert
     }()
     
@@ -154,6 +154,7 @@ extension OtherCityViewController {
             }
             searchTextField.text = ""
         } else {
+            alert.title = "추가 실패"
             alert.message = "이미 추가된 도시입니다."
             present(alert, animated: true, completion: nil)
             searchTextField.text = ""
@@ -193,20 +194,9 @@ extension OtherCityViewController {
                 }
             case .failure(let error):
                 guard let self = self else { return }
-                switch error {
-                case .apiKeyError:
-                    DispatchQueue.main.async {
-                        self.alert.message = "api key 에러가 발생하였습니다."
-                        self.present(self.alert, animated: true, completion: nil)
-                    }
-                case .cityNameError:
-                    DispatchQueue.main.async {
-                        self.alert.message = "도시 이름을 다시 확인해주세요."
-                        self.present(self.alert, animated: true, completion: nil)
-                    }
-                case .unknown:
-                    DispatchQueue.main.async {
-                        self.alert.message = "알 수 없는 오류가 발생하였습니다."
+                DispatchQueue.main.async {
+                    if !self.alert.isBeingPresented {
+                        self.alert.message = self.apiManager.errorHandler(error: error)
                         self.present(self.alert, animated: true, completion: nil)
                     }
                 }
@@ -232,20 +222,9 @@ extension OtherCityViewController {
                 }
             case .failure(let error):
                 guard let self = self else { return }
-                switch error {
-                case .apiKeyError:
-                    DispatchQueue.main.async {
-                        self.alert.message = "알 수 없는 오류가 발생하였습니다."
-                        self.present(self.alert, animated: true, completion: nil)
-                    }
-                case .cityNameError:
-                    DispatchQueue.main.async {
-                        self.alert.message = "도시 이름을 다시 확인해주세요."
-                        self.present(self.alert, animated: true, completion: nil)
-                    }
-                case .unknown:
-                    DispatchQueue.main.async {
-                        self.alert.message = "알 수 없는 오류가 발생하였습니다."
+                DispatchQueue.main.async {
+                    if !self.alert.isBeingPresented {
+                        self.alert.message = self.apiManager.errorHandler(error: error)
                         self.present(self.alert, animated: true, completion: nil)
                     }
                 }

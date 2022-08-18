@@ -61,7 +61,7 @@ class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
     }
     
     required init?(coder: NSCoder) {
-        fatalError()
+        super.init(coder: coder)
     }
     
     func setUpHierachy() {

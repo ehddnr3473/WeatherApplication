@@ -86,7 +86,7 @@ class CityWeatherTableViewCell: UITableViewCell {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("")
+        super.init(coder: coder)
     }
     
     private func setUpHierachy() {
@@ -106,7 +106,7 @@ class CityWeatherTableViewCell: UITableViewCell {
             cityNameLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 15),
             
             weatherLabel.topAnchor.constraint(equalTo: cityNameLabel.bottomAnchor, constant: 15),
-            weatherLabel.centerXAnchor.constraint(equalTo: cityNameLabel.centerXAnchor),
+            weatherLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 15),
             
             temperatureLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
             temperatureLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -50),

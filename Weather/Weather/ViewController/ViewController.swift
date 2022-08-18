@@ -143,7 +143,6 @@ final class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        
         setUpUI()
         configure()
     }
@@ -303,8 +302,10 @@ extension ViewController {
                 default:
                     guard let self = self else { return }
                     DispatchQueue.main.async {
-                        self.alert.message = "위치정보를 가져올 수 없습니다."
-                        self.present(self.alert, animated: true, completion: nil)
+                        if !self.alert.isBeingPresented {
+                            self.alert.message = self.apiManager.errorHandler(error: error)
+                            self.present(self.alert, animated: true, completion: nil)
+                        }
                     }
                 }
             }
@@ -322,14 +323,13 @@ extension ViewController {
                     self.setCurrentWeather(weather: currentWeatherOfCity.weather[0].description, temperature: currentWeatherOfCity.main.temp)
                 }
             case .failure(let error):
-                switch error {
-                default:
                     guard let self = self else { return }
                     DispatchQueue.main.async {
-                        self.alert.message = "날씨 정보를 가져올 수 없습니다."
-                        self.present(self.alert, animated: true, completion: nil)
+                        if !self.alert.isBeingPresented {
+                            self.alert.message = self.apiManager.errorHandler(error: error)
+                            self.present(self.alert, animated: true, completion: nil)
+                        }
                     }
-                }
             }
         })
     }
@@ -349,20 +349,9 @@ extension ViewController {
                 }
             case .failure(let error):
                 guard let self = self else { return }
-                switch error {
-                case .apiKeyError:
-                    DispatchQueue.main.async {
-                        self.alert.message = "알 수 없는 오류가 발생하였습니다."
-                        self.present(self.alert, animated: true, completion: nil)
-                    }
-                case .cityNameError:
-                    DispatchQueue.main.async {
-                        self.alert.message = "도시 이름을 다시 확인해주세요."
-                        self.present(self.alert, animated: true, completion: nil)
-                    }
-                case .unknown:
-                    DispatchQueue.main.async {
-                        self.alert.message = "알 수 없는 오류가 발생하였습니다."
+                DispatchQueue.main.async {
+                    if !self.alert.isBeingPresented {
+                        self.alert.message = self.apiManager.errorHandler(error: error)
                         self.present(self.alert, animated: true, completion: nil)
                     }
                 }

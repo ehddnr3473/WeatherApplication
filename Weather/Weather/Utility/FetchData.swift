@@ -8,15 +8,37 @@
 import Foundation
 
 struct FetchData {
+    private let getMethodString: String = "GET"
+    private let appid = Bundle.main.apiKey
     
     enum FetchError: Error {
         case apiKeyError
         case cityNameError
-        case unknown
+        case internetConnectionProblem
+        case didNotReceiveData
+        case undefined
     }
     
-    private let getMethodString: String = "GET"
-    private let appid = Bundle.main.apiKey
+    func errorHandler(error: Error) -> String {
+        var message: String = ""
+        switch error {
+        case FetchError.apiKeyError:
+            message = "알 수 없는 오류가 발생하였습니다."
+            return message
+        case FetchError.cityNameError:
+            message = "도시 이름을 다시 확인해주세요."
+            return message
+        case FetchError.internetConnectionProblem:
+            message = "인터넷 연결을 확인해주세요."
+            return message
+        case FetchError.undefined:
+            message = "알 수 없는 오류가 발생하였습니다."
+            return message
+        default:
+            message = "알 수 없는 오류가 발생하였습니다."
+            return message
+        }
+    }
     
     func getCityWeatherURL(cityName: String) -> URL? {
         var baseURL = URLComponents(string: "https://api.openweathermap.org/data/2.5/weather?")
@@ -57,18 +79,15 @@ struct FetchData {
         let session: URLSession = URLSession(configuration: .default)
         let dataTask: URLSessionDataTask = session.dataTask(with: request, completionHandler: { (data, response, error) in
             guard error == nil else {
-                #if DEBUG
-                print("Error: error calling GET")
-                print(error!)
-                #endif
+                completion(.failure(FetchError.internetConnectionProblem))
                 return
             }
+            
             guard let data = data else {
-                #if DEBUG
-                print("Error: Did not receive data")
-                #endif
+                completion(.failure(FetchError.didNotReceiveData))
                 return
             }
+            
             guard let response = response as? HTTPURLResponse else { return }
             if !(response.statusCode == 200) {
                 switch response.statusCode {
@@ -77,7 +96,7 @@ struct FetchData {
                 case 404:
                     completion(.failure(FetchError.cityNameError))
                 default:
-                    completion(.failure(FetchError.unknown))
+                    completion(.failure(FetchError.undefined))
                 }
             }
             completion(.success(data))
