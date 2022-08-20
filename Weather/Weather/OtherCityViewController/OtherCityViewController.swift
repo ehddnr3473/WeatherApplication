@@ -17,6 +17,9 @@ final class OtherCityViewController: UIViewController {
     private let cancelButtonTitle: String = "취소"
     private var cities: [WeatherOfCity] = []
     private var forecasts: [Forecast] = []
+    private var storedCities: [String] = []
+    
+    private lazy var trailingOfSearchTextField: NSLayoutConstraint = searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8)
     
     private var backgroundImageView: UIImageView = {
         let imageView: UIImageView = UIImageView(image: UIImage(named: "CityBackground"))
@@ -107,6 +110,7 @@ final class OtherCityViewController: UIViewController {
             guard let resultArray = try fetchCity() else { return }
             for i in 0..<resultArray.count {
                 print(resultArray[i].value(forKey: "name") as! String)
+                storedCities.append(resultArray[i].value(forKey: "name") as! String)
                 requestCurrentWeatherOfCity(cityName: resultArray[i].value(forKey: "name") as! String)
                 DispatchQueue.global().async {
                     self.requestForecastWeatherOfCity(cityName: resultArray[i].value(forKey: "name") as! String)
@@ -139,24 +143,25 @@ extension OtherCityViewController {
     }
     
     private func setUpLayout() {
+        let safeGuideLine: UILayoutGuide = view.safeAreaLayoutGuide
+        
         NSLayoutConstraint.activate([
             backgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
             backgroundImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             backgroundImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             backgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
-            mainLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 100),
+            mainLabel.topAnchor.constraint(equalTo: safeGuideLine.topAnchor),
             mainLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
             
-            searchTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
             searchTextField.topAnchor.constraint(equalTo: mainLabel.bottomAnchor, constant: 8),
-            searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
+            searchTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
+            trailingOfSearchTextField,
             searchTextField.heightAnchor.constraint(equalToConstant: 30),
             
             cancelButton.topAnchor.constraint(equalTo: searchTextField.topAnchor),
             cancelButton.bottomAnchor.constraint(equalTo: searchTextField.bottomAnchor),
             cancelButton.leadingAnchor.constraint(equalTo: searchTextField.trailingAnchor, constant: 8),
-            cancelButton.widthAnchor.constraint(equalToConstant: 40),
             
             cityWeatherTableView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: 20),
             cityWeatherTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
@@ -235,6 +240,14 @@ extension OtherCityViewController: UITableViewDelegate, UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CityWeatherTableViewCell.identifier, for: indexPath) as? CityWeatherTableViewCell else {
             return UITableViewCell()
         }
+        for i in 0..<storedCities.count {
+            if cities[indexPath.row].name == storedCities[i] {
+                cell.bookMarkButton.isSelected = true
+                cell.bookMarkButton.tintColor = UIColor.systemYellow
+                break
+            }
+        }
+        
         cell.cityNameLabel.text = cities[indexPath.row].name
         cell.weatherLabel.text = cities[indexPath.row].weather[0].description
         cell.temperatureLabel.text = String(Int(cities[indexPath.row].main.temp)) + AppText.celsiusString
@@ -335,24 +348,15 @@ extension OtherCityViewController: UITextFieldDelegate {
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        NSLayoutConstraint.activate([
-            searchTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
-            searchTextField.topAnchor.constraint(equalTo: mainLabel.bottomAnchor, constant: 8),
-            searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
-            searchTextField.heightAnchor.constraint(equalToConstant: 30),
-        ])
-        searchTextField.setNeedsUpdateConstraints()
         UIView.animate(withDuration: 0.2) {
+            self.trailingOfSearchTextField.constant = -50
             self.view.layoutIfNeeded()
         }
     }
     
     func textFieldDidEndEditing(_ textField: UITextField, reason: UITextField.DidEndEditingReason) {
-        NSLayoutConstraint.activate([
-            searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
-        ])
-        searchTextField.setNeedsUpdateConstraints()
         UIView.animate(withDuration: 0.2) {
+            self.trailingOfSearchTextField.constant = -8
             self.view.layoutIfNeeded()
         }
     }

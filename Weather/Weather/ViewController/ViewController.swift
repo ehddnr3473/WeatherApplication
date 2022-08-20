@@ -49,7 +49,7 @@ final class ViewController: UIViewController {
         
         label.textColor = UIColor.white
         label.textAlignment = NSTextAlignment.center
-        label.font = UIFont.boldSystemFont(ofSize: 40)
+        label.font = UIFont.boldSystemFont(ofSize: 30)
         
         return label
     }()
@@ -59,7 +59,7 @@ final class ViewController: UIViewController {
         
         label.textColor = UIColor.white
         label.textAlignment = NSTextAlignment.center
-        label.font = UIFont.boldSystemFont(ofSize: 50)
+        label.font = UIFont.boldSystemFont(ofSize: 40)
         
         return label
     }()
@@ -69,7 +69,7 @@ final class ViewController: UIViewController {
         
         label.textColor = UIColor.white
         label.textAlignment = NSTextAlignment.center
-        label.font = UIFont.boldSystemFont(ofSize: 30)
+        label.font = UIFont.boldSystemFont(ofSize: 20)
         
         return label
     }()
@@ -77,7 +77,7 @@ final class ViewController: UIViewController {
     private var todayWeatherForecastCollectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.scrollDirection = .horizontal
-        flowLayout.sectionInset = .zero
+        flowLayout.sectionInset = .init(top: 0, left: 20, bottom: 0, right: 20)
         
         let collectionView: UICollectionView = UICollectionView(frame: .zero , collectionViewLayout: flowLayout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -122,6 +122,7 @@ final class ViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         
         button.tintColor = UIColor.white
+        
         button.addTarget(self, action: #selector(touchUpSearchOtherCityButton(_:)), for: UIControl.Event.touchUpInside)
         
         return button
@@ -168,6 +169,8 @@ extension ViewController {
     }
     
     private func setUpLayout() {
+        let safeGuideLine: UILayoutGuide = view.safeAreaLayoutGuide
+        
         NSLayoutConstraint.activate([
             weatherBackgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
             weatherBackgroundImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -175,7 +178,7 @@ extension ViewController {
             weatherBackgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             currentWeatherStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            currentWeatherStackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 60),
+            currentWeatherStackView.topAnchor.constraint(equalTo: safeGuideLine.topAnchor),
             currentWeatherStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.6),
             currentWeatherStackView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.2),
             
@@ -193,7 +196,7 @@ extension ViewController {
             weatherForecastTableView.heightAnchor.constraint(equalToConstant: 300),
             
             searchOtherCityButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            searchOtherCityButton.topAnchor.constraint(equalTo: weatherForecastTableView.bottomAnchor, constant: 20)
+            searchOtherCityButton.topAnchor.constraint(equalTo: weatherForecastTableView.bottomAnchor, constant: 10)
         ])
     }
     
