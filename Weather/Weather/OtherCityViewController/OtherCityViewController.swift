@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 final class OtherCityViewController: UIViewController {
     
@@ -13,7 +14,7 @@ final class OtherCityViewController: UIViewController {
     private let apiManager = FetchData()
     private let mainLabelText: String = "도시의 날씨"
     private let searchTextFieldPlaceholder: String = "도시명을 영어로 검색"
-    private let searchButtonTitle: String = "추가"
+    private let cancelButtonTitle: String = "취소"
     private var cities: [WeatherOfCity] = []
     private var forecasts: [Forecast] = []
     
@@ -44,6 +45,7 @@ final class OtherCityViewController: UIViewController {
         textField.backgroundColor = UIColor.lightGray
         textField.layer.cornerRadius = 10
         textField.layer.borderWidth = 2
+        textField.returnKeyType = .search
         
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: textField.frame.height))
         textField.leftView = paddingView
@@ -52,14 +54,14 @@ final class OtherCityViewController: UIViewController {
         return textField
     }()
     
-    private lazy var searchButton: UIButton = {
+    private lazy var cancelButton: UIButton = {
         let button: UIButton = UIButton(type: UIButton.ButtonType.roundedRect)
         button.translatesAutoresizingMaskIntoConstraints = false
         
-        button.setTitle(searchButtonTitle, for: UIControl.State.normal)
+        button.setTitle(cancelButtonTitle, for: UIControl.State.normal)
         button.tintColor = UIColor.lightGray
         
-        button.addTarget(self, action: #selector(touchUpSearchButton(_:)), for: UIControl.Event.touchUpInside)
+        button.addTarget(self, action: #selector(touchUpCancelButton(_:)), for: UIControl.Event.touchUpInside)
         
         return button
     }()
@@ -98,6 +100,22 @@ final class OtherCityViewController: UIViewController {
         setUpUI()
         configure()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        do {
+            guard let resultArray = try fetchCity() else { return }
+            for i in 0..<resultArray.count {
+                print(resultArray[i].value(forKey: "name") as! String)
+                requestCurrentWeatherOfCity(cityName: resultArray[i].value(forKey: "name") as! String)
+                DispatchQueue.global().async {
+                    self.requestForecastWeatherOfCity(cityName: resultArray[i].value(forKey: "name") as! String)
+                }
+            }
+        } catch let error as NSError {
+            print(error)
+        }
+    }
 }
 
 extension OtherCityViewController {
@@ -107,7 +125,7 @@ extension OtherCityViewController {
     }
     
     private func setUpHierachy() {
-        [backgroundImageView, mainLabel, searchTextField, searchButton, cityWeatherTableView].forEach {
+        [backgroundImageView, mainLabel, searchTextField, cancelButton, cityWeatherTableView].forEach {
             view.addSubview($0)
         }
     }
@@ -115,6 +133,7 @@ extension OtherCityViewController {
     private func configure() {
         cityWeatherTableView.dataSource = self
         cityWeatherTableView.delegate = self
+        searchTextField.delegate = self
         
         alert.addAction(okAction)
     }
@@ -131,13 +150,13 @@ extension OtherCityViewController {
             
             searchTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
             searchTextField.topAnchor.constraint(equalTo: mainLabel.bottomAnchor, constant: 8),
-            searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
+            searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
             searchTextField.heightAnchor.constraint(equalToConstant: 30),
             
-            searchButton.topAnchor.constraint(equalTo: searchTextField.topAnchor),
-            searchButton.bottomAnchor.constraint(equalTo: searchTextField.bottomAnchor),
-            searchButton.leadingAnchor.constraint(equalTo: searchTextField.trailingAnchor, constant: 8),
-            searchButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
+            cancelButton.topAnchor.constraint(equalTo: searchTextField.topAnchor),
+            cancelButton.bottomAnchor.constraint(equalTo: searchTextField.bottomAnchor),
+            cancelButton.leadingAnchor.constraint(equalTo: searchTextField.trailingAnchor, constant: 8),
+            cancelButton.widthAnchor.constraint(equalToConstant: 40),
             
             cityWeatherTableView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: 20),
             cityWeatherTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
@@ -146,44 +165,9 @@ extension OtherCityViewController {
         ])
     }
 
-    @IBAction func touchUpSearchButton(_ sender: UIButton) {
-        let cityName: String = searchTextField.text ?? ""
-        if verifyCityName(cityName: cityName) {
-            requestCurrentWeatherOfCity(cityName: cityName)
-            DispatchQueue.global().async {
-                self.requestForecastWeatherOfCity(cityName: cityName)
-            }
-            searchTextField.text = ""
-        } else {
-            if !alert.isBeingPresented {
-                alert.title = AppText.AlertTitle.appendFail
-                alert.message = AppText.AlertMessage.appendFailMessage
-                present(alert, animated: true, completion: nil)
-                searchTextField.text = ""
-            }
-        }
-    }
-    
-    private func verifyCityName(cityName: String) -> Bool {
-        if cityName == "" && !alert.isBeingPresented {
-            alert.title = AppText.AlertTitle.appendFail
-            alert.message = AppText.AlertMessage.emptyText
-            present(alert, animated: true, completion: nil)
-            return false
-        }
-        
-        let cityName = cityName.capitalized
-        
-        if cities.isEmpty {
-            return true
-        }
-        
-        for i in 0..<cities.count {
-            if cities[i].name == cityName {
-                return false
-            }
-        }
-        return true
+    @IBAction func touchUpCancelButton(_ sender: UIButton) {
+        searchTextField.text = ""
+        searchTextField.resignFirstResponder()
     }
 }
 
@@ -280,6 +264,7 @@ extension OtherCityViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             removeCell(at: indexPath, to: tableView)
+            
         }
     }
     
@@ -287,5 +272,88 @@ extension OtherCityViewController: UITableViewDelegate, UITableViewDataSource {
         forecasts.remove(at: indexPath.row)
         cities.remove(at: indexPath.row)
         tableView.reloadData()
+    }
+}
+
+extension OtherCityViewController {
+    func fetchCity() throws -> [NSManagedObject]? {
+        let appDelegate = UIApplication.shared.delegate as? AppDelegate
+        guard let context = appDelegate?.persistentContainer.viewContext else { return nil }
+
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "City")
+
+        do {
+            let resultArray = try context.fetch(fetchRequest)
+            return resultArray
+        } catch let error as NSError {
+            print("Could not read. \(error)" )
+            throw error
+        }
+    }
+}
+
+extension OtherCityViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        let cityName: String = textField.text ?? ""
+        if verifyCityName(cityName: cityName) {
+            requestCurrentWeatherOfCity(cityName: cityName)
+            DispatchQueue.global().async {
+                self.requestForecastWeatherOfCity(cityName: cityName)
+            }
+            searchTextField.text = ""
+        } else {
+            if !alert.isBeingPresented {
+                alert.title = AppText.AlertTitle.appendFail
+                alert.message = AppText.AlertMessage.appendFailMessage
+                present(alert, animated: true, completion: nil)
+                searchTextField.text = ""
+            }
+        }
+        return true
+    }
+    
+    private func verifyCityName(cityName: String) -> Bool {
+        if cityName == "" && !alert.isBeingPresented {
+            alert.title = AppText.AlertTitle.appendFail
+            alert.message = AppText.AlertMessage.emptyText
+            present(alert, animated: true, completion: nil)
+            return false
+        }
+        
+        let cityName = cityName.capitalized
+        
+        if cities.isEmpty {
+            return true
+        }
+        
+        for i in 0..<cities.count {
+            if cities[i].name == cityName {
+                return false
+            }
+        }
+        return true
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        NSLayoutConstraint.activate([
+            searchTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
+            searchTextField.topAnchor.constraint(equalTo: mainLabel.bottomAnchor, constant: 8),
+            searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
+            searchTextField.heightAnchor.constraint(equalToConstant: 30),
+        ])
+        searchTextField.setNeedsUpdateConstraints()
+        UIView.animate(withDuration: 0.2) {
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField, reason: UITextField.DidEndEditingReason) {
+        NSLayoutConstraint.activate([
+            searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
+        ])
+        searchTextField.setNeedsUpdateConstraints()
+        UIView.animate(withDuration: 0.2) {
+            self.view.layoutIfNeeded()
+        }
     }
 }

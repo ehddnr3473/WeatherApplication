@@ -198,6 +198,8 @@ extension ViewController {
     }
     
     private func configure() {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        appDelegate.restrictRotation = .portrait
         requestAuthorization()
         
         todayWeatherForecastCollectionView.dataSource = self

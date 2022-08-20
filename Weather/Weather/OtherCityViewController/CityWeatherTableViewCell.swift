@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import CoreData
 
 class CityWeatherTableViewCell: UITableViewCell {
     static let identifier: String = "CityWeatherTableViewCell"
@@ -19,6 +20,17 @@ class CityWeatherTableViewCell: UITableViewCell {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         return imageView
+    }()
+    
+    lazy var bookMarkButton: UIButton = {
+        let button: UIButton = UIButton(type: UIButton.ButtonType.custom)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        button.tintColor = UIColor.lightGray
+        button.setImage(UIImage(named: "star")?.withRenderingMode(.alwaysTemplate), for: UIControl.State.normal)
+        button.addTarget(self, action: #selector(touchUpBookMarkButton(_:)), for: UIControl.Event.touchUpInside)
+        
+        return button
     }()
     
     var cityNameLabel: UILabel = {
@@ -90,7 +102,7 @@ class CityWeatherTableViewCell: UITableViewCell {
     }
     
     private func setUpHierachy() {
-        [backgroundImageView, cityNameLabel, weatherLabel, temperatureLabel, forecastOfCityCollectionView].forEach {
+        [backgroundImageView, bookMarkButton, cityNameLabel, weatherLabel, temperatureLabel, forecastOfCityCollectionView].forEach {
             contentView.addSubview($0)
         }
     }
@@ -102,8 +114,13 @@ class CityWeatherTableViewCell: UITableViewCell {
             backgroundImageView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             backgroundImageView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
             
-            cityNameLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 15),
-            cityNameLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 15),
+            bookMarkButton.topAnchor.constraint(equalTo: self.topAnchor, constant: 15),
+            bookMarkButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 15),
+            bookMarkButton.widthAnchor.constraint(equalToConstant: 30),
+            bookMarkButton.heightAnchor.constraint(equalTo: bookMarkButton.widthAnchor),
+            
+            cityNameLabel.topAnchor.constraint(equalTo: bookMarkButton.topAnchor),
+            cityNameLabel.leadingAnchor.constraint(equalTo: bookMarkButton.trailingAnchor, constant: 10),
             
             weatherLabel.topAnchor.constraint(equalTo: cityNameLabel.bottomAnchor, constant: 15),
             weatherLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 15),
@@ -121,6 +138,18 @@ class CityWeatherTableViewCell: UITableViewCell {
     private func configure() {
         forecastOfCityCollectionView.dataSource = self
         forecastOfCityCollectionView.delegate = self
+    }
+    
+    @IBAction func touchUpBookMarkButton(_ sender: UIButton) {
+        sender.isSelected = !sender.isSelected
+        
+        if sender.isSelected {
+            sender.tintColor = UIColor.systemYellow
+            saveCity(name: cityNameLabel.text ?? "")
+        } else {
+            sender.tintColor = UIColor.lightGray
+            deleteCity(name: cityNameLabel.text ?? "")
+        }
     }
 }
 
@@ -147,5 +176,46 @@ extension CityWeatherTableViewCell: UICollectionViewDataSource, UICollectionView
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: 100, height: 100)
+    }
+}
+
+// MARK: - CoreData
+extension CityWeatherTableViewCell {
+    private func saveCity(name: String) {
+        let appDelegate = UIApplication.shared.delegate as? AppDelegate
+        guard let context = appDelegate?.persistentContainer.viewContext else { return }
+
+        guard let entity = NSEntityDescription.entity(forEntityName: "City", in: context) else { return }
+
+        let object = NSManagedObject(entity: entity, insertInto: context)
+        object.setValue(name, forKey: "name")
+        
+        do {
+            try context.save()
+            print(object)
+        } catch let error as NSError {
+            print("Could not save. \(error)")
+        }
+    }
+    
+    func deleteCity(name: String) {
+        let appDelegate = UIApplication.shared.delegate as? AppDelegate
+        guard let context = appDelegate?.persistentContainer.viewContext else { return }
+
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>.init(entityName: "City")
+
+        fetchRequest.predicate = NSPredicate(format: "name = %@ ", name)
+
+        do {
+            let result = try context.fetch(fetchRequest)
+            let objectToDelete = result[0] as! NSManagedObject
+            context.delete(objectToDelete)
+            print(objectToDelete)
+            try context.save()
+        } catch {
+            #if DEBUG
+            print(error.localizedDescription)
+            #endif
+        }
     }
 }
