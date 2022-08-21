@@ -178,16 +178,16 @@ extension ViewController {
             weatherBackgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             currentWeatherStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            currentWeatherStackView.topAnchor.constraint(equalTo: safeGuideLine.topAnchor),
+            currentWeatherStackView.topAnchor.constraint(equalTo: safeGuideLine.topAnchor, constant: -20),
             currentWeatherStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.6),
             currentWeatherStackView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.2),
             
-            todayWeatherForecastCollectionView.topAnchor.constraint(equalTo: currentWeatherStackView.bottomAnchor, constant: 20),
+            todayWeatherForecastCollectionView.topAnchor.constraint(equalTo: currentWeatherStackView.bottomAnchor, constant: 10),
             todayWeatherForecastCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
             todayWeatherForecastCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
             todayWeatherForecastCollectionView.heightAnchor.constraint(equalToConstant: 100),
             
-            titleLabel.topAnchor.constraint(equalTo: todayWeatherForecastCollectionView.bottomAnchor, constant: 20),
+            titleLabel.topAnchor.constraint(equalTo: todayWeatherForecastCollectionView.bottomAnchor, constant: 10),
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 15),
             
             weatherForecastTableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
@@ -196,7 +196,7 @@ extension ViewController {
             weatherForecastTableView.heightAnchor.constraint(equalToConstant: 300),
             
             searchOtherCityButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            searchOtherCityButton.topAnchor.constraint(equalTo: weatherForecastTableView.bottomAnchor, constant: 10)
+            searchOtherCityButton.topAnchor.constraint(equalTo: weatherForecastTableView.bottomAnchor, constant: 5)
         ])
     }
     
@@ -235,7 +235,7 @@ extension ViewController: CLLocationManagerDelegate {
         if locationManager == nil {
             locationManager = CLLocationManager()
             locationManager!.desiredAccuracy = kCLLocationAccuracyBest
-            locationManager!.requestWhenInUseAuthorization()
+            locationManager!.requestAlwaysAuthorization()
             locationManager!.delegate = self
             locationManagerDidChangeAuthorization(locationManager!)
         } else {
@@ -247,12 +247,12 @@ extension ViewController: CLLocationManagerDelegate {
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         switch manager.authorizationStatus {
         case .authorizedAlways:
-            currentLocation = manager.location?.coordinate
+            guard let currentLocation = manager.location?.coordinate else { return }
             latitude = String(currentLocation.latitude)
             longitude = String(currentLocation.longitude)
             requestCurrentWeather()
         case .authorizedWhenInUse:
-            currentLocation = manager.location?.coordinate
+            guard let currentLocation = manager.location?.coordinate else { return }
             latitude = String(currentLocation.latitude)
             longitude = String(currentLocation.longitude)
             requestCurrentWeather()

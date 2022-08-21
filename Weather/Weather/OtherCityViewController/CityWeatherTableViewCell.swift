@@ -14,7 +14,6 @@ class CityWeatherTableViewCell: UITableViewCell {
     var cities: [WeatherOfCity] = []
     private var forecast: Forecast?
     
-    // 날씨 백그라운드 이미지뷰, 도시이름 레이블, 날씨 레이블, 온도 레이블
     var backgroundImageView: UIImageView = {
         let imageView: UIImageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -145,10 +144,10 @@ class CityWeatherTableViewCell: UITableViewCell {
         
         if sender.isSelected {
             sender.tintColor = UIColor.systemYellow
-            saveCity(name: cityNameLabel.text ?? "")
+            BookMark.saveCity(name: cityNameLabel.text ?? "")
         } else {
             sender.tintColor = UIColor.lightGray
-            deleteCity(name: cityNameLabel.text ?? "")
+            BookMark.deleteCity(name: cityNameLabel.text ?? "")
         }
     }
 }
@@ -176,46 +175,5 @@ extension CityWeatherTableViewCell: UICollectionViewDataSource, UICollectionView
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: 100, height: 100)
-    }
-}
-
-// MARK: - CoreData
-extension CityWeatherTableViewCell {
-    private func saveCity(name: String) {
-        let appDelegate = UIApplication.shared.delegate as? AppDelegate
-        guard let context = appDelegate?.persistentContainer.viewContext else { return }
-
-        guard let entity = NSEntityDescription.entity(forEntityName: "City", in: context) else { return }
-
-        let object = NSManagedObject(entity: entity, insertInto: context)
-        object.setValue(name, forKey: "name")
-        
-        do {
-            try context.save()
-            print(object)
-        } catch let error as NSError {
-            print("Could not save. \(error)")
-        }
-    }
-    
-    func deleteCity(name: String) {
-        let appDelegate = UIApplication.shared.delegate as? AppDelegate
-        guard let context = appDelegate?.persistentContainer.viewContext else { return }
-
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>.init(entityName: "City")
-
-        fetchRequest.predicate = NSPredicate(format: "name = %@ ", name)
-
-        do {
-            let result = try context.fetch(fetchRequest)
-            let objectToDelete = result[0] as! NSManagedObject
-            context.delete(objectToDelete)
-            print(objectToDelete)
-            try context.save()
-        } catch {
-            #if DEBUG
-            print(error.localizedDescription)
-            #endif
-        }
     }
 }

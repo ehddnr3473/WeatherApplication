@@ -106,18 +106,15 @@ final class OtherCityViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        do {
-            guard let resultArray = try fetchCity() else { return }
-            for i in 0..<resultArray.count {
-                print(resultArray[i].value(forKey: "name") as! String)
-                storedCities.append(resultArray[i].value(forKey: "name") as! String)
-                requestCurrentWeatherOfCity(cityName: resultArray[i].value(forKey: "name") as! String)
-                DispatchQueue.global().async {
-                    self.requestForecastWeatherOfCity(cityName: resultArray[i].value(forKey: "name") as! String)
-                }
+        
+        guard let resultArray = BookMark.fetchCity() else { return }
+        for index in 0..<resultArray.count {
+            guard let cityName = resultArray[index].value(forKey: AppText.ModelText.attributeName) as? String else { return }
+            storedCities.append(cityName)
+            DispatchQueue.global().async {
+                self.requestCurrentWeatherOfCity(cityName: cityName)
+                self.requestForecastWeatherOfCity(cityName: cityName)
             }
-        } catch let error as NSError {
-            print(error)
         }
     }
 }
@@ -285,23 +282,6 @@ extension OtherCityViewController: UITableViewDelegate, UITableViewDataSource {
         forecasts.remove(at: indexPath.row)
         cities.remove(at: indexPath.row)
         tableView.reloadData()
-    }
-}
-
-extension OtherCityViewController {
-    func fetchCity() throws -> [NSManagedObject]? {
-        let appDelegate = UIApplication.shared.delegate as? AppDelegate
-        guard let context = appDelegate?.persistentContainer.viewContext else { return nil }
-
-        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "City")
-
-        do {
-            let resultArray = try context.fetch(fetchRequest)
-            return resultArray
-        } catch let error as NSError {
-            print("Could not read. \(error)" )
-            throw error
-        }
     }
 }
 
