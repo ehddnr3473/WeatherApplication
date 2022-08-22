@@ -367,10 +367,9 @@ extension ViewController {
     
     private func appendDayList(time: String) {
         var result: String
-        var day: Int
         let startIndex = time.index(time.startIndex, offsetBy: 8)
         let endIndex = time.index(time.endIndex, offsetBy: -10)
-        day = Int(String(time[startIndex...endIndex]))!
+        guard let day = Int(String(time[startIndex...endIndex])) else { return }
         
         result = String(day) + AppText.day
         dayList.append(result)
