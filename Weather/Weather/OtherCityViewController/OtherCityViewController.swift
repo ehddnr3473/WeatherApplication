@@ -278,7 +278,7 @@ extension OtherCityViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    func removeCell(at indexPath: IndexPath, to tableView: UITableView) {
+    private func removeCell(at indexPath: IndexPath, to tableView: UITableView) {
         forecasts.remove(at: indexPath.row)
         cities.remove(at: indexPath.row)
         tableView.reloadData()

@@ -7,7 +7,6 @@
 
 import Foundation
 
-// url component
 struct DecodingManager {
     static func decode<T: Decodable>(with data: Data, modelType: T.Type) -> T? {
         let decoder = JSONDecoder()
