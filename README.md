@@ -125,7 +125,7 @@ func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath:
 
 < 열목 >('https://github.com/ehddnr3473/WeatherApplication'이하 '열목날씨')은(는) 다음의 목적을 위하여 개인정보를 처리합니다. 처리하고 있는 개인정보는 다음의 목적 이외의 용도로는 이용되지 않으며 이용 목적이 변경되는 경우에는 「개인정보 보호법」 제18조에 따라 별도의 동의를 받는 등 필요한 조치를 이행할 예정입니다.
 
-6. 기타
+위치
 
 위치 확인 등을 목적으로 개인정보를 처리합니다.
 
@@ -137,8 +137,8 @@ func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath:
 
 ② 각각의 개인정보 처리 및 보유 기간은 다음과 같습니다.
 
-1.<기타>
-<기타>와 관련한 개인정보는 수집.이용에 관한 동의일로부터<지체없이 파기>까지 위 이용목적을 위하여 보유.이용됩니다.
+1. 위치
+위치와 관련한 개인정보는 수집.이용에 관한 동의일로부터<지체없이 파기>까지 위 이용목적을 위하여 보유.이용됩니다.
 보유근거 : 날씨 정보 제공
 
 
@@ -146,7 +146,7 @@ func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath:
 
 ① < 열목 >은(는) 다음의 개인정보 항목을 처리하고 있습니다.
 
-1< 기타 >
+1. 
 필수항목 : 위치
 
 
