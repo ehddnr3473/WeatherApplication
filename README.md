@@ -135,7 +135,6 @@ func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath:
 위치 확인 등을 목적으로 개인정보를 처리합니다.
 
 
-
 제2조(개인정보의 처리 및 보유 기간)
 
 ① < 열목 >은(는) 법령에 따른 개인정보 보유·이용기간 또는 정보주체로부터 개인정보를 수집 시에 동의받은 개인정보 보유·이용기간 내에서 개인정보를 처리·보유합니다.
@@ -154,9 +153,7 @@ func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath:
 1. 
 필수항목 : 위치
 
-
 제4조(개인정보의 파기절차 및 파기방법)
-
 
 ① < 열목 > 은(는) 개인정보 보유기간의 경과, 처리목적 달성 등 개인정보가 불필요하게 되었을 때에는 지체없이 해당 개인정보를 파기합니다.
 
@@ -167,8 +164,6 @@ func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath:
 
 
 제5조(정보주체와 법정대리인의 권리·의무 및 그 행사방법에 관한 사항)
-
-
 
 ① 정보주체는 열목에 대해 언제든지 개인정보 열람·정정·삭제·처리정지 요구 등의 권리를 행사할 수 있습니다.
 
@@ -192,13 +187,10 @@ func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath:
 개인정보 취급 관련 안정성 확보를 위해 정기적(분기 1회)으로 자체 감사를 실시하고 있습니다.
 
 
-
-
 제7조(개인정보를 자동으로 수집하는 장치의 설치·운영 및 그 거부에 관한 사항)
 
+열목은(는) 정보주체의 이용정보를 저장하고 수시로 불러오는 ‘쿠키(cookie)’를 사용하지 않습니다.
 
-
-열목 은(는) 정보주체의 이용정보를 저장하고 수시로 불러오는 ‘쿠키(cookie)’를 사용하지 않습니다.
 
 제8조 (개인정보 보호책임자에 관한 사항)
 
@@ -217,10 +209,7 @@ func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath:
 < 열목 >은(는) 정보주체의 개인정보 열람청구가 신속하게 처리되도록 노력하겠습니다.
 
 
-
 제10조(정보주체의 권익침해에 대한 구제방법)
-
-
 
 정보주체는 개인정보침해로 인한 구제를 받기 위하여 개인정보분쟁조정위원회, 한국인터넷진흥원 개인정보침해신고센터 등에 분쟁해결이나 상담 등을 신청할 수 있습니다. 이 밖에 기타 개인정보침해의 신고, 상담에 대하여는 아래의 기관에 문의하시기 바랍니다.
 
@@ -237,4 +226,48 @@ func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath:
 
 
 ① 이 개인정보처리방침은 2022년 8월 22부터 적용됩니다.)
- </details>
+</details>
+ 
+## 심사 reject
+* 심사를 미국에서 한다는 것을 생각하지 못하고, 아래와 같이 한국의 도시를 기준으로 데이터를 가져옴. 컨텐츠는 한국어로 처리하되, 전세계 어디에서든 앱을 실행할 수 있도록 명확하게 처리.
+```swift
+    private func requestCityName(url: URL) {
+        apiManager.requestData(url: url, completion: { [weak self] result in
+            switch result {
+            case .success(let data):
+                guard let self = self, let city = DecodingManager.decode(with: data, modelType: CityName.self) else { return }
+                
+                DispatchQueue.main.async {
+                    // 해외의 도시에서 데이터를 요청했을때, Entity/CityName의 ko(한글 도시 명을 담은 String), ascii와 같은 값을 API에서 넘겨주지 않음.
+                    self.setCityName(cityName: city.koreanNameOfCity.cityName)
+                    // -> self.setCityName(cityName: city[0].koreanNameOfCity.cityName ?? city[0].name)
+                }
+                
+                DispatchQueue.global().async {
+                    // 해외의 도시에서 데이터를 요청했을때, Entity/CityName의 ko(한글 도시 명을 담은 String), ascii와 같은 값을 API에서 넘겨주지 않음.
+                    self.requestWeatherForecast(cityName: city.koreanNameOfCity.ascii ?? city.name)
+                    // -> self.requestWeatherForecast(cityName: city[0].name)
+                }
+                
+                guard let url: URL = self.apiManager.getCityWeatherURL(cityName: city.koreanNameOfCity.ascii ?? city.name) else { return }
+                self.requestWeatherDataOfCity(url: url)
+                // -> guard let url: URL = self.apiManager.getCityWeatherURL(cityName: city[0].name) else { return }
+                self.requestWeatherDataOfCity(url: url)
+            case .failure(let error):
+                switch error {
+                default:
+                    guard let self = self else { return }
+                    DispatchQueue.main.async {
+                        if !self.alert.isBeingPresented {
+                            self.alert.message = self.apiManager.errorHandler(error: error)
+                            self.present(self.alert, animated: true, completion: nil)
+                        }
+                    }
+                }
+            }
+        })
+    }
+```
+
+
+
