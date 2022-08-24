@@ -119,7 +119,7 @@ func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath:
 
 <br></br>
 ## 심사 reject
-* 심사를 미국에서 한다는 것을 생각하지 못하고, 아래와 같이 한국의 도시를 기준으로 데이터를 가져옴. 컨텐츠는 한국어로 처리하되, 전세계 어디에서든 앱을 실행할 수 있도록 명확하게 처리.
+* 심사를 미국에서 한다는 것을 생각하지 못하고, 아래와 같이 한국의 도시를 기준으로 데이터를 가져옴. 콘텐츠는 한국어로 처리하되, 전 세계 어디에서든 앱을 실행할 수 있도록 명확하게 처리.
 ```swift
     private func requestCityName(url: URL) {
         apiManager.requestData(url: url, completion: { [weak self] result in
