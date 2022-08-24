@@ -125,21 +125,21 @@ func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath:
         apiManager.requestData(url: url, completion: { [weak self] result in
             switch result {
             case .success(let data):
-                guard let self = self, let city = DecodingManager.decode(with: data, modelType: CityName.self) else { return }
+                guard let self = self, let city = DecodingManager.decode(with: data, modelType: [CityName].self) else { return }
                 
                 DispatchQueue.main.async {
                     // 해외의 도시에서 데이터를 요청했을때, Entity/CityName의 ko(한글 도시 명을 담은 String), ascii와 같은 값을 API에서 넘겨주지 않음.
-                    self.setCityName(cityName: city.koreanNameOfCity.cityName)
+                    self.setCityName(cityName: city[0].koreanNameOfCity.cityName)
                     // -> self.setCityName(cityName: city[0].koreanNameOfCity.cityName ?? city[0].name)
                 }
                 
                 DispatchQueue.global().async {
                     // 해외의 도시에서 데이터를 요청했을때, Entity/CityName의 ko(한글 도시 명을 담은 String), ascii와 같은 값을 API에서 넘겨주지 않음.
-                    self.requestWeatherForecast(cityName: city.koreanNameOfCity.ascii ?? city.name)
+                    self.requestWeatherForecast(cityName: city[0].koreanNameOfCity.ascii ?? city[0].name)
                     // -> self.requestWeatherForecast(cityName: city[0].name)
                 }
                 
-                guard let url: URL = self.apiManager.getCityWeatherURL(cityName: city.koreanNameOfCity.ascii ?? city.name) else { return }
+                guard let url: URL = self.apiManager.getCityWeatherURL(cityName: city[0].koreanNameOfCity.ascii ?? city[0].name) else { return }
                 // -> guard let url: URL = self.apiManager.getCityWeatherURL(cityName: city[0].name) else { return }
                 self.requestWeatherDataOfCity(url: url)
             case .failure(let error):
