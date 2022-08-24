@@ -228,6 +228,7 @@ func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath:
 ① 이 개인정보처리방침은 2022년 8월 22부터 적용됩니다.)
 </details>
  
+<br></br>
 ## 심사 reject
 * 심사를 미국에서 한다는 것을 생각하지 못하고, 아래와 같이 한국의 도시를 기준으로 데이터를 가져옴. 컨텐츠는 한국어로 처리하되, 전세계 어디에서든 앱을 실행할 수 있도록 명확하게 처리.
 ```swift
@@ -250,7 +251,6 @@ func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath:
                 }
                 
                 guard let url: URL = self.apiManager.getCityWeatherURL(cityName: city.koreanNameOfCity.ascii ?? city.name) else { return }
-                self.requestWeatherDataOfCity(url: url)
                 // -> guard let url: URL = self.apiManager.getCityWeatherURL(cityName: city[0].name) else { return }
                 self.requestWeatherDataOfCity(url: url)
             case .failure(let error):
