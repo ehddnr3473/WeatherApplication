@@ -294,14 +294,14 @@ extension ViewController {
                 guard let self = self, let city = DecodingManager.decode(with: data, modelType: [CityName].self) else { return }
                 
                 DispatchQueue.main.async {
-                    self.setCityName(cityName: city[0].koreanNameOfCity.cityName)
+                    self.setCityName(cityName: city[0].koreanNameOfCity.cityName ?? city[0].name)
                 }
                 
                 DispatchQueue.global().async {
-                    self.requestWeatherForecast(cityName: city[0].koreanNameOfCity.ascii ?? city[0].name)
+                    self.requestWeatherForecast(cityName: city[0].name)
                 }
                 
-                guard let url: URL = self.apiManager.getCityWeatherURL(cityName: city[0].koreanNameOfCity.ascii ?? city[0].name) else { return }
+                guard let url: URL = self.apiManager.getCityWeatherURL(cityName: city[0].name) else { return }
                 self.requestWeatherDataOfCity(url: url)
             case .failure(let error):
                 switch error {

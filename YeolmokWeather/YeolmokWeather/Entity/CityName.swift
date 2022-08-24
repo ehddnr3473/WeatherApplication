@@ -10,8 +10,9 @@ import Foundation
 struct CityName: Codable {
     let name: String
     let koreanNameOfCity: KoreanNameOfCity
+    
     struct KoreanNameOfCity: Codable {
-        let cityName: String
+        let cityName: String?
         let ascii: String?
         
         enum CodingKeys: String, CodingKey {
