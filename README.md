@@ -51,7 +51,7 @@ if !self.alert.isBeingPresented {
 ```
 
 <br></br>
-### MSLayoutConstraint 변경
+### NSLayoutConstraint 변경
 * 텍스트 필드에 텍스트를 입력할때, 텍스트필드의 너비가 줄어들면서 숨어있던 버튼이 나오게 하려고 했는데, 단순히 새로운 값을 activate() 해주면, 같은 뷰에 제약이 두 개가 들어가며 레이아웃이 깨짐.
   - 방법 1: 텍스트 필드와 버튼을 UIStackView에 넣고 버튼.isHidden = true를 사용하여 숨기기 (실패)
   - 방법 2: NSLayoutConstraint.deactivate()를 사용하여 제약을 deactivate 후, 다시 제약을 추가 (실패)
