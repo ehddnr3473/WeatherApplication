@@ -28,7 +28,7 @@ final class OtherCityViewController: UIViewController {
         return imageView
     }()
     
-    private lazy var mainLabel: UILabel = {
+    private lazy var titleLabel: UILabel = {
         let label: UILabel = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -126,7 +126,7 @@ extension OtherCityViewController {
     }
     
     private func setUpHierachy() {
-        [backgroundImageView, mainLabel, searchTextField, cancelButton, cityWeatherTableView].forEach {
+        [backgroundImageView, titleLabel, searchTextField, cancelButton, cityWeatherTableView].forEach {
             view.addSubview($0)
         }
     }
@@ -148,22 +148,22 @@ extension OtherCityViewController {
             backgroundImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             backgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
-            mainLabel.topAnchor.constraint(equalTo: safeGuideLine.topAnchor),
-            mainLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            titleLabel.topAnchor.constraint(equalTo: safeGuideLine.topAnchor, constant: LayoutConstants.standardGap),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.titleLeading),
             
-            searchTextField.topAnchor.constraint(equalTo: mainLabel.bottomAnchor, constant: 8),
-            searchTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
+            searchTextField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: LayoutConstants.standardGap),
+            searchTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.standardGap),
             trailingOfSearchTextField,
-            searchTextField.heightAnchor.constraint(equalToConstant: 30),
+            searchTextField.heightAnchor.constraint(equalToConstant: LayoutConstants.textFieldHeight),
             
             cancelButton.topAnchor.constraint(equalTo: searchTextField.topAnchor),
             cancelButton.bottomAnchor.constraint(equalTo: searchTextField.bottomAnchor),
-            cancelButton.leadingAnchor.constraint(equalTo: searchTextField.trailingAnchor, constant: 8),
+            cancelButton.leadingAnchor.constraint(equalTo: searchTextField.trailingAnchor, constant: LayoutConstants.standardGap),
             
-            cityWeatherTableView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: 20),
-            cityWeatherTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            cityWeatherTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            cityWeatherTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50)
+            cityWeatherTableView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: LayoutConstants.standardGap),
+            cityWeatherTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.standardGap),
+            cityWeatherTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstants.standardGap),
+            cityWeatherTableView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: LayoutConstants.heightMultiplier)
         ])
     }
 
@@ -171,6 +171,14 @@ extension OtherCityViewController {
         searchTextField.text = ""
         searchTextField.resignFirstResponder()
     }
+}
+
+private struct LayoutConstants {
+    static let standardGap: CGFloat = 8
+    static let textFieldHeight: CGFloat = 30
+    static let heightMultiplier: CGFloat = 0.7
+    static let titleLeading: CGFloat = 15
+    static let largeGap: CGFloat = 50
 }
 
 extension OtherCityViewController {
@@ -326,16 +334,20 @@ extension OtherCityViewController: UITextFieldDelegate {
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        UIView.animate(withDuration: 0.2) {
-            self.trailingOfSearchTextField.constant = -50
+        UIView.animate(withDuration: AnimationConstants.duration) {
+            self.trailingOfSearchTextField.constant = -LayoutConstants.largeGap
             self.view.layoutIfNeeded()
         }
     }
     
     func textFieldDidEndEditing(_ textField: UITextField, reason: UITextField.DidEndEditingReason) {
-        UIView.animate(withDuration: 0.2) {
-            self.trailingOfSearchTextField.constant = -8
+        UIView.animate(withDuration: AnimationConstants.duration) {
+            self.trailingOfSearchTextField.constant = -LayoutConstants.standardGap
             self.view.layoutIfNeeded()
         }
     }
+}
+
+private struct AnimationConstants {
+    static let duration: TimeInterval = 0.2
 }

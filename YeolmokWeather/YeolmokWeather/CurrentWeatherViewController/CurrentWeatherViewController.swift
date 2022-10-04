@@ -8,7 +8,7 @@
 import UIKit
 import CoreLocation
 
-final class ViewController: UIViewController {
+final class CurrentWeatherViewController: UIViewController {
     
     // MARK: - Properties
     private var apiManager = FetchData()
@@ -117,17 +117,6 @@ final class ViewController: UIViewController {
         return tableView
     }()
     
-    private lazy var searchOtherCityButton: UIButton = {
-        let button: UIButton = UIButton(type: UIButton.ButtonType.contactAdd)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        
-        button.tintColor = UIColor.white
-        
-        button.addTarget(self, action: #selector(touchUpSearchOtherCityButton(_:)), for: UIControl.Event.touchUpInside)
-        
-        return button
-    }()
-    
     private let alert: UIAlertController = {
         let alert: UIAlertController = UIAlertController(title: "오류", message: "", preferredStyle: UIAlertController.Style.alert)
         
@@ -151,7 +140,7 @@ final class ViewController: UIViewController {
 }
 
 // MARK: - View
-extension ViewController {
+extension CurrentWeatherViewController {
     private func setUpUI() {
         view.backgroundColor = UIColor.black
         setUpHierachy()
@@ -159,7 +148,7 @@ extension ViewController {
     }
     
     private func setUpHierachy() {
-        [weatherBackgroundImageView, currentWeatherStackView, todayWeatherForecastCollectionView, titleLabel, weatherForecastTableView, searchOtherCityButton].forEach {
+        [weatherBackgroundImageView, currentWeatherStackView, todayWeatherForecastCollectionView, titleLabel, weatherForecastTableView].forEach {
             view.addSubview($0)
         }
         
@@ -178,25 +167,22 @@ extension ViewController {
             weatherBackgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             currentWeatherStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            currentWeatherStackView.topAnchor.constraint(equalTo: safeGuideLine.topAnchor, constant: -20),
-            currentWeatherStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.6),
-            currentWeatherStackView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.2),
+            currentWeatherStackView.topAnchor.constraint(equalTo: safeGuideLine.topAnchor),
+            currentWeatherStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: LayoutConstants.stackViewWidth),
+            currentWeatherStackView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: LayoutConstants.stackViewHeight),
             
-            todayWeatherForecastCollectionView.topAnchor.constraint(equalTo: currentWeatherStackView.bottomAnchor, constant: 10),
-            todayWeatherForecastCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            todayWeatherForecastCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            todayWeatherForecastCollectionView.heightAnchor.constraint(equalToConstant: 100),
+            todayWeatherForecastCollectionView.topAnchor.constraint(equalTo: currentWeatherStackView.bottomAnchor, constant: LayoutConstants.standardGap),
+            todayWeatherForecastCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.standardGap),
+            todayWeatherForecastCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstants.standardGap),
+            todayWeatherForecastCollectionView.heightAnchor.constraint(equalToConstant: LayoutConstants.collectionViewHeight),
             
-            titleLabel.topAnchor.constraint(equalTo: todayWeatherForecastCollectionView.bottomAnchor, constant: 10),
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 15),
+            titleLabel.topAnchor.constraint(equalTo: todayWeatherForecastCollectionView.bottomAnchor, constant: LayoutConstants.standardGap),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.largeGap),
             
-            weatherForecastTableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
-            weatherForecastTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            weatherForecastTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            weatherForecastTableView.heightAnchor.constraint(equalToConstant: 300),
-            
-            searchOtherCityButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            searchOtherCityButton.topAnchor.constraint(equalTo: weatherForecastTableView.bottomAnchor, constant: 5)
+            weatherForecastTableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: LayoutConstants.standardGap),
+            weatherForecastTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.standardGap),
+            weatherForecastTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstants.standardGap),
+            weatherForecastTableView.heightAnchor.constraint(equalToConstant: LayoutConstants.tableViewHeight)
         ])
     }
     
@@ -214,11 +200,6 @@ extension ViewController {
         alert.addAction(okAction)
     }
     
-    @IBAction func touchUpSearchOtherCityButton(_ sender: UIButton) {
-        let nextViewController = OtherCityViewController()
-        navigationController?.pushViewController(nextViewController, animated: true)
-    }
-    
     private func setCityName(cityName: String) {
         self.cityNameLabel.text = cityName
     }
@@ -229,8 +210,17 @@ extension ViewController {
     }
 }
 
+private struct LayoutConstants {
+    static let standardGap: CGFloat = 8
+    static let largeGap: CGFloat = 15
+    static let stackViewWidth: CGFloat = 0.6
+    static let stackViewHeight: CGFloat = 0.2
+    static let collectionViewHeight: CGFloat = 100
+    static let tableViewHeight: CGFloat = collectionViewHeight * 3
+}
+
 // MARK: - CoreLocation
-extension ViewController: CLLocationManagerDelegate {
+extension CurrentWeatherViewController: CLLocationManagerDelegate {
     private func requestAuthorization() {
         if locationManager == nil {
             locationManager = CLLocationManager()
@@ -278,7 +268,7 @@ extension ViewController: CLLocationManagerDelegate {
 }
 
 // MARK: - REQUEST
-extension ViewController {
+extension CurrentWeatherViewController {
     private func requestCurrentWeather() {
         guard let lat = latitude else { return }
         guard let lon = longitude else { return }
@@ -420,7 +410,7 @@ extension ViewController {
     }
 }
 
-extension ViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension CurrentWeatherViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier, for: indexPath) as? TodayWeatherForecastCollectionViewCell else { return UICollectionViewCell() }
         guard let forecast = forecast else { return UICollectionViewCell() }
@@ -446,7 +436,7 @@ extension ViewController: UICollectionViewDataSource, UICollectionViewDelegateFl
     }
 }
 
-extension ViewController: UITableViewDataSource, UITableViewDelegate {
+extension CurrentWeatherViewController: UITableViewDataSource, UITableViewDelegate {
    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: WeatherForecastTableViewCell.identifier, for: indexPath) as? WeatherForecastTableViewCell else { return UITableViewCell() }
