@@ -26,14 +26,14 @@ final class CurrentWeatherViewController: UIViewController {
     
     
     private var weatherBackgroundImageView: UIImageView = {
-        let imageView: UIImageView = UIImageView()
+        let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         return imageView
     }()
     
     private var currentWeatherStackView: UIStackView = {
-        let stackView: UIStackView = UIStackView()
+        let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
         stackView.axis = .vertical
@@ -45,7 +45,7 @@ final class CurrentWeatherViewController: UIViewController {
     }()
     
     private var cityNameLabel: UILabel = {
-        let label: UILabel = UILabel()
+        let label = UILabel()
         
         label.textColor = UIColor.white
         label.textAlignment = NSTextAlignment.center
@@ -55,7 +55,7 @@ final class CurrentWeatherViewController: UIViewController {
     }()
     
     private var temperatureLabel: UILabel = {
-        let label: UILabel = UILabel()
+        let label = UILabel()
         
         label.textColor = UIColor.white
         label.textAlignment = NSTextAlignment.center
@@ -65,7 +65,7 @@ final class CurrentWeatherViewController: UIViewController {
     }()
     
     private var weatherLabel: UILabel = {
-        let label: UILabel = UILabel()
+        let label = UILabel()
         
         label.textColor = UIColor.white
         label.textAlignment = NSTextAlignment.center
@@ -93,7 +93,7 @@ final class CurrentWeatherViewController: UIViewController {
     }()
     
     private var titleLabel: UILabel = {
-        let label: UILabel = UILabel()
+        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
         label.textColor = UIColor.white
@@ -104,7 +104,7 @@ final class CurrentWeatherViewController: UIViewController {
     }()
     
     private var weatherForecastTableView: UITableView = {
-        let tableView: UITableView = UITableView()
+        let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         tableView.backgroundColor = AppStyles.Colors.backgroundColor
@@ -113,18 +113,17 @@ final class CurrentWeatherViewController: UIViewController {
         tableView.layer.borderColor = AppStyles.Colors.mainColor.cgColor
         
         tableView.register(WeatherForecastTableViewCell.self, forCellReuseIdentifier: WeatherForecastTableViewCell.identifier)
-        
         return tableView
     }()
     
     private let alert: UIAlertController = {
-        let alert: UIAlertController = UIAlertController(title: "오류", message: "", preferredStyle: UIAlertController.Style.alert)
+        let alert = UIAlertController(title: "오류", message: "", preferredStyle: UIAlertController.Style.alert)
         
         return alert
     }()
     
     private let okAction: UIAlertAction = {
-        let action: UIAlertAction = UIAlertAction(title: "확인", style: UIAlertAction.Style.default)
+        let action = UIAlertAction(title: "확인", style: UIAlertAction.Style.default)
         
         return action
     }()
@@ -158,7 +157,7 @@ extension CurrentWeatherViewController {
     }
     
     private func setUpLayout() {
-        let safeGuideLine: UILayoutGuide = view.safeAreaLayoutGuide
+        let safeGuideLine = view.safeAreaLayoutGuide
         
         NSLayoutConstraint.activate([
             weatherBackgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -210,15 +209,6 @@ extension CurrentWeatherViewController {
     }
 }
 
-private struct LayoutConstants {
-    static let standardGap: CGFloat = 8
-    static let largeGap: CGFloat = 15
-    static let stackViewWidth: CGFloat = 0.6
-    static let stackViewHeight: CGFloat = 0.2
-    static let collectionViewHeight: CGFloat = 100
-    static let tableViewHeight: CGFloat = collectionViewHeight * 3
-}
-
 // MARK: - CoreLocation
 extension CurrentWeatherViewController: CLLocationManagerDelegate {
     private func requestAuthorization() {
@@ -255,6 +245,7 @@ extension CurrentWeatherViewController: CLLocationManagerDelegate {
         case .restricted:
             alert.message = AppText.AlertMessage.restricted
             present(alert, animated: true, completion: nil)
+            requestAuthorization()
         @unknown default:
             alert.message = AppText.AlertMessage.undefined
             present(alert, animated: true, completion: nil)
@@ -284,14 +275,14 @@ extension CurrentWeatherViewController {
                 guard let self = self, let city = DecodingManager.decode(with: data, modelType: [CityName].self) else { return }
                 
                 DispatchQueue.main.async {
-                    self.setCityName(cityName: city[0].koreanNameOfCity.cityName ?? city[0].name)
+                    self.setCityName(cityName: city[.zero].koreanNameOfCity.cityName ?? city[.zero].name)
                 }
                 
                 DispatchQueue.global().async {
-                    self.requestWeatherForecast(cityName: city[0].name)
+                    self.requestWeatherForecast(cityName: city[.zero].name)
                 }
                 
-                guard let url: URL = self.apiManager.getCityWeatherURL(cityName: city[0].name) else { return }
+                guard let url: URL = self.apiManager.getCityWeatherURL(cityName: city[.zero].name) else { return }
                 self.requestWeatherDataOfCity(url: url)
             case .failure(let error):
                 switch error {
@@ -315,8 +306,8 @@ extension CurrentWeatherViewController {
                 guard let self = self, let currentWeatherOfCity = DecodingManager.decode(with: data, modelType: WeatherOfCity.self) else { return }
                 
                 DispatchQueue.main.async {
-                    self.weatherBackgroundImageView.image = UIImage(named: FetchImageName.setUpBackgroundImage(weather: currentWeatherOfCity.weather[0].id))
-                    self.setCurrentWeather(weather: currentWeatherOfCity.weather[0].description, temperature: currentWeatherOfCity.main.temp)
+                    self.weatherBackgroundImageView.image = UIImage(named: FetchImageName.setUpBackgroundImage(weather: currentWeatherOfCity.weather[.zero].id))
+                    self.setCurrentWeather(weather: currentWeatherOfCity.weather[.zero].description, temperature: currentWeatherOfCity.main.temp)
                 }
             case .failure(let error):
                     guard let self = self else { return }
@@ -336,7 +327,7 @@ extension CurrentWeatherViewController {
             switch result {
             case .success(let data):
                 guard let self = self, var todayWeatherOfCity = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
-                todayWeatherOfCity.list.removeSubrange(0...2)
+                todayWeatherOfCity.list.removeSubrange(NumberConstants.fromZeroToTwo)
                 self.forecast = todayWeatherOfCity
                 self.makeArray(forecast: todayWeatherOfCity)
                 DispatchQueue.main.async {
@@ -357,8 +348,8 @@ extension CurrentWeatherViewController {
     
     private func appendDayList(time: String) {
         var result: String
-        let startIndex = time.index(time.startIndex, offsetBy: 8)
-        let endIndex = time.index(time.endIndex, offsetBy: -10)
+        let startIndex = time.index(time.startIndex, offsetBy: NumberConstants.startOffset)
+        let endIndex = time.index(time.endIndex, offsetBy: -NumberConstants.endOffset)
         guard let day = Int(String(time[startIndex...endIndex])) else { return }
         
         result = String(day) + AppText.day
@@ -367,8 +358,8 @@ extension CurrentWeatherViewController {
     
     private func setUpToday(time: String) {
         var day: String
-        let startIndex = time.index(time.startIndex, offsetBy: 8)
-        let endIndex = time.index(time.endIndex, offsetBy: -10)
+        let startIndex = time.index(time.startIndex, offsetBy: NumberConstants.startOffset)
+        let endIndex = time.index(time.endIndex, offsetBy: -NumberConstants.endOffset)
         day = String(time[startIndex...endIndex])
         
         today = day
@@ -376,17 +367,17 @@ extension CurrentWeatherViewController {
     
     private func getTomorrowString(time: String) -> String {
         var day: String
-        let startIndex = time.index(time.startIndex, offsetBy: 8)
-        let endIndex = time.index(time.endIndex, offsetBy: -10)
+        let startIndex = time.index(time.startIndex, offsetBy: NumberConstants.startOffset)
+        let endIndex = time.index(time.endIndex, offsetBy: -NumberConstants.endOffset)
         day = String(time[startIndex...endIndex])
         
         return day
     }
     
     private func setUpTomorrow(forecast: Forecast) {
-        for i in 0..<forecast.list.count {
-            if getTomorrowString(time: forecast.list[i].time) != today {
-                startOfTomorrowIndex = i
+        for index in forecast.list.indices {
+            if getTomorrowString(time: forecast.list[index].time) != today {
+                startOfTomorrowIndex = index
                 break
             }
         }
@@ -394,19 +385,19 @@ extension CurrentWeatherViewController {
     
     private func makeArray(forecast: Forecast) {
         var forecast = forecast
-        setUpToday(time: forecast.list[0].time)
+        setUpToday(time: forecast.list[.zero].time)
         setUpTomorrow(forecast: forecast)
         guard let startOfTomorrowIndex = startOfTomorrowIndex else { return }
-        forecast.list.removeSubrange(0..<startOfTomorrowIndex)
+        forecast.list.removeSubrange(.zero..<startOfTomorrowIndex)
 
         forecasts.append(forecast)
-        appendDayList(time: forecast.list[0].time)
-        forecast.list.removeSubrange(0...7)
+        appendDayList(time: forecast.list[.zero].time)
+        forecast.list.removeSubrange(NumberConstants.fromZeroToSeven)
         forecasts.append(forecast)
-        appendDayList(time: forecast.list[0].time)
-        forecast.list.removeSubrange(0...7)
+        appendDayList(time: forecast.list[.zero].time)
+        forecast.list.removeSubrange(NumberConstants.fromZeroToSeven)
         forecasts.append(forecast)
-        appendDayList(time: forecast.list[0].time)
+        appendDayList(time: forecast.list[.zero].time)
     }
 }
 
@@ -416,8 +407,8 @@ extension CurrentWeatherViewController: UICollectionViewDataSource, UICollection
         guard let forecast = forecast else { return UICollectionViewCell() }
 
         cell.timeLabel.text = AppText.getTimeText(time: forecast.list[indexPath.row].time)
-        cell.weatherImageView.image = UIImage(named: FetchImageName.setForecastImage(weather: forecast.list[indexPath.row].weather[0].id))?.withRenderingMode(.alwaysTemplate)
-        cell.weatherLabel.text = forecast.list[indexPath.row].weather[0].description
+        cell.weatherImageView.image = UIImage(named: FetchImageName.setForecastImage(weather: forecast.list[indexPath.row].weather[.zero].id))?.withRenderingMode(.alwaysTemplate)
+        cell.weatherLabel.text = forecast.list[indexPath.row].weather[.zero].description
         cell.temperatureLabel.text = String(Int(forecast.list[indexPath.row].main.temp)) + AppText.celsiusString
         
         return cell
@@ -425,14 +416,14 @@ extension CurrentWeatherViewController: UICollectionViewDataSource, UICollection
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if forecast == nil {
-            return 0
+            return .zero
         } else {
-            return 8
+            return NumberConstants.numberOfItemsInSection
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 100, height: 100)
+        return CGSize(width: LayoutConstants.collectionViewWidth, height: LayoutConstants.collectionViewHeight)
     }
 }
 
@@ -449,14 +440,14 @@ extension CurrentWeatherViewController: UITableViewDataSource, UITableViewDelega
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if forecasts.isEmpty {
-            return 0
+            return .zero
         } else {
-            return 3
+            return NumberConstants.numberOfRowsInSection
         }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 100
+        return LayoutConstants.collectionViewHeight
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -464,4 +455,24 @@ extension CurrentWeatherViewController: UITableViewDataSource, UITableViewDelega
         cell.layer.borderWidth = AppStyles.borderWidth
         cell.layer.borderColor = AppStyles.Colors.mainColor.cgColor
     }
+}
+
+// MARK: - Magic Number
+private struct LayoutConstants {
+    static let standardGap: CGFloat = 8
+    static let largeGap: CGFloat = 15
+    static let stackViewWidth: CGFloat = 0.6
+    static let stackViewHeight: CGFloat = 0.2
+    static let collectionViewHeight: CGFloat = 100
+    static let collectionViewWidth: CGFloat = collectionViewHeight
+    static let tableViewHeight: CGFloat = collectionViewHeight * 3
+}
+
+private struct NumberConstants {
+    static let fromZeroToTwo = 0...2
+    static let fromZeroToSeven = 0...7
+    static let numberOfItemsInSection = 8
+    static let numberOfRowsInSection = 3
+    static let startOffset = 8
+    static let endOffset = 10
 }

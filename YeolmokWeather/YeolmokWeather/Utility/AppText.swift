@@ -15,12 +15,12 @@ struct AppText {
     static let pm: String = "오후 "
     static let hourString: String = "시"
     
-    enum ModelText {
+    struct ModelText {
         static let entityName: String = "City"
         static let attributeName: String = "name"
     }
     
-    enum AlertTitle {
+    struct AlertTitle {
         static let error: String = "오류"
         static let appendFail: String = "추가 실패"
     }

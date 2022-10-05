@@ -12,7 +12,7 @@ class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
     static let identifier: String = "TodayWeatherForecastCollectionViewCell"
     
     var timeLabel: UILabel = {
-        let label: UILabel = UILabel()
+        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
         label.textAlignment = NSTextAlignment.center
@@ -23,7 +23,7 @@ class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
     }()
     
     var weatherImageView: UIImageView = {
-        let imageView: UIImageView = UIImageView()
+        let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         imageView.tintColor = UIColor.white
@@ -32,7 +32,7 @@ class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
     }()
     
     var weatherLabel: UILabel = {
-        let label: UILabel = UILabel()
+        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
         label.textAlignment = NSTextAlignment.center
@@ -43,7 +43,7 @@ class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
     }()
     
     var temperatureLabel: UILabel = {
-        let label: UILabel = UILabel()
+        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
         label.textAlignment = NSTextAlignment.center
@@ -73,18 +73,24 @@ class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
     func setUpLayout() {
         NSLayoutConstraint.activate([
             timeLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            timeLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 10),
+            timeLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: LayoutConstraint.standardGap),
             
             weatherImageView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            weatherImageView.topAnchor.constraint(equalTo: timeLabel.bottomAnchor, constant: 5),
-            weatherImageView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.3),
+            weatherImageView.topAnchor.constraint(equalTo: timeLabel.bottomAnchor, constant: LayoutConstraint.smallGap),
+            weatherImageView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: LayoutConstraint.imageWidth),
             weatherImageView.heightAnchor.constraint(equalTo: weatherImageView.widthAnchor),
             
             weatherLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            weatherLabel.topAnchor.constraint(equalTo: weatherImageView.bottomAnchor, constant: 5),
+            weatherLabel.topAnchor.constraint(equalTo: weatherImageView.bottomAnchor, constant: LayoutConstraint.smallGap),
             
             temperatureLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            temperatureLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10)
+            temperatureLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -LayoutConstraint.standardGap)
         ])
     }
+}
+
+private struct LayoutConstraint {
+    static let smallGap: CGFloat = 5
+    static let standardGap: CGFloat = 10
+    static let imageWidth: CGFloat = 0.3
 }

@@ -163,8 +163,8 @@
 			isa = PBXGroup;
 			children = (
 				6B92429B2898EDE300E29CF8 /* CurrentWeatherViewController.swift */,
-				6B9242AB2898EED000E29CF8 /* WeatherForecastTableViewCell.swift */,
 				6BEAF02C28A1370500D0BB6D /* TodayWeatherForecastCollectionViewCell.swift */,
+				6B9242AB2898EED000E29CF8 /* WeatherForecastTableViewCell.swift */,
 			);
 			path = CurrentWeatherViewController;
 			sourceTree = "<group>";

@@ -13,11 +13,11 @@ class WeatherForecastTableViewCell: UITableViewCell {
     private var forecast: Forecast?
     
     var dayLabel: UILabel = {
-        let label: UILabel = UILabel()
+        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.textColor = UIColor.white
-        label.font = UIFont.boldSystemFont(ofSize: 15)
+        label.textColor = .white
+        label.font = .boldSystemFont(ofSize: 15)
         
         return label
     }()
@@ -26,14 +26,14 @@ class WeatherForecastTableViewCell: UITableViewCell {
         flowLayout.scrollDirection = .horizontal
         flowLayout.sectionInset = .zero
         
-        let collectionVIew: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
-        collectionVIew.translatesAutoresizingMaskIntoConstraints = false
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
         
-        collectionVIew.backgroundColor = UIColor.clear
+        collectionView.backgroundColor = .clear
         
-        collectionVIew.register(TodayWeatherForecastCollectionViewCell.self, forCellWithReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier)
+        collectionView.register(TodayWeatherForecastCollectionViewCell.self, forCellWithReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier)
         
-        return collectionVIew
+        return collectionView
     }()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -69,10 +69,10 @@ class WeatherForecastTableViewCell: UITableViewCell {
     func setUpLayout() {
         NSLayoutConstraint.activate([
             dayLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-            dayLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 8),
+            dayLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: LayoutConstraint.standardGap),
             
             forecastCollectionView.topAnchor.constraint(equalTo: self.topAnchor),
-            forecastCollectionView.leadingAnchor.constraint(equalTo: dayLabel.trailingAnchor, constant: 5),
+            forecastCollectionView.leadingAnchor.constraint(equalTo: dayLabel.trailingAnchor, constant: LayoutConstraint.standardGap),
             forecastCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             forecastCollectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
         ])
@@ -90,8 +90,8 @@ extension WeatherForecastTableViewCell: UICollectionViewDataSource, UICollection
         guard let forecast = forecast else { return UICollectionViewCell() }
         
         cell.timeLabel.text = AppText.getTimeText(time: forecast.list[indexPath.row].time)
-        cell.weatherImageView.image = UIImage(named: FetchImageName.setForecastImage(weather: forecast.list[indexPath.row].weather[0].id))?.withRenderingMode(.alwaysTemplate)
-        cell.weatherLabel.text = forecast.list[indexPath.row].weather[0].description
+        cell.weatherImageView.image = UIImage(named: FetchImageName.setForecastImage(weather: forecast.list[indexPath.row].weather[.zero].id))?.withRenderingMode(.alwaysTemplate)
+        cell.weatherLabel.text = forecast.list[indexPath.row].weather[.zero].description
         cell.temperatureLabel.text = String(Int(forecast.list[indexPath.row].main.temp)) + AppText.celsiusString
         
         return cell
@@ -99,13 +99,23 @@ extension WeatherForecastTableViewCell: UICollectionViewDataSource, UICollection
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if forecast == nil {
-            return 0
+            return .zero
         } else {
-            return 8
+            return NumberConstants.numberOfItem
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 80, height: 100)
+        return CGSize(width: NumberConstants.widthOfItem, height: NumberConstants.heightOfItem)
     }
+}
+
+private struct LayoutConstraint {
+    static let standardGap: CGFloat = 8
+}
+
+private struct NumberConstants {
+    static let numberOfItem = 8
+    static let widthOfItem = 80
+    static let heightOfItem = 100
 }

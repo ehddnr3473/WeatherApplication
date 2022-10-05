@@ -15,14 +15,14 @@ class CityWeatherTableViewCell: UITableViewCell {
     private var forecast: Forecast?
     
     var backgroundImageView: UIImageView = {
-        let imageView: UIImageView = UIImageView()
+        let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         return imageView
     }()
     
     lazy var bookMarkButton: UIButton = {
-        let button: UIButton = UIButton(type: UIButton.ButtonType.custom)
+        let button = UIButton(type: UIButton.ButtonType.custom)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         button.tintColor = UIColor.lightGray
@@ -33,16 +33,17 @@ class CityWeatherTableViewCell: UITableViewCell {
     }()
     
     var cityNameLabel: UILabel = {
-        let label: UILabel = UILabel()
+        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
         label.textColor = UIColor.white
         label.font = UIFont.boldSystemFont(ofSize: 30)
+        
         return label
     }()
     
     var weatherLabel: UILabel = {
-        let label: UILabel = UILabel()
+        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
         label.textColor = UIColor.white
@@ -52,7 +53,7 @@ class CityWeatherTableViewCell: UITableViewCell {
     }()
     
     var temperatureLabel: UILabel = {
-        let label: UILabel = UILabel()
+        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
         label.textColor = UIColor.white
@@ -113,19 +114,19 @@ class CityWeatherTableViewCell: UITableViewCell {
             backgroundImageView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             backgroundImageView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
             
-            bookMarkButton.topAnchor.constraint(equalTo: self.topAnchor, constant: 15),
-            bookMarkButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 15),
-            bookMarkButton.widthAnchor.constraint(equalToConstant: 30),
-            bookMarkButton.heightAnchor.constraint(equalTo: bookMarkButton.widthAnchor),
+            bookMarkButton.topAnchor.constraint(equalTo: self.topAnchor, constant: LayoutConstants.standardGap),
+            bookMarkButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: LayoutConstants.standardGap),
+            bookMarkButton.widthAnchor.constraint(equalToConstant: LayoutConstants.bookMarkSize),
+            bookMarkButton.heightAnchor.constraint(equalToConstant: LayoutConstants.bookMarkSize),
             
             cityNameLabel.topAnchor.constraint(equalTo: bookMarkButton.topAnchor),
-            cityNameLabel.leadingAnchor.constraint(equalTo: bookMarkButton.trailingAnchor, constant: 10),
+            cityNameLabel.leadingAnchor.constraint(equalTo: bookMarkButton.trailingAnchor, constant: LayoutConstants.standardGap),
             
-            weatherLabel.topAnchor.constraint(equalTo: cityNameLabel.bottomAnchor, constant: 15),
-            weatherLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 15),
+            weatherLabel.topAnchor.constraint(equalTo: cityNameLabel.bottomAnchor, constant: LayoutConstants.standardGap),
+            weatherLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: LayoutConstants.standardGap),
             
-            temperatureLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
-            temperatureLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -50),
+            temperatureLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -LayoutConstants.standardGap),
+            temperatureLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -LayoutConstants.quarterOfCenterY),
             
             forecastOfCityCollectionView.topAnchor.constraint(equalTo: weatherLabel.bottomAnchor),
             forecastOfCityCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
@@ -167,13 +168,25 @@ extension CityWeatherTableViewCell: UICollectionViewDataSource, UICollectionView
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if forecast == nil {
-            return 0
+            return .zero
         } else {
-            return 8
+            return NumberConstants.numberOfItem
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 100, height: 100)
+        return CGSize(width: NumberConstants.sizeOfItem, height: NumberConstants.sizeOfItem)
     }
+}
+
+// MARK: - Magic Number
+private struct LayoutConstants {
+    static let standardGap: CGFloat = 15
+    static let bookMarkSize: CGFloat = 30
+    static let quarterOfCenterY: CGFloat = 50
+}
+
+private struct NumberConstants {
+    static let numberOfItem = 8
+    static let sizeOfItem = 100
 }

@@ -19,33 +19,34 @@ final class OtherCityViewController: UIViewController {
     private var forecasts: [Forecast] = []
     private var storedCities: [String] = []
     
-    private lazy var trailingOfSearchTextField: NSLayoutConstraint = searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8)
+    // Layout Constraint 가변 textField
+    private lazy var trailingOfSearchTextField: NSLayoutConstraint = searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstants.standardGap)
     
     private var backgroundImageView: UIImageView = {
-        let imageView: UIImageView = UIImageView(image: UIImage(named: "CityBackground"))
+        let imageView = UIImageView(image: UIImage(named: "CityBackground"))
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         return imageView
     }()
     
     private lazy var titleLabel: UILabel = {
-        let label: UILabel = UILabel()
+        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
         label.text = mainLabelText
         label.textColor = UIColor.white
-        label.font = UIFont.boldSystemFont(ofSize: 30)
+        label.font = .boldSystemFont(ofSize: 30)
         
         return label
     }()
     
     private lazy var searchTextField: UITextField = {
-        let textField: UITextField = UITextField()
+        let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
         
-        textField.textColor = UIColor.white
+        textField.textColor = .white
         textField.placeholder = searchTextFieldPlaceholder
-        textField.backgroundColor = UIColor.lightGray
+        textField.backgroundColor = .lightGray
         textField.layer.cornerRadius = 10
         textField.layer.borderWidth = 2
         textField.returnKeyType = .search
@@ -58,7 +59,7 @@ final class OtherCityViewController: UIViewController {
     }()
     
     private lazy var cancelButton: UIButton = {
-        let button: UIButton = UIButton(type: UIButton.ButtonType.roundedRect)
+        let button = UIButton(type: UIButton.ButtonType.roundedRect)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         button.setTitle(cancelButtonTitle, for: UIControl.State.normal)
@@ -70,7 +71,7 @@ final class OtherCityViewController: UIViewController {
     }()
     
     private var cityWeatherTableView: UITableView = {
-        let tableView: UITableView = UITableView()
+        let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         tableView.backgroundColor = AppStyles.Colors.backgroundColor
@@ -84,13 +85,13 @@ final class OtherCityViewController: UIViewController {
     }()
     
     private let alert: UIAlertController = {
-        let alert: UIAlertController = UIAlertController(title: "오류", message: "", preferredStyle: UIAlertController.Style.alert)
+        let alert = UIAlertController(title: "오류", message: "", preferredStyle: UIAlertController.Style.alert)
         
         return alert
     }()
     
     private let okAction: UIAlertAction = {
-        let action: UIAlertAction = UIAlertAction(title: "확인", style: UIAlertAction.Style.default)
+        let action = UIAlertAction(title: "확인", style: UIAlertAction.Style.default)
         
         return action
     }()
@@ -102,13 +103,12 @@ final class OtherCityViewController: UIViewController {
         // Do any additional setup after loading the view.
         setUpUI()
         configure()
+        fetchBookMarkCity()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
+    private func fetchBookMarkCity() {
         guard let resultArray = BookMark.fetchCity() else { return }
-        for index in 0..<resultArray.count {
+        for index in resultArray.indices {
             guard let cityName = resultArray[index].value(forKey: AppText.ModelText.attributeName) as? String else { return }
             storedCities.append(cityName)
             DispatchQueue.global().async {
@@ -140,7 +140,7 @@ extension OtherCityViewController {
     }
     
     private func setUpLayout() {
-        let safeGuideLine: UILayoutGuide = view.safeAreaLayoutGuide
+        let safeGuideLine = view.safeAreaLayoutGuide
         
         NSLayoutConstraint.activate([
             backgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -173,16 +173,8 @@ extension OtherCityViewController {
     }
 }
 
-private struct LayoutConstants {
-    static let standardGap: CGFloat = 8
-    static let textFieldHeight: CGFloat = 30
-    static let heightMultiplier: CGFloat = 0.7
-    static let titleLeading: CGFloat = 15
-    static let largeGap: CGFloat = 50
-}
-
+// MARK: - REQUEST
 extension OtherCityViewController {
-    // MARK: - REQUEST
     private func requestCurrentWeatherOfCity(cityName: String) {
         guard let url: URL = apiManager.getCityWeatherURL(cityName: cityName) else { return }
         requestCurrentWeatherOfCityData(url: url)
@@ -220,8 +212,8 @@ extension OtherCityViewController {
             switch result {
             case .success(let data):
                 guard let self = self, var forecastWeatherOfCity = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
-                forecastWeatherOfCity.list.removeSubrange(0...2)
-                forecastWeatherOfCity.list.removeSubrange(8...)
+                forecastWeatherOfCity.list.removeSubrange(NumberConstants.fromZeroToTwo)
+                forecastWeatherOfCity.list.removeSubrange(NumberConstants.fromEightToEnd)
                 self.forecasts.append(forecastWeatherOfCity)
                 DispatchQueue.main.async {
                     self.cityWeatherTableView.reloadData()
@@ -246,7 +238,7 @@ extension OtherCityViewController: UITableViewDelegate, UITableViewDataSource {
             return UITableViewCell()
         }
         for i in 0..<storedCities.count {
-            if cities[indexPath.row].name == storedCities[i] {
+            if indexPath.row < cities.count, cities[indexPath.row].name == storedCities[i] {
                 cell.bookMarkButton.isSelected = true
                 cell.bookMarkButton.tintColor = UIColor.systemYellow
                 break
@@ -254,7 +246,7 @@ extension OtherCityViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         cell.cityNameLabel.text = cities[indexPath.row].name
-        cell.weatherLabel.text = cities[indexPath.row].weather[0].description
+        cell.weatherLabel.text = cities[indexPath.row].weather[.zero].description
         cell.temperatureLabel.text = String(Int(cities[indexPath.row].main.temp)) + AppText.celsiusString
         cell.prepare(forecast: forecasts[indexPath.row])
         
@@ -266,7 +258,7 @@ extension OtherCityViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 200
+        return LayoutConstants.tableViewItemHeight
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -282,7 +274,6 @@ extension OtherCityViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             removeCell(at: indexPath, to: tableView)
-            
         }
     }
     
@@ -348,6 +339,21 @@ extension OtherCityViewController: UITextFieldDelegate {
     }
 }
 
+// MARK: - Magic Number
+private struct LayoutConstants {
+    static let standardGap: CGFloat = 8
+    static let textFieldHeight: CGFloat = 30
+    static let heightMultiplier: CGFloat = 0.7
+    static let titleLeading: CGFloat = 15
+    static let largeGap: CGFloat = 50
+    static let tableViewItemHeight: CGFloat = 200
+}
+
 private struct AnimationConstants {
     static let duration: TimeInterval = 0.2
+}
+
+private struct NumberConstants {
+    static let fromZeroToTwo = 0...2
+    static let fromEightToEnd = 8...
 }

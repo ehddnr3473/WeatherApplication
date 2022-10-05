@@ -24,10 +24,7 @@ class TabBar: UITabBarController {
         
         viewControllers = [currentWeatherViewController, otherCityViewController]
         setViewControllers(viewControllers, animated: true)
-        
-//        tabBar.backgroundColor = .systemBackground
-//        view.backgroundColor = .systemBackground
-//        UITabBar.appearance().barTintColor = .systemBackground
+
         tabBar.tintColor = .white
     }
 }
