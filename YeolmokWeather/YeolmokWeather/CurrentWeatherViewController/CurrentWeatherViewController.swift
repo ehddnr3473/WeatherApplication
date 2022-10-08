@@ -47,8 +47,8 @@ final class CurrentWeatherViewController: UIViewController {
     private var cityNameLabel: UILabel = {
         let label = UILabel()
         
-        label.textColor = UIColor.white
-        label.textAlignment = NSTextAlignment.center
+        label.textColor = .white
+        label.textAlignment = .center
         label.font = UIFont.boldSystemFont(ofSize: 30)
         
         return label
@@ -57,8 +57,8 @@ final class CurrentWeatherViewController: UIViewController {
     private var temperatureLabel: UILabel = {
         let label = UILabel()
         
-        label.textColor = UIColor.white
-        label.textAlignment = NSTextAlignment.center
+        label.textColor = .white
+        label.textAlignment = .center
         label.font = UIFont.boldSystemFont(ofSize: 40)
         
         return label
@@ -67,8 +67,8 @@ final class CurrentWeatherViewController: UIViewController {
     private var weatherLabel: UILabel = {
         let label = UILabel()
         
-        label.textColor = UIColor.white
-        label.textAlignment = NSTextAlignment.center
+        label.textColor = .white
+        label.textAlignment = .center
         label.font = UIFont.boldSystemFont(ofSize: 20)
         
         return label
@@ -132,7 +132,7 @@ final class CurrentWeatherViewController: UIViewController {
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+
         setUpUI()
         configure()
     }
@@ -278,12 +278,8 @@ extension CurrentWeatherViewController {
                     self.setCityName(cityName: city[.zero].koreanNameOfCity.cityName ?? city[.zero].name)
                 }
                 
-                DispatchQueue.global().async {
-                    self.requestWeatherForecast(cityName: city[.zero].name)
-                }
+                self.verifyAndRequestWeatherData(city[.zero].name)
                 
-                guard let url: URL = self.apiManager.getCityWeatherURL(cityName: city[.zero].name) else { return }
-                self.requestWeatherDataOfCity(url: url)
             case .failure(let error):
                 switch error {
                 default:
@@ -297,6 +293,39 @@ extension CurrentWeatherViewController {
                 }
             }
         })
+    }
+    
+    private func verifyAndRequestWeatherData(_ cityName: String) {
+        let pattern = "^[A-Za-z]{0,}$"
+        
+        let regex = try? NSRegularExpression(pattern: pattern)
+        if let _ = regex?.firstMatch(in: cityName, range: NSRange(location: 0, length: cityName.count)) {
+            guard let url: URL = self.apiManager.getCityWeatherURL(cityName: cityName) else { return }
+            DispatchQueue.global(qos: .userInitiated).async {
+                self.requestWeatherDataOfCity(url: url)
+                self.requestWeatherForecast(cityName: cityName)
+            }
+        } else {
+            let refinedCityName = refineCityName(cityName)
+            guard let url: URL = self.apiManager.getCityWeatherURL(cityName: refinedCityName) else { return }
+            DispatchQueue.global(qos: .userInitiated).async {
+                self.requestWeatherDataOfCity(url: url)
+                self.requestWeatherForecast(cityName: refinedCityName)
+            }
+        }
+    }
+    
+    private func refineCityName(_ cityName: String) -> String {
+        var cityName = cityName
+        let startIndex = cityName.startIndex
+        
+        for index in cityName.indices {
+            if cityName[index] == "-" || cityName[index] == "," {
+                cityName = String(cityName[startIndex..<index])
+                break
+            }
+        }
+        return cityName
     }
     
     private func requestWeatherDataOfCity(url: URL) {

@@ -100,7 +100,6 @@ final class OtherCityViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
         setUpUI()
         configure()
         fetchBookMarkCity()
@@ -111,7 +110,7 @@ final class OtherCityViewController: UIViewController {
         for index in resultArray.indices {
             guard let cityName = resultArray[index].value(forKey: AppText.ModelText.attributeName) as? String else { return }
             storedCities.append(cityName)
-            DispatchQueue.global().async {
+            DispatchQueue.global(qos: .userInitiated).async {
                 self.requestCurrentWeatherOfCity(cityName: cityName)
                 self.requestForecastWeatherOfCity(cityName: cityName)
             }
@@ -119,6 +118,7 @@ final class OtherCityViewController: UIViewController {
     }
 }
 
+// MARK: - View
 extension OtherCityViewController {
     private func setUpUI() {
         setUpHierachy()
@@ -289,7 +289,7 @@ extension OtherCityViewController: UITextFieldDelegate {
         let cityName: String = textField.text?.capitalized ?? ""
         if verifyCityName(cityName: cityName) {
             requestCurrentWeatherOfCity(cityName: cityName)
-            DispatchQueue.global().async {
+            DispatchQueue.global(qos: .userInitiated).async {
                 self.requestForecastWeatherOfCity(cityName: cityName)
             }
             searchTextField.text = ""

@@ -159,8 +159,8 @@ extension CityWeatherTableViewCell: UICollectionViewDataSource, UICollectionView
         guard let forecast = forecast else { return UICollectionViewCell() }
         
         cell.timeLabel.text = AppText.getTimeText(time: forecast.list[indexPath.row].time)
-        cell.weatherImageView.image = UIImage(named: FetchImageName.setForecastImage(weather: forecast.list[indexPath.row].weather[0].id))?.withRenderingMode(.alwaysTemplate)
-        cell.weatherLabel.text = forecast.list[indexPath.row].weather[0].description
+        cell.weatherImageView.image = UIImage(named: FetchImageName.setForecastImage(weather: forecast.list[indexPath.row].weather[.zero].id))?.withRenderingMode(.alwaysTemplate)
+        cell.weatherLabel.text = forecast.list[indexPath.row].weather[.zero].description
         cell.temperatureLabel.text = String(Int(forecast.list[indexPath.row].main.temp)) + AppText.celsiusString
         
         return cell
