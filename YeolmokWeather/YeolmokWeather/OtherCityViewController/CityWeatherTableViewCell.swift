@@ -11,15 +11,7 @@ import CoreData
 
 class CityWeatherTableViewCell: UITableViewCell {
     static let identifier: String = "CityWeatherTableViewCell"
-    var cities: [WeatherOfCity] = []
     private var forecast: Forecast?
-    
-    var backgroundImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        return imageView
-    }()
     
     lazy var bookMarkButton: UIButton = {
         let button = UIButton(type: UIButton.ButtonType.custom)
@@ -87,10 +79,9 @@ class CityWeatherTableViewCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        guard let forecast = forecast else {
-            return
+        if let forecast = forecast {
+            prepare(forecast: forecast)
         }
-        prepare(forecast: forecast)
     }
     
     func prepare(forecast: Forecast) {
@@ -102,18 +93,13 @@ class CityWeatherTableViewCell: UITableViewCell {
     }
     
     private func setUpHierachy() {
-        [backgroundImageView, bookMarkButton, cityNameLabel, weatherLabel, temperatureLabel, forecastOfCityCollectionView].forEach {
+        [bookMarkButton, cityNameLabel, weatherLabel, temperatureLabel, forecastOfCityCollectionView].forEach {
             contentView.addSubview($0)
         }
     }
     
     private func setUpLayout() {
         NSLayoutConstraint.activate([
-            backgroundImageView.topAnchor.constraint(equalTo: self.topAnchor),
-            backgroundImageView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            backgroundImageView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            backgroundImageView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-            
             bookMarkButton.topAnchor.constraint(equalTo: self.topAnchor, constant: LayoutConstants.standardGap),
             bookMarkButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: LayoutConstants.standardGap),
             bookMarkButton.widthAnchor.constraint(equalToConstant: LayoutConstants.bookMarkSize),
@@ -156,7 +142,7 @@ class CityWeatherTableViewCell: UITableViewCell {
 extension CityWeatherTableViewCell: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier, for: indexPath) as? TodayWeatherForecastCollectionViewCell else { return UICollectionViewCell() }
-        guard let forecast = forecast else { return UICollectionViewCell() }
+        guard let forecast = forecast else { return cell }
         
         cell.timeLabel.text = AppText.getTimeText(time: forecast.list[indexPath.row].time)
         cell.weatherImageView.image = UIImage(named: FetchImageName.setForecastImage(weather: forecast.list[indexPath.row].weather[.zero].id))?.withRenderingMode(.alwaysTemplate)

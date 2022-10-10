@@ -19,12 +19,17 @@ class TabBar: UITabBarController {
         let currentWeatherViewController = CurrentWeatherViewController()
         let otherCityViewController = OtherCityViewController()
         
-        currentWeatherViewController.tabBarItem = UITabBarItem(title: "Home", image: UIImage(systemName: "house.fill"), tag: 0)
-        otherCityViewController.tabBarItem = UITabBarItem(title: "OtherCity", image: UIImage(systemName: "plus.circle.fill"), tag: 1)
+        currentWeatherViewController.tabBarItem = UITabBarItem(title: "Weather", image: UIImage(systemName: "sun.max.circle.fill"), tag: NumberConstants.first)
+        otherCityViewController.tabBarItem = UITabBarItem(title: "City", image: UIImage(systemName: "plus.circle.fill"), tag: NumberConstants.second)
         
         viewControllers = [currentWeatherViewController, otherCityViewController]
         setViewControllers(viewControllers, animated: true)
 
         tabBar.tintColor = .white
     }
+}
+
+private struct NumberConstants {
+    static let first = 0
+    static let second = 1
 }

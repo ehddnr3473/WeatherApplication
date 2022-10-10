@@ -46,13 +46,12 @@ class WeatherForecastTableViewCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        guard let forecast = forecast else {
-            return
+        if let forecast = forecast {
+            prepare(with: forecast)
         }
-        prepare(forecast: forecast)
     }
     
-    func prepare(forecast: Forecast) {
+    func prepare(with forecast: Forecast) {
         self.forecast = forecast
     }
     
@@ -87,7 +86,7 @@ extension WeatherForecastTableViewCell: UICollectionViewDataSource, UICollection
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier, for: indexPath) as? TodayWeatherForecastCollectionViewCell else { return UICollectionViewCell() }
-        guard let forecast = forecast else { return UICollectionViewCell() }
+        guard let forecast = forecast else { return cell }
         
         cell.timeLabel.text = AppText.getTimeText(time: forecast.list[indexPath.row].time)
         cell.weatherImageView.image = UIImage(named: FetchImageName.setForecastImage(weather: forecast.list[indexPath.row].weather[.zero].id))?.withRenderingMode(.alwaysTemplate)

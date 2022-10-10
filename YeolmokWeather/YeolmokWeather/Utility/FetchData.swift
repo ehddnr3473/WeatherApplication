@@ -19,7 +19,7 @@ struct FetchData {
         case undefined
     }
     
-    func errorHandler(error: Error) -> String {
+    func errorHandler(_ error: Error) -> String {
         var message: String = ""
         switch error {
         case FetchError.apiKeyError:
@@ -40,7 +40,7 @@ struct FetchData {
         }
     }
     
-    func getCityWeatherURL(cityName: String) -> URL? {
+    func getCityWeatherURL(with cityName: String) -> URL? {
         var baseURL = URLComponents(string: "https://api.openweathermap.org/data/2.5/weather?")
         let cityName = URLQueryItem(name: "q", value: cityName)
         let language = URLQueryItem(name: "lang", value: "kr")
@@ -61,7 +61,7 @@ struct FetchData {
         return baseURL?.url
     }
     
-    func getWeatherForecastURL(cityName: String) -> URL? {
+    func getWeatherForecastURL(with cityName: String) -> URL? {
         var baseURL = URLComponents(string: "https://api.openweathermap.org/data/2.5/forecast?")
         let cityName = URLQueryItem(name: "q", value: cityName)
         let language = URLQueryItem(name: "lang", value: "kr")
@@ -72,7 +72,7 @@ struct FetchData {
         return baseURL?.url
     }
     
-    func requestData(url: URL, completion: @escaping (Result<Data, FetchError>) -> Void) {
+    func requestData(with url: URL, completion: @escaping (Result<Data, FetchError>) -> Void) {
         var request = URLRequest(url: url)
         request.httpMethod = getMethodString
         

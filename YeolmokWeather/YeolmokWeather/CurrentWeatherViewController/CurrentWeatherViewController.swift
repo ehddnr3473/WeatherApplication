@@ -24,7 +24,6 @@ final class CurrentWeatherViewController: UIViewController {
     private var today: String?
     private var startOfTomorrowIndex: Int?
     
-    
     private var weatherBackgroundImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -269,7 +268,7 @@ extension CurrentWeatherViewController {
     }
     
     private func requestCityName(url: URL) {
-        apiManager.requestData(url: url, completion: { [weak self] result in
+        apiManager.requestData(with: url, completion: { [weak self] result in
             switch result {
             case .success(let data):
                 guard let self = self, let city = DecodingManager.decode(with: data, modelType: [CityName].self) else { return }
@@ -286,7 +285,7 @@ extension CurrentWeatherViewController {
                     guard let self = self else { return }
                     DispatchQueue.main.async {
                         if !self.alert.isBeingPresented {
-                            self.alert.message = self.apiManager.errorHandler(error: error)
+                            self.alert.message = self.apiManager.errorHandler(error)
                             self.present(self.alert, animated: true, completion: nil)
                         }
                     }
@@ -300,17 +299,17 @@ extension CurrentWeatherViewController {
         
         let regex = try? NSRegularExpression(pattern: pattern)
         if let _ = regex?.firstMatch(in: cityName, range: NSRange(location: 0, length: cityName.count)) {
-            guard let url: URL = self.apiManager.getCityWeatherURL(cityName: cityName) else { return }
+            guard let url: URL = self.apiManager.getCityWeatherURL(with: cityName) else { return }
             DispatchQueue.global(qos: .userInitiated).async {
-                self.requestWeatherDataOfCity(url: url)
-                self.requestWeatherForecast(cityName: cityName)
+                self.requestWeatherDataOfCity(url)
+                self.requestWeatherForecast(cityName)
             }
         } else {
             let refinedCityName = refineCityName(cityName)
-            guard let url: URL = self.apiManager.getCityWeatherURL(cityName: refinedCityName) else { return }
+            guard let url: URL = self.apiManager.getCityWeatherURL(with: refinedCityName) else { return }
             DispatchQueue.global(qos: .userInitiated).async {
-                self.requestWeatherDataOfCity(url: url)
-                self.requestWeatherForecast(cityName: refinedCityName)
+                self.requestWeatherDataOfCity(url)
+                self.requestWeatherForecast(refinedCityName)
             }
         }
     }
@@ -328,8 +327,8 @@ extension CurrentWeatherViewController {
         return cityName
     }
     
-    private func requestWeatherDataOfCity(url: URL) {
-        apiManager.requestData(url: url, completion: { [weak self] result in
+    private func requestWeatherDataOfCity(_ url: URL) {
+        apiManager.requestData(with: url) { [weak self] result in
             switch result {
             case .success(let data):
                 guard let self = self, let currentWeatherOfCity = DecodingManager.decode(with: data, modelType: WeatherOfCity.self) else { return }
@@ -342,17 +341,17 @@ extension CurrentWeatherViewController {
                     guard let self = self else { return }
                     DispatchQueue.main.async {
                         if !self.alert.isBeingPresented {
-                            self.alert.message = self.apiManager.errorHandler(error: error)
+                            self.alert.message = self.apiManager.errorHandler(error)
                             self.present(self.alert, animated: true, completion: nil)
                         }
                     }
             }
-        })
+        }
     }
     
-    private func requestWeatherForecast(cityName: String) {
-        guard let url: URL = apiManager.getWeatherForecastURL(cityName: cityName) else { return }
-        apiManager.requestData(url: url, completion: { [weak self] result in
+    private func requestWeatherForecast(_ cityName: String) {
+        guard let url: URL = apiManager.getWeatherForecastURL(with: cityName) else { return }
+        apiManager.requestData(with: url) { [weak self] result in
             switch result {
             case .success(let data):
                 guard let self = self, var todayWeatherOfCity = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
@@ -367,12 +366,12 @@ extension CurrentWeatherViewController {
                 guard let self = self else { return }
                 DispatchQueue.main.async {
                     if !self.alert.isBeingPresented {
-                        self.alert.message = self.apiManager.errorHandler(error: error)
+                        self.alert.message = self.apiManager.errorHandler(error)
                         self.present(self.alert, animated: true, completion: nil)
                     }
                 }
             }
-        })
+        }
     }
     
     private func appendDayList(time: String) {
@@ -457,12 +456,11 @@ extension CurrentWeatherViewController: UICollectionViewDataSource, UICollection
 }
 
 extension CurrentWeatherViewController: UITableViewDataSource, UITableViewDelegate {
-   
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: WeatherForecastTableViewCell.identifier, for: indexPath) as? WeatherForecastTableViewCell else { return UITableViewCell() }
         
         cell.dayLabel.text = dayList[indexPath.row]
-        cell.prepare(forecast: forecasts[indexPath.row])
+        cell.prepare(with: forecasts[indexPath.row])
         
         return cell
     }

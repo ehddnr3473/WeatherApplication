@@ -9,7 +9,7 @@ import Foundation
 
 struct Forecast: Codable {
     var list: [List]
-    
+    var city: City
     struct List: Codable {
         let main: Main
         let weather: [Weather]
@@ -40,5 +40,9 @@ struct Forecast: Codable {
             case rain
             case time = "dt_txt"
         }
+    }
+    
+    struct City: Codable {
+        let name: String
     }
 }
