@@ -46,12 +46,10 @@ class WeatherForecastTableViewCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        if let forecast = forecast {
-            prepare(with: forecast)
-        }
+        forecast = nil
     }
     
-    func prepare(with forecast: Forecast) {
+    func setUpForecast(with forecast: Forecast) {
         self.forecast = forecast
     }
     

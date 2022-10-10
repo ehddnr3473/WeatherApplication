@@ -79,12 +79,15 @@ class CityWeatherTableViewCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        if let forecast = forecast {
-            prepare(forecast: forecast)
-        }
+        
+        forecast = nil
+        
+        bookMarkButton.setImage(UIImage(named: "star")?.withRenderingMode(.alwaysTemplate), for: UIControl.State.normal)
+        bookMarkButton.tintColor = .lightGray
+        bookMarkButton.isSelected = false
     }
     
-    func prepare(forecast: Forecast) {
+    func setUpForecast(forecast: Forecast) {
         self.forecast = forecast
     }
     

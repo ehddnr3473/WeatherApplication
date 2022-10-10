@@ -91,13 +91,13 @@ final class OtherCityViewController: UIViewController {
     }()
     
     private let alert: UIAlertController = {
-        let alert = UIAlertController(title: "오류", message: "", preferredStyle: UIAlertController.Style.alert)
+        let alert = UIAlertController(title: "오류", message: "", preferredStyle: .alert)
         
         return alert
     }()
     
     private let okAction: UIAlertAction = {
-        let action = UIAlertAction(title: "확인", style: UIAlertAction.Style.default)
+        let action = UIAlertAction(title: "확인", style: .default)
         
         return action
     }()
@@ -116,9 +116,10 @@ final class OtherCityViewController: UIViewController {
         for index in resultArray.indices {
             guard let cityName = resultArray[index].value(forKey: AppText.ModelText.attributeName) as? String else { return }
             storedCities.append(cityName)
-            DispatchQueue.global(qos: .userInitiated).async {
-                self.requestCurrentWeatherOfCity(cityName)
-                self.requestForecastWeatherOfCity(cityName)
+            AnotherCities.append(AnotherCity(name: cityName))
+            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+                self?.requestCurrentWeatherOfCity(cityName)
+                self?.requestForecastWeatherOfCity(cityName)
             }
         }
     }
@@ -195,6 +196,7 @@ extension OtherCityViewController {
                     for index in self.AnotherCities.indices {
                         if weatherOfCity.name == self.AnotherCities[index].name {
                             self.AnotherCities[index].currentWeather = weatherOfCity
+                            break
                         }
                     }
                 } else {
@@ -268,17 +270,17 @@ extension OtherCityViewController: UITableViewDelegate, UITableViewDataSource {
                 break
             }
         }
-        
+        cell.selectionStyle = .none
         cell.cityNameLabel.text = currentWeather.name
         cell.weatherLabel.text = currentWeather.weather[.zero].description
         cell.temperatureLabel.text = String(Int(currentWeather.main.temp)) + AppText.celsiusString
         
         guard let forecastWeather = AnotherCities[indexPath.row].forecastWeather else { return cell }
-        cell.prepare(forecast: forecastWeather)
+        cell.setUpForecast(forecast: forecastWeather)
         
         return cell
     }
-    // nil이 없을 경우 AnotherCities.count
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if AnotherCities.isEmpty {
             return .zero
@@ -327,51 +329,45 @@ extension OtherCityViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         let cityName: String = textField.text?.capitalized ?? ""
         if verifyCityName(cityName) {
-            DispatchQueue.global(qos: .userInitiated).async {
-                self.requestCurrentWeatherOfCity(cityName)
-                self.requestForecastWeatherOfCity(cityName)
+            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+                self?.requestCurrentWeatherOfCity(cityName)
+                self?.requestForecastWeatherOfCity(cityName)
             }
-            searchTextField.text = ""
-        } else {
-            if !alert.isBeingPresented {
-                alert.title = AppText.AlertTitle.appendFail
-                alert.message = AppText.AlertMessage.appendFailMessage
-                present(alert, animated: true, completion: nil)
-                searchTextField.text = ""
-            }
+            textField.text = ""
         }
         return true
     }
     
     private func verifyCityName(_ cityName: String) -> Bool {
-        if cityName == "" && !alert.isBeingPresented {
+        if AnotherCities.isEmpty {
+            return true
+        } else if cityName == "" && !alert.isBeingPresented {
             alert.title = AppText.AlertTitle.appendFail
             alert.message = AppText.AlertMessage.emptyText
             present(alert, animated: true, completion: nil)
             return false
-        }
-        
-        if AnotherCities.isEmpty {
+        } else if AnotherCities.contains(where: { $0.name == cityName }) && !alert.isBeingPresented {
+            alert.title = AppText.AlertTitle.appendFail
+            alert.message = AppText.AlertMessage.appendFailMessage
+            present(alert, animated: true, completion: nil)
+            searchTextField.text = ""
+            return false
+        } else {
             return true
         }
-
-        if AnotherCities.contains(where: { $0.name == cityName }) {
-            return false
-        }
-        return true
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        UIView.animate(withDuration: AnimationConstants.duration) {
-            self.trailingOfSearchTextField.constant = -LayoutConstants.largeGap
-            self.view.layoutIfNeeded()
+        UIView.animate(withDuration: AnimationConstants.duration) { [weak self] in
+            self?.trailingOfSearchTextField.constant = -LayoutConstants.largeGap
+            self?.view.layoutIfNeeded()
         }
     }
     
     func textFieldDidEndEditing(_ textField: UITextField, reason: UITextField.DidEndEditingReason) {
-        UIView.animate(withDuration: AnimationConstants.duration) {
-            self.trailingOfSearchTextField.constant = -LayoutConstants.standardGap
-            self.view.layoutIfNeeded()
+        UIView.animate(withDuration: AnimationConstants.duration) { [weak self] in
+            self?.trailingOfSearchTextField.constant = -LayoutConstants.standardGap
+            self?.view.layoutIfNeeded()
         }
     }
 }

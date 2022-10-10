@@ -198,7 +198,7 @@ extension CurrentWeatherViewController {
         alert.addAction(okAction)
     }
     
-    private func setCityName(cityName: String) {
+    private func setCityName(with cityName: String) {
         self.cityNameLabel.text = cityName
     }
     
@@ -264,17 +264,19 @@ extension CurrentWeatherViewController {
         guard let lon = longitude else { return }
         
         guard let url: URL = apiManager.getReverseGeocodingURL(lat: lat, lon: lon) else { return }
-        requestCityName(url: url)
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            self?.requestCityName(with: url)
+        }
     }
     
-    private func requestCityName(url: URL) {
+    private func requestCityName(with url: URL) {
         apiManager.requestData(with: url, completion: { [weak self] result in
             switch result {
             case .success(let data):
                 guard let self = self, let city = DecodingManager.decode(with: data, modelType: [CityName].self) else { return }
                 
                 DispatchQueue.main.async {
-                    self.setCityName(cityName: city[.zero].koreanNameOfCity.cityName ?? city[.zero].name)
+                    self.setCityName(with: city[.zero].koreanNameOfCity.cityName ?? city[.zero].name)
                 }
                 
                 self.verifyAndRequestWeatherData(city[.zero].name)
@@ -295,21 +297,19 @@ extension CurrentWeatherViewController {
     }
     
     private func verifyAndRequestWeatherData(_ cityName: String) {
-        let pattern = "^[A-Za-z]{0,}$"
-        
-        let regex = try? NSRegularExpression(pattern: pattern)
+        let regex = try? NSRegularExpression(pattern: AppText.pattern)
         if let _ = regex?.firstMatch(in: cityName, range: NSRange(location: 0, length: cityName.count)) {
             guard let url: URL = self.apiManager.getCityWeatherURL(with: cityName) else { return }
-            DispatchQueue.global(qos: .userInitiated).async {
-                self.requestWeatherDataOfCity(url)
-                self.requestWeatherForecast(cityName)
+            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+                self?.requestWeatherDataOfCity(with: url)
+                self?.requestWeatherForecast(with: cityName)
             }
         } else {
             let refinedCityName = refineCityName(cityName)
             guard let url: URL = self.apiManager.getCityWeatherURL(with: refinedCityName) else { return }
-            DispatchQueue.global(qos: .userInitiated).async {
-                self.requestWeatherDataOfCity(url)
-                self.requestWeatherForecast(refinedCityName)
+            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+                self?.requestWeatherDataOfCity(with: url)
+                self?.requestWeatherForecast(with: refinedCityName)
             }
         }
     }
@@ -327,7 +327,7 @@ extension CurrentWeatherViewController {
         return cityName
     }
     
-    private func requestWeatherDataOfCity(_ url: URL) {
+    private func requestWeatherDataOfCity(with url: URL) {
         apiManager.requestData(with: url) { [weak self] result in
             switch result {
             case .success(let data):
@@ -349,7 +349,7 @@ extension CurrentWeatherViewController {
         }
     }
     
-    private func requestWeatherForecast(_ cityName: String) {
+    private func requestWeatherForecast(with cityName: String) {
         guard let url: URL = apiManager.getWeatherForecastURL(with: cityName) else { return }
         apiManager.requestData(with: url) { [weak self] result in
             switch result {
@@ -374,14 +374,21 @@ extension CurrentWeatherViewController {
         }
     }
     
-    private func appendDayList(time: String) {
-        var result: String
-        let startIndex = time.index(time.startIndex, offsetBy: NumberConstants.startOffset)
-        let endIndex = time.index(time.endIndex, offsetBy: -NumberConstants.endOffset)
-        guard let day = Int(String(time[startIndex...endIndex])) else { return }
+    private func makeArray(forecast: Forecast) {
+        var forecast = forecast
+        setUpToday(time: forecast.list[.zero].time)
+        setUpTomorrow(forecast: forecast)
+        guard let startOfTomorrowIndex = startOfTomorrowIndex else { return }
+        forecast.list.removeSubrange(.zero..<startOfTomorrowIndex)
         
-        result = String(day) + AppText.day
-        dayList.append(result)
+        forecasts.append(forecast)
+        appendDayList(time: forecast.list[.zero].time)
+        forecast.list.removeSubrange(NumberConstants.fromZeroToSeven)
+        forecasts.append(forecast)
+        appendDayList(time: forecast.list[.zero].time)
+        forecast.list.removeSubrange(NumberConstants.fromZeroToSeven)
+        forecasts.append(forecast)
+        appendDayList(time: forecast.list[.zero].time)
     }
     
     private func setUpToday(time: String) {
@@ -393,15 +400,6 @@ extension CurrentWeatherViewController {
         today = day
     }
     
-    private func getTomorrowString(time: String) -> String {
-        var day: String
-        let startIndex = time.index(time.startIndex, offsetBy: NumberConstants.startOffset)
-        let endIndex = time.index(time.endIndex, offsetBy: -NumberConstants.endOffset)
-        day = String(time[startIndex...endIndex])
-        
-        return day
-    }
-    
     private func setUpTomorrow(forecast: Forecast) {
         for index in forecast.list.indices {
             if getTomorrowString(time: forecast.list[index].time) != today {
@@ -411,21 +409,23 @@ extension CurrentWeatherViewController {
         }
     }
     
-    private func makeArray(forecast: Forecast) {
-        var forecast = forecast
-        setUpToday(time: forecast.list[.zero].time)
-        setUpTomorrow(forecast: forecast)
-        guard let startOfTomorrowIndex = startOfTomorrowIndex else { return }
-        forecast.list.removeSubrange(.zero..<startOfTomorrowIndex)
-
-        forecasts.append(forecast)
-        appendDayList(time: forecast.list[.zero].time)
-        forecast.list.removeSubrange(NumberConstants.fromZeroToSeven)
-        forecasts.append(forecast)
-        appendDayList(time: forecast.list[.zero].time)
-        forecast.list.removeSubrange(NumberConstants.fromZeroToSeven)
-        forecasts.append(forecast)
-        appendDayList(time: forecast.list[.zero].time)
+    private func getTomorrowString(time: String) -> String {
+        var day: String
+        let startIndex = time.index(time.startIndex, offsetBy: NumberConstants.startOffset)
+        let endIndex = time.index(time.endIndex, offsetBy: -NumberConstants.endOffset)
+        day = String(time[startIndex...endIndex])
+        
+        return day
+    }
+    
+    private func appendDayList(time: String) {
+        var result: String
+        let startIndex = time.index(time.startIndex, offsetBy: NumberConstants.startOffset)
+        let endIndex = time.index(time.endIndex, offsetBy: -NumberConstants.endOffset)
+        guard let day = Int(String(time[startIndex...endIndex])) else { return }
+        
+        result = String(day) + AppText.day
+        dayList.append(result)
     }
 }
 
@@ -451,7 +451,7 @@ extension CurrentWeatherViewController: UICollectionViewDataSource, UICollection
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: LayoutConstants.collectionViewWidth, height: LayoutConstants.collectionViewHeight)
+        CGSize(width: LayoutConstants.collectionViewWidth, height: LayoutConstants.collectionViewHeight)
     }
 }
 
@@ -459,8 +459,13 @@ extension CurrentWeatherViewController: UITableViewDataSource, UITableViewDelega
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: WeatherForecastTableViewCell.identifier, for: indexPath) as? WeatherForecastTableViewCell else { return UITableViewCell() }
         
-        cell.dayLabel.text = dayList[indexPath.row]
-        cell.prepare(with: forecasts[indexPath.row])
+        cell.selectionStyle = .none
+        if indexPath.row < dayList.count {
+            cell.dayLabel.text = dayList[indexPath.row]
+        }
+        if indexPath.row < forecasts.count {
+            cell.setUpForecast(with: forecasts[indexPath.row])
+        }
         
         return cell
     }
@@ -469,12 +474,12 @@ extension CurrentWeatherViewController: UITableViewDataSource, UITableViewDelega
         if forecasts.isEmpty {
             return .zero
         } else {
-            return NumberConstants.numberOfRowsInSection
+            return forecasts.count
         }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return LayoutConstants.collectionViewHeight
+        LayoutConstants.collectionViewHeight
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -499,7 +504,6 @@ private struct NumberConstants {
     static let fromZeroToTwo = 0...2
     static let fromZeroToSeven = 0...7
     static let numberOfItemsInSection = 8
-    static let numberOfRowsInSection = 3
     static let startOffset = 8
     static let endOffset = 10
 }

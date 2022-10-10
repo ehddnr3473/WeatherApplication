@@ -14,6 +14,7 @@ struct AppText {
     static let am: String = "오전 "
     static let pm: String = "오후 "
     static let hourString: String = "시"
+    static let pattern: String = "^[A-Za-z]{0,}$"
     
     struct ModelText {
         static let entityName: String = "City"
