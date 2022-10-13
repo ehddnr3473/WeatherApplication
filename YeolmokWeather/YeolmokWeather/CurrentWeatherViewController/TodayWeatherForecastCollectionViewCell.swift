@@ -9,15 +9,15 @@ import Foundation
 import UIKit
 
 class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
-    static let identifier: String = "TodayWeatherForecastCollectionViewCell"
+    static let identifier = "TodayWeatherForecastCollectionViewCell"
     
     var timeLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
         label.textAlignment = NSTextAlignment.center
-        label.textColor = UIColor.white
-        label.font = UIFont.boldSystemFont(ofSize: 10)
+        label.textColor = .white
+        label.font = .boldSystemFont(ofSize: 10)
         
         return label
     }()
@@ -26,7 +26,7 @@ class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
-        imageView.tintColor = UIColor.white
+        imageView.tintColor = .white
         
         return imageView
     }()
@@ -35,9 +35,9 @@ class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.textAlignment = NSTextAlignment.center
-        label.textColor = UIColor.white
-        label.font = UIFont.boldSystemFont(ofSize: 10)
+        label.textAlignment = .center
+        label.textColor = .white
+        label.font = .boldSystemFont(ofSize: 10)
         
         return label
     }()
@@ -46,9 +46,9 @@ class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.textAlignment = NSTextAlignment.center
-        label.textColor = UIColor.white
-        label.font = UIFont.boldSystemFont(ofSize: 10)
+        label.textAlignment = .center
+        label.textColor = .white
+        label.font = .boldSystemFont(ofSize: 10)
         
         return label
     }()

@@ -19,8 +19,8 @@ class TabBar: UITabBarController {
         let currentWeatherViewController = CurrentWeatherViewController()
         let otherCityViewController = OtherCityViewController()
         
-        currentWeatherViewController.tabBarItem = UITabBarItem(title: "Weather", image: UIImage(systemName: "sun.max.circle.fill"), tag: NumberConstants.first)
-        otherCityViewController.tabBarItem = UITabBarItem(title: "City", image: UIImage(systemName: "plus.circle.fill"), tag: NumberConstants.second)
+        currentWeatherViewController.tabBarItem = UITabBarItem(title: AppText.weatherTitle, image: UIImage(systemName: AppText.weatherIcon), tag: NumberConstants.first)
+        otherCityViewController.tabBarItem = UITabBarItem(title: AppText.cityTitle, image: UIImage(systemName: AppText.cityIcon), tag: NumberConstants.second)
         
         viewControllers = [currentWeatherViewController, otherCityViewController]
         setViewControllers(viewControllers, animated: true)

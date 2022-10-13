@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 class WeatherForecastTableViewCell: UITableViewCell {
-    static let identifier: String = "WeatherForecastTableViewCell"
+    static let identifier = "WeatherForecastTableViewCell"
     private var forecast: Forecast?
     
     var dayLabel: UILabel = {
@@ -86,7 +86,9 @@ extension WeatherForecastTableViewCell: UICollectionViewDataSource, UICollection
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier, for: indexPath) as? TodayWeatherForecastCollectionViewCell else { return UICollectionViewCell() }
         guard let forecast = forecast else { return cell }
         
-        cell.timeLabel.text = AppText.getTimeText(time: forecast.list[indexPath.row].time)
+        let time = Date(timeIntervalSince1970: forecast.list[indexPath.row].date)
+            .formatted(Date.FormatStyle().hour(.defaultDigits(amPM: .abbreviated)))
+        cell.timeLabel.text = time
         cell.weatherImageView.image = UIImage(named: FetchImageName.setForecastImage(weather: forecast.list[indexPath.row].weather[.zero].id))?.withRenderingMode(.alwaysTemplate)
         cell.weatherLabel.text = forecast.list[indexPath.row].weather[.zero].description
         cell.temperatureLabel.text = String(Int(forecast.list[indexPath.row].main.temp)) + AppText.celsiusString

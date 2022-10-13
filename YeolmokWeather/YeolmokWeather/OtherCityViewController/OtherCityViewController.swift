@@ -17,7 +17,6 @@ final class OtherCityViewController: UIViewController {
     private let cancelButtonTitle: String = "취소"
     private var storedCities: [String] = []
     private var AnotherCities: [AnotherCity] = []
-    private var count = 0
     
     private struct AnotherCity {
         let name: String
@@ -40,7 +39,7 @@ final class OtherCityViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         
         label.text = mainLabelText
-        label.textColor = UIColor.white
+        label.textColor = .white
         label.font = .boldSystemFont(ofSize: 30)
         
         return label
@@ -228,7 +227,6 @@ extension OtherCityViewController {
             switch result {
             case .success(let data):
                 guard let self = self, var forecastWeatherOfCity = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
-                forecastWeatherOfCity.list.removeSubrange(NumberConstants.fromZeroToTwo)
                 forecastWeatherOfCity.list.removeSubrange(NumberConstants.fromEightToEnd)
                 if self.AnotherCities.contains(where: { $0.name == forecastWeatherOfCity.city.name }) {
                     for index in self.AnotherCities.indices {
@@ -266,11 +264,10 @@ extension OtherCityViewController: UITableViewDelegate, UITableViewDataSource {
         for index in storedCities.indices {
             if indexPath.row < AnotherCities.count, currentWeather.name == storedCities[index] {
                 cell.bookMarkButton.isSelected = true
-                cell.bookMarkButton.tintColor = UIColor.systemYellow
+                cell.bookMarkButton.tintColor = .systemYellow
                 break
             }
         }
-        cell.selectionStyle = .none
         cell.cityNameLabel.text = currentWeather.name
         cell.weatherLabel.text = currentWeather.weather[.zero].description
         cell.temperatureLabel.text = String(Int(currentWeather.main.temp)) + AppText.celsiusString
@@ -304,7 +301,8 @@ extension OtherCityViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cell.backgroundColor = UIColor.clear
+        cell.selectionStyle = .none
+        cell.backgroundColor = .clear
         cell.layer.borderWidth = AppStyles.borderWidth
         cell.layer.borderColor = AppStyles.Colors.mainColor.cgColor
     }
@@ -321,7 +319,7 @@ extension OtherCityViewController: UITableViewDelegate, UITableViewDataSource {
     
     private func removeCell(at indexPath: IndexPath, to tableView: UITableView) {
         AnotherCities.remove(at: indexPath.row)
-        tableView.reloadData()
+        cityWeatherTableView.reloadData()
     }
 }
 
@@ -334,6 +332,7 @@ extension OtherCityViewController: UITextFieldDelegate {
                 self?.requestForecastWeatherOfCity(cityName)
             }
             textField.text = ""
+            textField.resignFirstResponder()
         }
         return true
     }

@@ -10,14 +10,14 @@ import UIKit
 import CoreData
 
 class CityWeatherTableViewCell: UITableViewCell {
-    static let identifier: String = "CityWeatherTableViewCell"
+    static let identifier = "CityWeatherTableViewCell"
     private var forecast: Forecast?
     
     lazy var bookMarkButton: UIButton = {
         let button = UIButton(type: UIButton.ButtonType.custom)
         button.translatesAutoresizingMaskIntoConstraints = false
         
-        button.tintColor = UIColor.lightGray
+        button.tintColor = .lightGray
         button.setImage(UIImage(named: "star")?.withRenderingMode(.alwaysTemplate), for: UIControl.State.normal)
         button.addTarget(self, action: #selector(touchUpBookMarkButton(_:)), for: UIControl.Event.touchUpInside)
         
@@ -28,8 +28,8 @@ class CityWeatherTableViewCell: UITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.textColor = UIColor.white
-        label.font = UIFont.boldSystemFont(ofSize: 30)
+        label.textColor = .white
+        label.font = .boldSystemFont(ofSize: 30)
         
         return label
     }()
@@ -38,8 +38,8 @@ class CityWeatherTableViewCell: UITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.textColor = UIColor.white
-        label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.textColor = .white
+        label.font = .boldSystemFont(ofSize: 20)
         
         return label
     }()
@@ -48,8 +48,8 @@ class CityWeatherTableViewCell: UITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.textColor = UIColor.white
-        label.font = UIFont.boldSystemFont(ofSize: 40)
+        label.textColor = .white
+        label.font = .boldSystemFont(ofSize: 40)
         
         return label
     }()
@@ -59,10 +59,10 @@ class CityWeatherTableViewCell: UITableViewCell {
         flowLayout.scrollDirection = .horizontal
         flowLayout.sectionInset = .zero
         
-        let collectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         
-        collectionView.backgroundColor = UIColor.clear
+        collectionView.backgroundColor = .clear
         
         collectionView.register(TodayWeatherForecastCollectionViewCell.self, forCellWithReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier)
         
@@ -133,10 +133,10 @@ class CityWeatherTableViewCell: UITableViewCell {
         sender.isSelected = !sender.isSelected
         
         if sender.isSelected {
-            sender.tintColor = UIColor.systemYellow
+            sender.tintColor = .systemYellow
             BookMark.saveCity(name: cityNameLabel.text ?? "")
         } else {
-            sender.tintColor = UIColor.lightGray
+            sender.tintColor = .lightGray
             BookMark.deleteCity(name: cityNameLabel.text ?? "")
         }
     }
@@ -147,7 +147,10 @@ extension CityWeatherTableViewCell: UICollectionViewDataSource, UICollectionView
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier, for: indexPath) as? TodayWeatherForecastCollectionViewCell else { return UICollectionViewCell() }
         guard let forecast = forecast else { return cell }
         
-        cell.timeLabel.text = AppText.getTimeText(time: forecast.list[indexPath.row].time)
+        let time = Date(timeIntervalSince1970: forecast.list[indexPath.row].date)
+            .formatted(Date.FormatStyle().hour(.defaultDigits(amPM: .abbreviated)))
+        
+        cell.timeLabel.text = time
         cell.weatherImageView.image = UIImage(named: FetchImageName.setForecastImage(weather: forecast.list[indexPath.row].weather[.zero].id))?.withRenderingMode(.alwaysTemplate)
         cell.weatherLabel.text = forecast.list[indexPath.row].weather[.zero].description
         cell.temperatureLabel.text = String(Int(forecast.list[indexPath.row].main.temp)) + AppText.celsiusString

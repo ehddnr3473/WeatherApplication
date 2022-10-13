@@ -11,10 +11,10 @@ struct Forecast: Codable {
     var list: [List]
     var city: City
     struct List: Codable {
+        let date: TimeInterval
         let main: Main
         let weather: [Weather]
         let rain: Rain?
-        let time: String
         
         struct Main: Codable {
             let temp: Double
@@ -35,10 +35,10 @@ struct Forecast: Codable {
         }
         
         enum CodingKeys: String, CodingKey {
+            case date = "dt"
             case main
             case weather
             case rain
-            case time = "dt_txt"
         }
     }
     

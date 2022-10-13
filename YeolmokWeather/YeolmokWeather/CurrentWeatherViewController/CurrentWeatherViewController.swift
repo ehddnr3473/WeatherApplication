@@ -15,14 +15,8 @@ final class CurrentWeatherViewController: UIViewController {
     private var forecast: Forecast?
     private var forecasts: [Forecast] = []
     
-    private var locationManager: CLLocationManager?
-    private var currentLocation: CLLocationCoordinate2D!
-    private var latitude: String?
-    private var longitude: String?
-    
-    var dayList: [String] = []
-    private var today: String?
-    private var startOfTomorrowIndex: Int?
+    private var locationManager = CLLocationManager()
+    private var currentLocation: CLLocationCoordinate2D?
     
     private var weatherBackgroundImageView: UIImageView = {
         let imageView = UIImageView()
@@ -48,7 +42,7 @@ final class CurrentWeatherViewController: UIViewController {
         
         label.textColor = .white
         label.textAlignment = .center
-        label.font = UIFont.boldSystemFont(ofSize: 30)
+        label.font = .boldSystemFont(ofSize: 30)
         
         return label
     }()
@@ -58,7 +52,7 @@ final class CurrentWeatherViewController: UIViewController {
         
         label.textColor = .white
         label.textAlignment = .center
-        label.font = UIFont.boldSystemFont(ofSize: 40)
+        label.font = .boldSystemFont(ofSize: 40)
         
         return label
     }()
@@ -68,7 +62,7 @@ final class CurrentWeatherViewController: UIViewController {
         
         label.textColor = .white
         label.textAlignment = .center
-        label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.font = .boldSystemFont(ofSize: 20)
         
         return label
     }()
@@ -95,8 +89,8 @@ final class CurrentWeatherViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.textColor = UIColor.white
-        label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.textColor = .white
+        label.font = .boldSystemFont(ofSize: 20)
         label.text = "3일간의 예보"
         
         return label
@@ -131,7 +125,7 @@ final class CurrentWeatherViewController: UIViewController {
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         setUpUI()
         configure()
     }
@@ -140,7 +134,7 @@ final class CurrentWeatherViewController: UIViewController {
 // MARK: - View
 extension CurrentWeatherViewController {
     private func setUpUI() {
-        view.backgroundColor = UIColor.black
+        view.backgroundColor = .black
         setUpHierachy()
         setUpLayout()
     }
@@ -211,59 +205,59 @@ extension CurrentWeatherViewController {
 // MARK: - CoreLocation
 extension CurrentWeatherViewController: CLLocationManagerDelegate {
     private func requestAuthorization() {
-        if locationManager == nil {
-            locationManager = CLLocationManager()
-            locationManager!.desiredAccuracy = kCLLocationAccuracyBest
-            locationManager!.requestAlwaysAuthorization()
-            locationManager!.delegate = self
-            locationManagerDidChangeAuthorization(locationManager!)
-        } else {
-            // 사용자의 위치가 바뀌고있는지 확인하는 메서드
-            locationManager!.startMonitoringSignificantLocationChanges()
-        }
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.requestWhenInUseAuthorization()
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        currentLocation = locations.last?.coordinate
+        requestCurrentWeather()
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        forecast = nil
+        forecasts.removeAll()
         switch manager.authorizationStatus {
         case .authorizedAlways:
-            guard let currentLocation = manager.location?.coordinate else { return }
-            latitude = String(currentLocation.latitude)
-            longitude = String(currentLocation.longitude)
-            requestCurrentWeather()
+            manager.requestLocation()
         case .authorizedWhenInUse:
-            guard let currentLocation = manager.location?.coordinate else { return }
-            latitude = String(currentLocation.latitude)
-            longitude = String(currentLocation.longitude)
-            requestCurrentWeather()
+            manager.requestLocation()
         case .denied:
-            alert.message = AppText.AlertMessage.denied
-            present(alert, animated: true, completion: nil)
-            requestAuthorization()
+            if !alert.isBeingPresented {
+                alert.message = AppText.AlertMessage.denied
+                present(alert, animated: true, completion: nil)
+            }
         case .notDetermined:
             manager.requestWhenInUseAuthorization()
         case .restricted:
-            alert.message = AppText.AlertMessage.restricted
-            present(alert, animated: true, completion: nil)
-            requestAuthorization()
+            if !alert.isBeingPresented {
+                alert.message = AppText.AlertMessage.restricted
+                present(alert, animated: true, completion: nil)
+            }
         @unknown default:
-            alert.message = AppText.AlertMessage.undefined
-            present(alert, animated: true, completion: nil)
+            if !alert.isBeingPresented {
+                alert.message = AppText.AlertMessage.fail
+                present(alert, animated: true, completion: nil)
+            }
         }
     }
     
-    func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
-        alert.message = AppText.AlertMessage.fail
-        present(alert, animated: true, completion: nil)
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print(error)
+        if !alert.isBeingPresented {
+            alert.message = AppText.AlertMessage.fail
+            present(alert, animated: true, completion: nil)
+        }
     }
 }
 
 // MARK: - REQUEST
 extension CurrentWeatherViewController {
     private func requestCurrentWeather() {
-        guard let lat = latitude else { return }
-        guard let lon = longitude else { return }
+        guard let currentLocation = currentLocation else { return }
         
-        guard let url: URL = apiManager.getReverseGeocodingURL(lat: lat, lon: lon) else { return }
+        guard let url: URL = apiManager.getReverseGeocodingURL(with: currentLocation) else { return }
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             self?.requestCityName(with: url)
         }
@@ -354,10 +348,14 @@ extension CurrentWeatherViewController {
         apiManager.requestData(with: url) { [weak self] result in
             switch result {
             case .success(let data):
-                guard let self = self, var todayWeatherOfCity = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
-                todayWeatherOfCity.list.removeSubrange(NumberConstants.fromZeroToTwo)
-                self.forecast = todayWeatherOfCity
-                self.makeArray(forecast: todayWeatherOfCity)
+                guard let self = self, let forecastWeatherOfCity = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
+            
+                // 24시간 동안의 예보
+                self.forecast = self.setUpDayForecast(with: forecastWeatherOfCity)
+                
+                // 내일부터 3일간의 예보
+                self.appendForecastsTomorrow(with: forecastWeatherOfCity)
+                
                 DispatchQueue.main.async {
                     self.todayWeatherForecastCollectionView.reloadData()
                     self.weatherForecastTableView.reloadData()
@@ -374,58 +372,71 @@ extension CurrentWeatherViewController {
         }
     }
     
-    private func makeArray(forecast: Forecast) {
+    // For 24시간 동안의 예보
+    private func setUpDayForecast(with forecast: Forecast) -> Forecast {
         var forecast = forecast
-        setUpToday(time: forecast.list[.zero].time)
-        setUpTomorrow(forecast: forecast)
-        guard let startOfTomorrowIndex = startOfTomorrowIndex else { return }
-        forecast.list.removeSubrange(.zero..<startOfTomorrowIndex)
+        if forecast.list.count > NumberConstants.numberOfItemsInSection {
+            forecast.list.removeSubrange(NumberConstants.fromEightToEnd)
+        }
         
-        forecasts.append(forecast)
-        appendDayList(time: forecast.list[.zero].time)
-        forecast.list.removeSubrange(NumberConstants.fromZeroToSeven)
-        forecasts.append(forecast)
-        appendDayList(time: forecast.list[.zero].time)
-        forecast.list.removeSubrange(NumberConstants.fromZeroToSeven)
-        forecasts.append(forecast)
-        appendDayList(time: forecast.list[.zero].time)
+        return forecast
     }
     
-    private func setUpToday(time: String) {
-        var day: String
-        let startIndex = time.index(time.startIndex, offsetBy: NumberConstants.startOffset)
-        let endIndex = time.index(time.endIndex, offsetBy: -NumberConstants.endOffset)
-        day = String(time[startIndex...endIndex])
-        
-        today = day
-    }
-    
-    private func setUpTomorrow(forecast: Forecast) {
+    // For 3일 간의 예보
+    private func appendForecastsTomorrow(with forecast: Forecast) {
+        var forecast = forecast
         for index in forecast.list.indices {
-            if getTomorrowString(time: forecast.list[index].time) != today {
-                startOfTomorrowIndex = index
+            if compare(to: forecast.list[index].date) {
+                forecast.list.removeSubrange(.zero..<index)
+                var copiedForecast = forecast
+                if copiedForecast.list.count > NumberConstants.numberOfItemsInSection,
+                        forecast.list.count >= NumberConstants.numberOfItemsInSection {
+                    
+                    copiedForecast.list.removeSubrange(NumberConstants.fromEightToEnd)
+                    forecast.list.removeSubrange(NumberConstants.fromZeroToSeven)
+                    
+                    forecasts.append(copiedForecast)
+                    appendForecastsDaysAfterTomorrow(with: forecast)
+                }
                 break
             }
         }
     }
     
-    private func getTomorrowString(time: String) -> String {
-        var day: String
-        let startIndex = time.index(time.startIndex, offsetBy: NumberConstants.startOffset)
-        let endIndex = time.index(time.endIndex, offsetBy: -NumberConstants.endOffset)
-        day = String(time[startIndex...endIndex])
+    private func appendForecastsDaysAfterTomorrow(with forecast: Forecast) {
+        var dayAfterTomorrowForecast = forecast
+        if dayAfterTomorrowForecast.list.count > NumberConstants.numberOfItemsInSection {
+            dayAfterTomorrowForecast.list.removeSubrange(NumberConstants.fromEightToEnd)
+            forecasts.append(dayAfterTomorrowForecast)
+        }
         
-        return day
+        var twoDaysAfterTomorrowForecast = forecast
+        if twoDaysAfterTomorrowForecast.list.count >= NumberConstants.numberOfItemsInSection {
+            twoDaysAfterTomorrowForecast.list.removeSubrange(NumberConstants.fromZeroToSeven)
+            if twoDaysAfterTomorrowForecast.list.count > NumberConstants.numberOfItemsInSection {
+                twoDaysAfterTomorrowForecast.list.removeSubrange(NumberConstants.fromEightToEnd)
+                forecasts.append(twoDaysAfterTomorrowForecast)
+            }
+        }
     }
     
-    private func appendDayList(time: String) {
-        var result: String
-        let startIndex = time.index(time.startIndex, offsetBy: NumberConstants.startOffset)
-        let endIndex = time.index(time.endIndex, offsetBy: -NumberConstants.endOffset)
-        guard let day = Int(String(time[startIndex...endIndex])) else { return }
+    private func compare(to date: TimeInterval) -> Bool {
+        let day = Date()
+        let nextDay = Date(timeIntervalSince1970: date)
         
-        result = String(day) + AppText.day
-        dayList.append(result)
+        if dayToString(from: day) == dayToString(from: nextDay) {
+            return false
+        } else {
+            return true
+        }
+    }
+    
+    private func dayToString(from date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = .current
+        dateFormatter.dateFormat = AppText.dateFormat
+        
+        return dateFormatter.string(from: date)
     }
 }
 
@@ -434,7 +445,10 @@ extension CurrentWeatherViewController: UICollectionViewDataSource, UICollection
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier, for: indexPath) as? TodayWeatherForecastCollectionViewCell else { return UICollectionViewCell() }
         guard let forecast = forecast else { return UICollectionViewCell() }
 
-        cell.timeLabel.text = AppText.getTimeText(time: forecast.list[indexPath.row].time)
+        let time = Date(timeIntervalSince1970: forecast.list[indexPath.row].date)
+            .formatted(Date.FormatStyle().hour(.defaultDigits(amPM: .abbreviated)))
+        
+        cell.timeLabel.text = time
         cell.weatherImageView.image = UIImage(named: FetchImageName.setForecastImage(weather: forecast.list[indexPath.row].weather[.zero].id))?.withRenderingMode(.alwaysTemplate)
         cell.weatherLabel.text = forecast.list[indexPath.row].weather[.zero].description
         cell.temperatureLabel.text = String(Int(forecast.list[indexPath.row].main.temp)) + AppText.celsiusString
@@ -459,10 +473,9 @@ extension CurrentWeatherViewController: UITableViewDataSource, UITableViewDelega
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: WeatherForecastTableViewCell.identifier, for: indexPath) as? WeatherForecastTableViewCell else { return UITableViewCell() }
         
-        cell.selectionStyle = .none
-        if indexPath.row < dayList.count {
-            cell.dayLabel.text = dayList[indexPath.row]
-        }
+        let day = Date(timeIntervalSince1970: forecasts[indexPath.row].list[.zero].date).formatted(Date.FormatStyle().day(.twoDigits))
+        
+        cell.dayLabel.text = day
         if indexPath.row < forecasts.count {
             cell.setUpForecast(with: forecasts[indexPath.row])
         }
@@ -483,7 +496,8 @@ extension CurrentWeatherViewController: UITableViewDataSource, UITableViewDelega
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cell.backgroundColor = UIColor.clear
+        cell.selectionStyle = .none
+        cell.backgroundColor = .clear
         cell.layer.borderWidth = AppStyles.borderWidth
         cell.layer.borderColor = AppStyles.Colors.mainColor.cgColor
     }
@@ -501,9 +515,10 @@ private struct LayoutConstants {
 }
 
 private struct NumberConstants {
+    static let numberOfItemsInSection = 8
     static let fromZeroToTwo = 0...2
     static let fromZeroToSeven = 0...7
-    static let numberOfItemsInSection = 8
-    static let startOffset = 8
-    static let endOffset = 10
+    static let fromEightToEnd = 8...
+    static let oneDay: Double = 86400
+    
 }

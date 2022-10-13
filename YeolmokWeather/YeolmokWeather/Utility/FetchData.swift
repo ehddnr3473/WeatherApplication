@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import CoreLocation
 
 struct FetchData {
-    private let getMethodString: String = "GET"
+    private let getMethodString = "GET"
     private let appid = Bundle.main.apiKey
     
     enum FetchError: Error {
@@ -20,7 +21,7 @@ struct FetchData {
     }
     
     func errorHandler(_ error: Error) -> String {
-        var message: String = ""
+        var message = ""
         switch error {
         case FetchError.apiKeyError:
             message = "알 수 없는 오류가 발생하였습니다."
@@ -40,6 +41,16 @@ struct FetchData {
         }
     }
     
+    func getReverseGeocodingURL(with location: CLLocationCoordinate2D) -> URL? {
+        var baseURL = URLComponents(string: "https://api.openweathermap.org/geo/1.0/reverse?")
+        let latitude = URLQueryItem(name: "lat", value: String(location.latitude))
+        let longitude = URLQueryItem(name: "lon", value: String(location.longitude))
+        let key = URLQueryItem(name: "appid", value: appid)
+        
+        baseURL?.queryItems = [latitude, longitude, key]
+        return baseURL?.url
+    }
+    
     func getCityWeatherURL(with cityName: String) -> URL? {
         var baseURL = URLComponents(string: "https://api.openweathermap.org/data/2.5/weather?")
         let cityName = URLQueryItem(name: "q", value: cityName)
@@ -48,16 +59,6 @@ struct FetchData {
         let units = URLQueryItem(name: "units", value: "metric")
         
         baseURL?.queryItems = [cityName, language, key, units]
-        return baseURL?.url
-    }
-    
-    func getReverseGeocodingURL(lat: String, lon: String) -> URL? {
-        var baseURL = URLComponents(string: "https://api.openweathermap.org/geo/1.0/reverse?")
-        let latitude = URLQueryItem(name: "lat", value: lat)
-        let longitude = URLQueryItem(name: "lon", value: lon)
-        let key = URLQueryItem(name: "appid", value: appid)
-        
-        baseURL?.queryItems = [latitude, longitude, key]
         return baseURL?.url
     }
     
