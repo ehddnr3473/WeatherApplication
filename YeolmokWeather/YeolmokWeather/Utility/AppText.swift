@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct AppText {
+enum AppText {
     static let weatherTitle = "Weather"
     static let cityTitle = "City"
     static let weatherIcon = "sun.max.circle.fill"
@@ -16,17 +16,17 @@ struct AppText {
     static let pattern = "^[A-Za-z]{0,}$"
     static let dateFormat = "dd"
     
-    struct ModelText {
+    enum ModelText {
         static let entityName = "City"
         static let attributeName = "name"
     }
     
-    struct AlertTitle {
+    enum AlertTitle {
         static let error = "오류"
         static let appendFail = "추가 실패"
     }
     
-    struct AlertMessage {
+    enum AlertMessage {
         static let appendFailMessage = "이미 추가된 도시입니다."
         static let emptyText = "도시명을 입력해주세요."
         static let denied = "애플리케이션을 실행하기 위해서는 위치 정보 제공이 필요합니다. 설정 > 열목날씨 > 위치에서 애플리케이션의 위치 사용 설정을 허용해주시기를 바랍니다."

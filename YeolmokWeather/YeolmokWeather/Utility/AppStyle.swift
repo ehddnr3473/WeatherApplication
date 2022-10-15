@@ -8,11 +8,11 @@
 import Foundation
 import UIKit
 
-struct AppStyles {
+enum AppStyles {
     static let cornerRadius: CGFloat = 10
     static let borderWidth: CGFloat = 1
     
-    struct Colors {
+    enum Colors {
         static let mainColor = UIColor.white
         static let backgroundColor = UIColor.clear.withAlphaComponent(0.5)
     }

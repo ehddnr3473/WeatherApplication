@@ -255,6 +255,7 @@ extension OtherCityViewController {
     }
 }
 
+// MARK: - TableView
 extension OtherCityViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CityWeatherTableViewCell.identifier, for: indexPath) as? CityWeatherTableViewCell else { return UITableViewCell() }
@@ -323,6 +324,7 @@ extension OtherCityViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
+// MARK: - TextFieldDelegate
 extension OtherCityViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         let cityName: String = textField.text?.capitalized ?? ""
