@@ -3,7 +3,7 @@
 ## 개요
  날씨를 확인할 수 있게 해주는 프로젝트. 사용자가 위치한 도시의 현재 날씨와, 이후 3일 동안의 날씨를 출력. 또한, 다른 도시를 검색해서 그곳의 날씨를 확인할 수도 있음.
  
- <img src = "https://user-images.githubusercontent.com/55693272/193609382-cdf17384-1027-4850-8d45-bd2a1afcbc6a.mp4" width = 300>
+ <img src = "https://user-images.githubusercontent.com/55693272/197079608-18192112-ab70-4842-972c-90a60d94c839.mp4" width = 250>
  
  
 <br></br>
