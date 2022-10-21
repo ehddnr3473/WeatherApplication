@@ -12,10 +12,11 @@
 |---|---|
 |아키텍처|MVC|
 |UI|UIKit|
-|로컬 데이터 저장소| CoreData |
+|로컬 데이터 저장소| Core Data Framework의 Persistence|
 |네트워크|URLSession|
 |동시성 프로그래밍|GCD|
- 
+|위치 정보|Core Location Framework|
+
 <br></br>
 ## 프로젝트 기간
 - 개발 ~ 앱스토어 배포: 2022/08/01 ~ 2022/08/24
