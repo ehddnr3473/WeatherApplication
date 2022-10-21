@@ -118,7 +118,7 @@ func setUpForecast(with forecast: Forecast) {
 1. Localization: 어플 이름 한글 표기
 2. UINavigationController → UITabBarController
 3. 일부 지역에서 날씨 정보를 가져오지 못하던 문제 해결
-4. CoreLocation관련항 버그가 발생하는 코드 수정
+4. Core Location 관련하여 버그가 발생하는 코드 수정
 5. 각 도시의 예보 데이터가 뒤섞이던 버그 수정
 6. 그 외 리팩토링
 
