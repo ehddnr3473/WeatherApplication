@@ -17,8 +17,8 @@
  
 <br></br>
 ## 프로젝트 기간
- 개발 ~ 앱스토어 배포: 2022/08/01 ~ 2022/08/24
- 리팩토링, 업데이트: 진행중
+- 개발 ~ 앱스토어 배포: 2022/08/01 ~ 2022/08/24
+- 리팩토링, 업데이트: 진행중
 
 <br></br>
 ## 사용 API
@@ -109,8 +109,17 @@ func setUpForecast(with forecast: Forecast) {
 
 <br></br>
 ## 심사 reject
-![reject image](./reject.png)
+![reject image](./rejectImage/reject.png)
 * 심사를 미국에서 한다는 것을 생각하지 못하고, 한국의 도시를 기준으로 데이터를 가져옴. 콘텐츠는 한국어로 처리하되, 전 세계 어디에서든 앱을 실행할 수 있도록 명확하게 처리.
 
+
+<br></br>
+## 1.1 업데이트
+1. Localization: 어플 이름 한글 표기
+2. UINavigationController → UITabBarController
+3. 일부 지역에서 날씨 정보를 가져오지 못하던 문제 해결
+4. CoreLocation관련항 버그가 발생하는 코드 수정
+5. 각 도시의 예보 데이터가 뒤섞이던 버그 수정
+6. 그 외 리팩토링
 
 
