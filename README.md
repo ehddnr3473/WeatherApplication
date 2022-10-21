@@ -14,6 +14,7 @@
 |UI|UIKit|
 |로컬 데이터 저장소| CoreData |
 |네트워크|URLSession|
+|동시성 프로그래밍|GCD|
  
 <br></br>
 ## 프로젝트 기간
