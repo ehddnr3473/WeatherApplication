@@ -82,7 +82,7 @@ func textFieldDidEndEditing(_ textField: UITextField, reason: UITextField.DidEnd
 
 <br></br>
 ### UITableView안에 UICollectionView 넣을 때, 데이터 전달하기
-* UITalbeView DataSource
+* UITableView DataSource
 ```swift
 func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: WeatherForecastTableViewCell.identifier, for: indexPath) as? WeatherForecastTableViewCell else { return UITableViewCell() }
