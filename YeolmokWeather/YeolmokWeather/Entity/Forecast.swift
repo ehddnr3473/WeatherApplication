@@ -7,9 +7,11 @@
 
 import Foundation
 
+/// 날씨 예보 Entity
 struct Forecast: Codable {
     var list: [List]
     var city: City
+    
     struct List: Codable {
         let date: TimeInterval
         let main: Main

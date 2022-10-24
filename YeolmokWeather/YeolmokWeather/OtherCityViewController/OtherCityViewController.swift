@@ -8,6 +8,11 @@
 import UIKit
 import CoreData
 
+/**
+ 다른 도시의 날씨
+ - 도시 이름을 이용하여 현재 날씨 데이터와 예보 데이터를 받아옴.
+ - Core Data의 Persistence를 이용하여 viewDidLoad()시 저장한 도시 이름을 받아와서 검색
+ */
 final class OtherCityViewController: UIViewController {
     
     // MARK: - Properties
@@ -18,6 +23,8 @@ final class OtherCityViewController: UIViewController {
     private var storedCities: [String] = []
     private var AnotherCities: [AnotherCity] = []
     
+    /// Cell에 표시할 각 도시의 날씨 정보
+    /// - 따로 검색한 현재의 날씨 데이터와 예보 데이터가 섞이는 것을 방지
     private struct AnotherCity {
         let name: String
         var currentWeather: WeatherOfCity?
@@ -110,6 +117,7 @@ final class OtherCityViewController: UIViewController {
         fetchBookMarkCity()
     }
     
+    // Core Data fetch
     private func fetchBookMarkCity() {
         guard let resultArray = BookMark.fetchCity() else { return }
         for index in resultArray.indices {

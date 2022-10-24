@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 import CoreData
 
+/// 각 도시의 현재 날씨와 약 24시간 동안의 예보를 나타내는 Custom Cell
 class CityWeatherTableViewCell: UITableViewCell {
     static let identifier = "CityWeatherTableViewCell"
     private var forecast: Forecast?

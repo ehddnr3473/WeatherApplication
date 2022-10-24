@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// 도시 이름 Entity
 struct CityName: Codable {
     let name: String
     let koreanNameOfCity: KoreanNameOfCity

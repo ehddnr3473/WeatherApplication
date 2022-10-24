@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import UIKit
 
+/// 현재 날씨 Entity
 struct WeatherOfCity: Codable {
     let coord: Coord
     let weather: [Weather]

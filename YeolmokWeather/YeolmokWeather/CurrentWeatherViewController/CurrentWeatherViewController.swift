@@ -8,6 +8,12 @@
 import UIKit
 import CoreLocation
 
+/**
+ 현재 위치한 도시의 날씨
+ 1. Core Location을 사용해 사용자의 위치 정보를 받아옴.
+ 2. 위치 정보를 Query로 현재 위치의 도시 이름을 받아옴.
+ 3. 받아온 도시 이름을 Query로 현재 날씨 데이터와 예보 데이터를 받아옴.
+ */
 final class CurrentWeatherViewController: UIViewController {
     
     // MARK: - Properties
@@ -72,7 +78,7 @@ final class CurrentWeatherViewController: UIViewController {
         flowLayout.scrollDirection = .horizontal
         flowLayout.sectionInset = .init(top: 0, left: 20, bottom: 0, right: 20)
         
-        let collectionView: UICollectionView = UICollectionView(frame: .zero , collectionViewLayout: flowLayout)
+        let collectionView = UICollectionView(frame: .zero , collectionViewLayout: flowLayout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         
         collectionView.backgroundColor = AppStyles.Colors.backgroundColor

@@ -8,10 +8,18 @@
 import Foundation
 import CoreLocation
 
+/// OpenWeather API 호출 관련
 struct FetchData {
     private let getMethodString = "GET"
     private let appid = Bundle.main.apiKey
     
+    /**
+     API 호출 관련 Custom Error
+     - apiKeyError: API key 오류
+     - cityNameError: 잘못된 도시 이름 오류
+     - didNotReceiveData: 데이터 오류
+     - undefined: 알 수 없는 오류
+     */
     enum FetchError: Error {
         case apiKeyError
         case cityNameError
@@ -41,38 +49,54 @@ struct FetchData {
         }
     }
     
+    /// 위도와 경도로 도시 이름을 GET
+    /// - Parameter location: 위도와 경도
+    /// - Returns: API ReverseGeocoding URL
     func getReverseGeocodingURL(with location: CLLocationCoordinate2D) -> URL? {
-        var baseURL = URLComponents(string: "https://api.openweathermap.org/geo/1.0/reverse?")
+        let baseURL = URL(string: "https://api.openweathermap.org")
+        var urlComponents = URLComponents()
         let latitude = URLQueryItem(name: "lat", value: String(location.latitude))
         let longitude = URLQueryItem(name: "lon", value: String(location.longitude))
         let key = URLQueryItem(name: "appid", value: appid)
         
-        baseURL?.queryItems = [latitude, longitude, key]
-        return baseURL?.url
+        urlComponents.path = "/geo/1.0/reverse"
+        urlComponents.queryItems = [latitude, longitude, key]
+        return urlComponents.url(relativeTo: baseURL)
     }
     
+    /// 도시 이름으로 현재 날씨 GET
+    /// - Parameter cityName: 도시 이름
+    /// - Returns: API 현재 날씨 URL
     func getCityWeatherURL(with cityName: String) -> URL? {
-        var baseURL = URLComponents(string: "https://api.openweathermap.org/data/2.5/weather?")
+        let baseURL = URL(string: "https://api.openweathermap.org")
+        var urlComponents = URLComponents()
         let cityName = URLQueryItem(name: "q", value: cityName)
         let language = URLQueryItem(name: "lang", value: "kr")
         let key = URLQueryItem(name: "appid", value: appid)
         let units = URLQueryItem(name: "units", value: "metric")
         
-        baseURL?.queryItems = [cityName, language, key, units]
-        return baseURL?.url
+        urlComponents.path = "/data/2.5/weather"
+        urlComponents.queryItems = [cityName, language, key, units]
+        return urlComponents.url(relativeTo: baseURL)
     }
     
+    /// 도시 이름으로 날씨 예보 GET
+    /// - Parameter cityName: 도시 이름
+    /// - Returns: API 날씨 예보 URL
     func getWeatherForecastURL(with cityName: String) -> URL? {
-        var baseURL = URLComponents(string: "https://api.openweathermap.org/data/2.5/forecast?")
+        let baseURL = URL(string: "https://api.openweathermap.org")
+        var urlComponents = URLComponents()
         let cityName = URLQueryItem(name: "q", value: cityName)
         let language = URLQueryItem(name: "lang", value: "kr")
         let key = URLQueryItem(name: "appid", value: appid)
         let units = URLQueryItem(name: "units", value: "metric")
         
-        baseURL?.queryItems = [cityName, language, key, units]
-        return baseURL?.url
+        urlComponents.path = "/data/2.5/forecast"
+        urlComponents.queryItems = [cityName, language, key, units]
+        return urlComponents.url(relativeTo: baseURL)
     }
     
+    // API 호출
     func requestData(with url: URL, completion: @escaping (Result<Data, FetchError>) -> Void) {
         var request = URLRequest(url: url)
         request.httpMethod = getMethodString

@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 
+/// 예보 CollectionView를 위한 공용 Custom Cell
 class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
     static let identifier = "TodayWeatherForecastCollectionViewCell"
     
