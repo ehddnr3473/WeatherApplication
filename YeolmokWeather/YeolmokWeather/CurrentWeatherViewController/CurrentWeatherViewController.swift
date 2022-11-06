@@ -18,8 +18,7 @@ final class CurrentWeatherViewController: UIViewController {
     
     // MARK: - Properties
     private var apiManager = FetchData()
-    private var forecast: Forecast?
-    private var forecasts: [Forecast] = []
+    private var currentCity = CurrentCity()
     
     private var locationManager = CLLocationManager()
     private var currentLocation: CLLocationCoordinate2D?
@@ -116,13 +115,13 @@ final class CurrentWeatherViewController: UIViewController {
     }()
     
     private let alert: UIAlertController = {
-        let alert = UIAlertController(title: "오류", message: "", preferredStyle: UIAlertController.Style.alert)
+        let alert = UIAlertController(title: "오류", message: "", preferredStyle: .alert)
         
         return alert
     }()
     
     private let okAction: UIAlertAction = {
-        let action = UIAlertAction(title: "확인", style: UIAlertAction.Style.default)
+        let action = UIAlertAction(title: "확인", style: .default)
         
         return action
     }()
@@ -166,8 +165,8 @@ extension CurrentWeatherViewController {
             
             currentWeatherStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             currentWeatherStackView.topAnchor.constraint(equalTo: safeGuideLine.topAnchor),
-            currentWeatherStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: LayoutConstants.stackViewWidth),
-            currentWeatherStackView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: LayoutConstants.stackViewHeight),
+            currentWeatherStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: LayoutConstants.stackViewWidthMultiplier),
+            currentWeatherStackView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: LayoutConstants.stackViewHeightMultiplier),
             
             todayWeatherForecastCollectionView.topAnchor.constraint(equalTo: currentWeatherStackView.bottomAnchor, constant: LayoutConstants.standardGap),
             todayWeatherForecastCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.standardGap),
@@ -199,12 +198,18 @@ extension CurrentWeatherViewController {
     }
     
     private func setCityName(with cityName: String) {
-        self.cityNameLabel.text = cityName
+        currentCity.setCityName(with: cityName)
+        self.cityNameLabel.text = currentCity.name
     }
     
     private func setCurrentWeather(weather: String, temperature: Double) {
-        self.weatherLabel.text = weather
-        self.temperatureLabel.text = String(Int(temperature)) + AppText.celsiusString
+        currentCity.setCurrentWeather(weather: weather, temperature: temperature)
+        
+        self.weatherLabel.text = currentCity.weather
+        
+        if let temperature = currentCity.temperature {
+            self.temperatureLabel.text = String(Int(temperature)) + AppText.celsiusString
+        }
     }
 }
 
@@ -222,8 +227,7 @@ extension CurrentWeatherViewController: CLLocationManagerDelegate {
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        forecast = nil
-        forecasts.removeAll()
+        currentCity.emptyForecast()
         switch manager.authorizationStatus {
         case .authorizedAlways:
             manager.requestLocation()
@@ -250,7 +254,6 @@ extension CurrentWeatherViewController: CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print(error)
         if !alert.isBeingPresented {
             alert.message = AppText.AlertMessage.fail
             present(alert, animated: true, completion: nil)
@@ -357,7 +360,7 @@ extension CurrentWeatherViewController {
                 guard let self = self, let forecastWeatherOfCity = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
             
                 // 24시간 동안의 예보
-                self.forecast = self.setUpDayForecast(with: forecastWeatherOfCity)
+                self.setUpDayForecast(with: forecastWeatherOfCity)
                 
                 // 내일부터 3일간의 예보
                 self.appendForecastsTomorrow(with: forecastWeatherOfCity)
@@ -379,70 +382,13 @@ extension CurrentWeatherViewController {
     }
     
     // For 24시간 동안의 예보
-    private func setUpDayForecast(with forecast: Forecast) -> Forecast {
-        var forecast = forecast
-        if forecast.list.count > NumberConstants.numberOfItemsInSection {
-            forecast.list.removeSubrange(NumberConstants.fromEightToEnd)
-        }
-        
-        return forecast
+    private func setUpDayForecast(with forecast: Forecast) {
+        currentCity.setUpDayForecast(with: forecast)
     }
     
     // For 3일 간의 예보
     private func appendForecastsTomorrow(with forecast: Forecast) {
-        var forecast = forecast
-        for index in forecast.list.indices {
-            if compare(to: forecast.list[index].date) {
-                forecast.list.removeSubrange(.zero..<index)
-                var copiedForecast = forecast
-                if copiedForecast.list.count > NumberConstants.numberOfItemsInSection,
-                        forecast.list.count >= NumberConstants.numberOfItemsInSection {
-                    
-                    copiedForecast.list.removeSubrange(NumberConstants.fromEightToEnd)
-                    forecast.list.removeSubrange(NumberConstants.fromZeroToSeven)
-                    
-                    forecasts.append(copiedForecast)
-                    appendForecastsDaysAfterTomorrow(with: forecast)
-                }
-                break
-            }
-        }
-    }
-    
-    private func appendForecastsDaysAfterTomorrow(with forecast: Forecast) {
-        var dayAfterTomorrowForecast = forecast
-        if dayAfterTomorrowForecast.list.count > NumberConstants.numberOfItemsInSection {
-            dayAfterTomorrowForecast.list.removeSubrange(NumberConstants.fromEightToEnd)
-            forecasts.append(dayAfterTomorrowForecast)
-        }
-        
-        var twoDaysAfterTomorrowForecast = forecast
-        if twoDaysAfterTomorrowForecast.list.count >= NumberConstants.numberOfItemsInSection {
-            twoDaysAfterTomorrowForecast.list.removeSubrange(NumberConstants.fromZeroToSeven)
-            if twoDaysAfterTomorrowForecast.list.count > NumberConstants.numberOfItemsInSection {
-                twoDaysAfterTomorrowForecast.list.removeSubrange(NumberConstants.fromEightToEnd)
-                forecasts.append(twoDaysAfterTomorrowForecast)
-            }
-        }
-    }
-    
-    private func compare(to date: TimeInterval) -> Bool {
-        let day = Date()
-        let nextDay = Date(timeIntervalSince1970: date)
-        
-        if dayToString(from: day) == dayToString(from: nextDay) {
-            return false
-        } else {
-            return true
-        }
-    }
-    
-    private func dayToString(from date: Date) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.timeZone = .current
-        dateFormatter.dateFormat = AppText.dateFormat
-        
-        return dateFormatter.string(from: date)
+        currentCity.appendForecastsTomorrow(with: forecast)
     }
 }
 
@@ -450,7 +396,7 @@ extension CurrentWeatherViewController {
 extension CurrentWeatherViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier, for: indexPath) as? TodayWeatherForecastCollectionViewCell else { return UICollectionViewCell() }
-        guard let forecast = forecast else { return UICollectionViewCell() }
+        guard let forecast = currentCity.forecast else { return UICollectionViewCell() }
 
         let time = Date(timeIntervalSince1970: forecast.list[indexPath.row].date)
             .formatted(Date.FormatStyle().hour(.defaultDigits(amPM: .abbreviated)))
@@ -464,7 +410,7 @@ extension CurrentWeatherViewController: UICollectionViewDataSource, UICollection
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if forecast == nil {
+        if currentCity.forecastIsNil {
             return .zero
         } else {
             return NumberConstants.numberOfItemsInSection
@@ -481,21 +427,21 @@ extension CurrentWeatherViewController: UITableViewDataSource, UITableViewDelega
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: WeatherForecastTableViewCell.identifier, for: indexPath) as? WeatherForecastTableViewCell else { return UITableViewCell() }
         
-        let day = Date(timeIntervalSince1970: forecasts[indexPath.row].list[.zero].date).formatted(Date.FormatStyle().day(.twoDigits))
+        let day = Date(timeIntervalSince1970: currentCity.forecasts[indexPath.row].list[.zero].date).formatted(Date.FormatStyle().day(.twoDigits))
         
         cell.dayLabel.text = day
-        if indexPath.row < forecasts.count {
-            cell.setUpForecast(with: forecasts[indexPath.row])
+        if indexPath.row < currentCity.count {
+            cell.setUpForecast(with: currentCity.forecasts[indexPath.row])
         }
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if forecasts.isEmpty {
+        if currentCity.isEmpty {
             return .zero
         } else {
-            return forecasts.count
+            return currentCity.count
         }
     }
     
@@ -515,8 +461,8 @@ extension CurrentWeatherViewController: UITableViewDataSource, UITableViewDelega
 private struct LayoutConstants {
     static let standardGap: CGFloat = 8
     static let largeGap: CGFloat = 15
-    static let stackViewWidth: CGFloat = 0.6
-    static let stackViewHeight: CGFloat = 0.2
+    static let stackViewWidthMultiplier: CGFloat = 0.6
+    static let stackViewHeightMultiplier: CGFloat = 0.2
     static let collectionViewHeight: CGFloat = 100
     static let collectionViewWidth: CGFloat = collectionViewHeight
     static let tableViewHeight: CGFloat = collectionViewHeight * 3
@@ -524,9 +470,5 @@ private struct LayoutConstants {
 
 private struct NumberConstants {
     static let numberOfItemsInSection = 8
-    static let fromZeroToTwo = 0...2
-    static let fromZeroToSeven = 0...7
-    static let fromEightToEnd = 8...
-    static let oneDay: Double = 86400
-    
+
 }

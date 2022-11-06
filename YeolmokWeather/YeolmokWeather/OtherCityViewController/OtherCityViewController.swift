@@ -17,19 +17,11 @@ final class OtherCityViewController: UIViewController {
     
     // MARK: - Properties
     private let apiManager = FetchData()
+    private var other = Other()
     private let mainLabelText: String = "도시의 날씨"
     private let searchTextFieldPlaceholder: String = "도시명을 영어로 검색"
     private let cancelButtonTitle: String = "취소"
     private var storedCities: [String] = []
-    private var AnotherCities: [AnotherCity] = []
-    
-    /// Cell에 표시할 각 도시의 날씨 정보
-    /// - 따로 검색한 현재의 날씨 데이터와 예보 데이터가 섞이는 것을 방지
-    private struct AnotherCity {
-        let name: String
-        var currentWeather: WeatherOfCity?
-        var forecastWeather: Forecast?
-    }
     
     // Layout Constraint 가변 textField
     private lazy var trailingOfSearchTextField: NSLayoutConstraint = searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstants.standardGap)
@@ -123,7 +115,7 @@ final class OtherCityViewController: UIViewController {
         for index in resultArray.indices {
             guard let cityName = resultArray[index].value(forKey: AppText.ModelText.attributeName) as? String else { return }
             storedCities.append(cityName)
-            AnotherCities.append(AnotherCity(name: cityName))
+            other.appendCityWithName(cityName)
             DispatchQueue.global(qos: .userInitiated).async { [weak self] in
                 self?.requestCurrentWeatherOfCity(cityName)
                 self?.requestForecastWeatherOfCity(cityName)
@@ -199,16 +191,8 @@ extension OtherCityViewController {
             switch result {
             case .success(let data):
                 guard let self = self, let weatherOfCity = DecodingManager.decode(with: data, modelType: WeatherOfCity.self) else { return }
-                if self.AnotherCities.contains(where: { $0.name == weatherOfCity.name }) {
-                    for index in self.AnotherCities.indices {
-                        if weatherOfCity.name == self.AnotherCities[index].name {
-                            self.AnotherCities[index].currentWeather = weatherOfCity
-                            break
-                        }
-                    }
-                } else {
-                    self.AnotherCities.append(AnotherCity(name: weatherOfCity.name, currentWeather: weatherOfCity))
-                }
+                self.other.appendCityWithWeahter(weatherOfCity)
+                
                 DispatchQueue.main.async {
                     self.cityWeatherTableView.reloadData()
                 }
@@ -236,16 +220,8 @@ extension OtherCityViewController {
             case .success(let data):
                 guard let self = self, var forecastWeatherOfCity = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
                 forecastWeatherOfCity.list.removeSubrange(NumberConstants.fromEightToEnd)
-                if self.AnotherCities.contains(where: { $0.name == forecastWeatherOfCity.city.name }) {
-                    for index in self.AnotherCities.indices {
-                        if forecastWeatherOfCity.city.name == self.AnotherCities[index].name {
-                            self.AnotherCities[index].forecastWeather = forecastWeatherOfCity
-                            break
-                        }
-                    }
-                } else {
-                    self.AnotherCities.append(AnotherCity(name: forecastWeatherOfCity.city.name, forecastWeather: forecastWeatherOfCity))
-                }
+                self.other.appendCityWithForecast(forecastWeatherOfCity)
+                
                 DispatchQueue.main.async {
                     self.cityWeatherTableView.reloadData()
                 }
@@ -268,10 +244,10 @@ extension OtherCityViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CityWeatherTableViewCell.identifier, for: indexPath) as? CityWeatherTableViewCell else { return UITableViewCell() }
         
-        guard let currentWeather = AnotherCities[indexPath.row].currentWeather else { return cell }
+        guard let currentWeather = other.cities[indexPath.row].currentWeather else { return cell }
         
         for index in storedCities.indices {
-            if indexPath.row < AnotherCities.count, currentWeather.name == storedCities[index] {
+            if indexPath.row < other.count, currentWeather.name == storedCities[index] {
                 cell.bookMarkButton.isSelected = true
                 cell.bookMarkButton.tintColor = .systemYellow
                 break
@@ -281,27 +257,19 @@ extension OtherCityViewController: UITableViewDelegate, UITableViewDataSource {
         cell.weatherLabel.text = currentWeather.weather[.zero].description
         cell.temperatureLabel.text = String(Int(currentWeather.main.temp)) + AppText.celsiusString
         
-        guard let forecastWeather = AnotherCities[indexPath.row].forecastWeather else { return cell }
+        guard let forecastWeather = other.cities[indexPath.row].forecastWeather else { return cell }
         cell.setUpForecast(forecast: forecastWeather)
         
         return cell
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if AnotherCities.isEmpty {
+        if other.isEmpty {
             return .zero
-        } else if verifyNil() {
-            return AnotherCities.count
+        } else if other.verifyNil {
+            return other.count
         } else {
             return .zero
-        }
-    }
-    
-    func verifyNil() -> Bool {
-        if AnotherCities.filter({ $0.currentWeather == nil || $0.forecastWeather == nil }).count == 0 {
-            return true
-        } else {
-            return false
         }
     }
     
@@ -327,7 +295,7 @@ extension OtherCityViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     private func removeCell(at indexPath: IndexPath, to tableView: UITableView) {
-        AnotherCities.remove(at: indexPath.row)
+        other.removeCity(at: indexPath.row)
         cityWeatherTableView.reloadData()
     }
 }
@@ -348,14 +316,14 @@ extension OtherCityViewController: UITextFieldDelegate {
     }
     
     private func verifyCityName(_ cityName: String) -> Bool {
-        if AnotherCities.isEmpty {
+        if other.isEmpty {
             return true
         } else if cityName == "" && !alert.isBeingPresented {
             alert.title = AppText.AlertTitle.appendFail
             alert.message = AppText.AlertMessage.emptyText
             present(alert, animated: true, completion: nil)
             return false
-        } else if AnotherCities.contains(where: { $0.name == cityName }) && !alert.isBeingPresented {
+        } else if other.verifyContains(with: cityName) && !alert.isBeingPresented {
             alert.title = AppText.AlertTitle.appendFail
             alert.message = AppText.AlertMessage.appendFailMessage
             present(alert, animated: true, completion: nil)
@@ -396,6 +364,5 @@ private struct AnimationConstants {
 }
 
 private struct NumberConstants {
-    static let fromZeroToTwo = 0...2
     static let fromEightToEnd = 8...
 }

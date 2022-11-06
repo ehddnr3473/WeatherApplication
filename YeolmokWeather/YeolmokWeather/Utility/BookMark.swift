@@ -43,6 +43,7 @@ struct BookMark {
         guard let result = try? context.fetch(fetchRequest) else { return }
         guard let objectToDelete = result[.zero] as? NSManagedObject else { return }
         context.delete(objectToDelete)
+        
         try? context.save()
     }
 }
