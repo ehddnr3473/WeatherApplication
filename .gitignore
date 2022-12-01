@@ -1,8 +1,10 @@
+### API KEY ###
+*.xcconfig
+
 ### Xcode ###
 ## User settings
 xcuserdata/
 *.xcuserstate
-YeolmokWeather/YeolmokWeather/API_KEY/WeatherInfo.plist
 
 ###folder meta data###
 *.DS_Store

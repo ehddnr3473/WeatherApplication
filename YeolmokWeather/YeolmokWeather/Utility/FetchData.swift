@@ -11,7 +11,7 @@ import CoreLocation
 /// OpenWeather API 호출 관련
 struct FetchData {
     private let getMethodString = "GET"
-    private let appid = Bundle.main.apiKey
+    let apiKey = Bundle.main.infoDictionary?["API_KEY"] as? String
     
     /**
      API 호출 관련 Custom Error
@@ -57,7 +57,7 @@ struct FetchData {
         var urlComponents = URLComponents()
         let latitude = URLQueryItem(name: "lat", value: String(location.latitude))
         let longitude = URLQueryItem(name: "lon", value: String(location.longitude))
-        let key = URLQueryItem(name: "appid", value: appid)
+        let key = URLQueryItem(name: "appid", value: apiKey)
         
         urlComponents.path = "/geo/1.0/reverse"
         urlComponents.queryItems = [latitude, longitude, key]
@@ -72,7 +72,7 @@ struct FetchData {
         var urlComponents = URLComponents()
         let cityName = URLQueryItem(name: "q", value: cityName)
         let language = URLQueryItem(name: "lang", value: "kr")
-        let key = URLQueryItem(name: "appid", value: appid)
+        let key = URLQueryItem(name: "appid", value: apiKey)
         let units = URLQueryItem(name: "units", value: "metric")
         
         urlComponents.path = "/data/2.5/weather"
@@ -88,7 +88,7 @@ struct FetchData {
         var urlComponents = URLComponents()
         let cityName = URLQueryItem(name: "q", value: cityName)
         let language = URLQueryItem(name: "lang", value: "kr")
-        let key = URLQueryItem(name: "appid", value: appid)
+        let key = URLQueryItem(name: "appid", value: apiKey)
         let units = URLQueryItem(name: "units", value: "metric")
         
         urlComponents.path = "/data/2.5/forecast"

@@ -23,8 +23,6 @@
 		6B9242A12898EDE500E29CF8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6B9242A02898EDE500E29CF8 /* Assets.xcassets */; };
 		6B9242A42898EDE500E29CF8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6B9242A22898EDE500E29CF8 /* LaunchScreen.storyboard */; };
 		6B9242AC2898EED000E29CF8 /* WeatherForecastTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B9242AB2898EED000E29CF8 /* WeatherForecastTableViewCell.swift */; };
-		6B9242B128990B7B00E29CF8 /* WeatherInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6B9242B028990B7B00E29CF8 /* WeatherInfo.plist */; };
-		6B9242B328990C0100E29CF8 /* Weather++Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B9242B228990C0100E29CF8 /* Weather++Bundle.swift */; };
 		6BA4F0C929176CF200102A6F /* CurrentCity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BA4F0C829176CF200102A6F /* CurrentCity.swift */; };
 		6BA4F0CB2917783500102A6F /* AnotherCity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BA4F0CA2917783500102A6F /* AnotherCity.swift */; };
 		6BA4F0CE291779F500102A6F /* Other.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BA4F0CD291779F500102A6F /* Other.swift */; };
@@ -48,6 +46,7 @@
 		6B73813C28EB679200D98CEC /* TabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
 		6B84DA2A28A40C1A002EF4DC /* FetchImageName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchImageName.swift; sourceTree = "<group>"; };
 		6B84DA2C28A40E69002EF4DC /* AppText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppText.swift; sourceTree = "<group>"; };
+		6B8CE25D293909BF00C8DC4B /* ApiKey.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ApiKey.xcconfig; sourceTree = "<group>"; };
 		6B9242942898EDE300E29CF8 /* YeolmokWeather.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YeolmokWeather.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6B9242972898EDE300E29CF8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6B9242992898EDE300E29CF8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -56,8 +55,6 @@
 		6B9242A32898EDE500E29CF8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6B9242A52898EDE500E29CF8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6B9242AB2898EED000E29CF8 /* WeatherForecastTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherForecastTableViewCell.swift; sourceTree = "<group>"; };
-		6B9242B028990B7B00E29CF8 /* WeatherInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = WeatherInfo.plist; sourceTree = "<group>"; };
-		6B9242B228990C0100E29CF8 /* Weather++Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Weather++Bundle.swift"; sourceTree = "<group>"; };
 		6BA4F0C829176CF200102A6F /* CurrentCity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentCity.swift; sourceTree = "<group>"; };
 		6BA4F0CA2917783500102A6F /* AnotherCity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnotherCity.swift; sourceTree = "<group>"; };
 		6BA4F0CD291779F500102A6F /* Other.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Other.swift; sourceTree = "<group>"; };
@@ -83,8 +80,7 @@
 		6B009E0928999A5900CD0FEF /* API_KEY */ = {
 			isa = PBXGroup;
 			children = (
-				6B9242B028990B7B00E29CF8 /* WeatherInfo.plist */,
-				6B9242B228990C0100E29CF8 /* Weather++Bundle.swift */,
+				6B8CE25D293909BF00C8DC4B /* ApiKey.xcconfig */,
 			);
 			path = API_KEY;
 			sourceTree = "<group>";
@@ -253,7 +249,6 @@
 				6B9242A42898EDE500E29CF8 /* LaunchScreen.storyboard in Resources */,
 				6B4E887728EB549D00723006 /* InfoPlist.strings in Resources */,
 				6B9242A12898EDE500E29CF8 /* Assets.xcassets in Resources */,
-				6B9242B128990B7B00E29CF8 /* WeatherInfo.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -265,7 +260,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6BEAF02D28A1370500D0BB6D /* TodayWeatherForecastCollectionViewCell.swift in Sources */,
-				6B9242B328990C0100E29CF8 /* Weather++Bundle.swift in Sources */,
 				6B58B49C28A181E500BA9F71 /* Forecast.swift in Sources */,
 				6BA4F0C929176CF200102A6F /* CurrentCity.swift in Sources */,
 				6BEC6C60289EC5B800EFF342 /* CityWeatherTableViewCell.swift in Sources */,
@@ -315,6 +309,7 @@
 /* Begin XCBuildConfiguration section */
 		6B9242A62898EDE500E29CF8 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6B8CE25D293909BF00C8DC4B /* ApiKey.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -376,6 +371,7 @@
 		};
 		6B9242A72898EDE500E29CF8 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6B8CE25D293909BF00C8DC4B /* ApiKey.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -431,6 +427,7 @@
 		};
 		6B9242A92898EDE500E29CF8 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6B8CE25D293909BF00C8DC4B /* ApiKey.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -462,6 +459,7 @@
 		};
 		6B9242AA2898EDE500E29CF8 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6B8CE25D293909BF00C8DC4B /* ApiKey.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
