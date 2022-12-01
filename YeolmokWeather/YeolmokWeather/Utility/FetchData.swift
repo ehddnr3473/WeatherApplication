@@ -11,7 +11,7 @@ import CoreLocation
 /// OpenWeather API 호출 관련
 struct FetchData {
     private let getMethodString = "GET"
-    let apiKey = Bundle.main.infoDictionary?["API_KEY"] as? String
+    private let apiKey = Bundle.main.infoDictionary?["API_KEY"] as? String
     
     /**
      API 호출 관련 Custom Error
@@ -28,24 +28,21 @@ struct FetchData {
         case undefined
     }
     
-    func errorHandler(_ error: Error) -> String {
-        var message = ""
+    /// 에러 종류에 따라 Alert으로 띄울 메시지 반환
+    /// - Parameter error: FetchError
+    /// - Returns: 에러 메시지
+    func errorHandler(_ error: FetchError) -> String {
         switch error {
         case FetchError.apiKeyError:
-            message = "알 수 없는 오류가 발생하였습니다."
-            return message
+            return ErrorMessage.apiKeyError
         case FetchError.cityNameError:
-            message = "도시 이름을 다시 확인해주세요."
-            return message
+            return ErrorMessage.cityNameError
         case FetchError.internetConnectionProblem:
-            message = "인터넷 연결을 확인해주세요."
-            return message
+            return ErrorMessage.internetConnectionProblem
+        case .didNotReceiveData:
+            return ErrorMessage.didNotReceiveData
         case FetchError.undefined:
-            message = "알 수 없는 오류가 발생하였습니다."
-            return message
-        default:
-            message = "알 수 없는 오류가 발생하였습니다."
-            return message
+            return ErrorMessage.undefined
         }
     }
     
@@ -128,4 +125,13 @@ struct FetchData {
         })
         dataTask.resume()
     }
+}
+
+// ErrorMessage Namespace
+private enum ErrorMessage {
+    static let apiKeyError = "알 수 없는 오류가 발생하였습니다."
+    static let cityNameError = "도시 이름을 다시 확인해주세요."
+    static let internetConnectionProblem = "인터넷 연결을 확인해주세요."
+    static let didNotReceiveData = "날씨 정보를 받아오지 못했습니다."
+    static let undefined = "알 수 없는 오류가 발생하였습니다."
 }
