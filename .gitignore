@@ -2,8 +2,9 @@
 ## User settings
 xcuserdata/
 *.xcuserstate
+YeolmokWeather/YeolmokWeather/API_KEY/WeatherInfo.plist
 
-// folder meta data
+###folder meta data###
 *.DS_Store
 
 ## Xcode 8 and earlier
