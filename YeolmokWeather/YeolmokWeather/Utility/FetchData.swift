@@ -38,9 +38,11 @@ struct FetchData {
             return ErrorMessage.cityNameError
         case FetchError.internetConnectionProblem:
             return ErrorMessage.internetConnectionProblem
-        case .didNotReceiveData:
+        case FetchError.didNotReceiveData:
             return ErrorMessage.didNotReceiveData
         case FetchError.undefined:
+            return ErrorMessage.undefined
+        default:
             return ErrorMessage.undefined
         }
     }

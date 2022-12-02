@@ -88,16 +88,13 @@ final class OtherCityViewController: UIViewController {
         return tableView
     }()
     
-    private let alert: UIAlertController = {
+    private lazy var alert: UIAlertController = {
         let alert = UIAlertController(title: "오류", message: "", preferredStyle: .alert)
         
-        return alert
-    }()
-    
-    private let okAction: UIAlertAction = {
         let action = UIAlertAction(title: "확인", style: .default)
+        alert.addAction(action)
         
-        return action
+        return alert
     }()
     
     // MARK: - LifeCycle
@@ -141,8 +138,6 @@ extension OtherCityViewController {
         cityWeatherTableView.dataSource = self
         cityWeatherTableView.delegate = self
         searchTextField.delegate = self
-        
-        alert.addAction(okAction)
     }
     
     private func setUpLayout() {
@@ -183,58 +178,44 @@ extension OtherCityViewController {
 extension OtherCityViewController {
     private func requestCurrentWeatherOfCity(_ cityName: String) {
         guard let url: URL = apiManager.getCityWeatherURL(with: cityName) else { return }
-        requestCurrentWeatherOfCityData(url)
+        Task {
+            await requestCurrentWeather(with: url)
+        }
     }
     
-    private func requestCurrentWeatherOfCityData(_ url: URL) {
-        apiManager.requestData(with: url) { [weak self] result in
-            switch result {
-            case .success(let data):
-                guard let self = self, let weatherOfCity = DecodingManager.decode(with: data, modelType: WeatherOfCity.self) else { return }
-                self.other.appendCityWithWeahter(weatherOfCity)
-                
-                DispatchQueue.main.async {
-                    self.cityWeatherTableView.reloadData()
-                }
-            case .failure(let error):
-                guard let self = self else { return }
-                DispatchQueue.main.async {
-                    if !self.alert.isBeingPresented {
-                        self.alert.title = AppText.AlertTitle.error
-                        self.alert.message = self.apiManager.errorHandler(error)
-                        self.present(self.alert, animated: true, completion: nil)
-                    }
-                }
+    private func requestCurrentWeather(with url: URL) async {
+        do {
+            let data = try await apiManager.requestData(with: url)
+            guard let weather = DecodingManager.decode(with: data, modelType: WeatherOfCity.self) else { return }
+            other.appendCityWithWeahter(weather)
+            
+            DispatchQueue.main.async {
+                self.cityWeatherTableView.reloadData()
             }
+        } catch {
+            alertWillAppear(alert, apiManager.errorMessage(error))
         }
     }
     
     private func requestForecastWeatherOfCity(_ cityName: String) {
         guard let url: URL = apiManager.getWeatherForecastURL(with: cityName) else { return }
-        requestForecastWeatherOfCityData(url)
+        Task {
+            await requestForecast(with: url)
+        }
     }
     
-    private func requestForecastWeatherOfCityData(_ url: URL) {
-        apiManager.requestData(with: url) { [weak self] result in
-            switch result {
-            case .success(let data):
-                guard let self = self, var forecastWeatherOfCity = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
-                forecastWeatherOfCity.list.removeSubrange(NumberConstants.fromEightToEnd)
-                self.other.appendCityWithForecast(forecastWeatherOfCity)
-                
-                DispatchQueue.main.async {
-                    self.cityWeatherTableView.reloadData()
-                }
-            case .failure(let error):
-                guard let self = self else { return }
-                DispatchQueue.main.async {
-                    if !self.alert.isBeingPresented {
-                        self.alert.title = AppText.AlertTitle.error
-                        self.alert.message = self.apiManager.errorHandler(error)
-                        self.present(self.alert, animated: true, completion: nil)
-                    }
-                }
+    private func requestForecast(with url: URL) async {
+        do {
+            let data = try await apiManager.requestData(with: url)
+            guard var forecast = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
+            forecast.list.removeSubrange(NumberConstants.fromEightToEnd)
+            self.other.appendCityWithForecast(forecast)
+            
+            DispatchQueue.main.async {
+                self.cityWeatherTableView.reloadData()
             }
+        } catch {
+            alertWillAppear(alert, apiManager.errorMessage(error))
         }
     }
 }
@@ -318,15 +299,11 @@ extension OtherCityViewController: UITextFieldDelegate {
     private func verifyCityName(_ cityName: String) -> Bool {
         if other.isEmpty {
             return true
-        } else if cityName == "" && !alert.isBeingPresented {
-            alert.title = AppText.AlertTitle.appendFail
-            alert.message = AppText.AlertMessage.emptyText
-            present(alert, animated: true, completion: nil)
+        } else if cityName == "" {
+            alertWillAppear(alert, ErrorMessage.emptyText)
             return false
-        } else if other.verifyContains(with: cityName) && !alert.isBeingPresented {
-            alert.title = AppText.AlertTitle.appendFail
-            alert.message = AppText.AlertMessage.appendFailMessage
-            present(alert, animated: true, completion: nil)
+        } else if other.verifyContains(with: cityName) {
+            alertWillAppear(alert, ErrorMessage.appendFailMessage)
             searchTextField.text = ""
             return false
         } else {
@@ -365,4 +342,10 @@ private struct AnimationConstants {
 
 private struct NumberConstants {
     static let fromEightToEnd = 8...
+}
+
+private enum ErrorMessage {
+    static let appendFailMessage = "이미 추가된 도시입니다."
+    static let emptyText = "도시명을 입력해주세요."
+    static let undefined = "알 수 없는 오류가 발생하였습니다."
 }

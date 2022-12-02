@@ -25,13 +25,4 @@ enum AppText {
         static let error = "오류"
         static let appendFail = "추가 실패"
     }
-    
-    enum AlertMessage {
-        static let appendFailMessage = "이미 추가된 도시입니다."
-        static let emptyText = "도시명을 입력해주세요."
-        static let denied = "애플리케이션을 실행하기 위해서는 위치 정보 제공이 필요합니다. 설정 > 열목날씨 > 위치에서 애플리케이션의 위치 사용 설정을 허용해주시기를 바랍니다."
-        static let restricted = "보호자 통제와 같은 활성화 제한으로 인해 사용자가 애플리케이션의 상태를 변경할 수 없습니다."
-        static let undefined = "알 수 없는 오류가 발생하였습니다."
-        static let fail = "위치 설정 오류가 발생하였습니다."
-    }
 }

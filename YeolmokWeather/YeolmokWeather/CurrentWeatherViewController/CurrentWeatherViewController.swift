@@ -123,7 +123,6 @@ final class CurrentWeatherViewController: UIViewController {
         return alert
     }()
     
-    
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -193,14 +192,6 @@ extension CurrentWeatherViewController {
     }
     
     @MainActor
-    private func alertWillAppear(message: String) {
-        if !alert.isBeingPresented {
-            alert.message = message
-            present(alert, animated: true, completion: nil)
-        }
-    }
-    
-    @MainActor
     private func setCityName(with cityName: String) {
         currentCity.setCityName(with: cityName)
         self.cityNameLabel.text = currentCity.name
@@ -244,21 +235,18 @@ extension CurrentWeatherViewController: CLLocationManagerDelegate {
         case .authorizedWhenInUse:
             manager.requestLocation()
         case .denied:
-            alertWillAppear(message: AppText.AlertMessage.denied)
+            alertWillAppear(alert, CoreLocationErrorMessage.denied)
         case .notDetermined:
             manager.requestWhenInUseAuthorization()
         case .restricted:
-            alertWillAppear(message: AppText.AlertMessage.restricted)
+            alertWillAppear(alert, CoreLocationErrorMessage.denied)
         @unknown default:
-            alertWillAppear(message: AppText.AlertMessage.fail)
+            alertWillAppear(alert, CoreLocationErrorMessage.denied)
         }
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        if !alert.isBeingPresented {
-            alert.message = AppText.AlertMessage.fail
-            present(alert, animated: true, completion: nil)
-        }
+        alertWillAppear(alert, CoreLocationErrorMessage.fail)
     }
 }
 
@@ -281,7 +269,7 @@ extension CurrentWeatherViewController {
             setCityName(with: city[.zero].koreanNameOfCity.cityName ?? city[.zero].name)
             verifyAndRequestWeatherData(city[.zero].name)
         } catch {
-            alertWillAppear(message: apiManager.errorMessage(error))
+            alertWillAppear(alert, apiManager.errorMessage(error))
         }
         
     }
@@ -324,7 +312,7 @@ extension CurrentWeatherViewController {
             setBackgroundImage(with: FetchImageName.setUpBackgroundImage(weather: currentWeather.weather[.zero].id))
             setCurrentWeather(weather: currentWeather.weather[.zero].description, temperature: currentWeather.main.temp)
         } catch(let error){
-            alertWillAppear(message: apiManager.errorMessage(error))
+            alertWillAppear(alert, apiManager.errorMessage(error))
         }
     }
     
@@ -345,7 +333,7 @@ extension CurrentWeatherViewController {
                 self.weatherForecastTableView.reloadData()
             }
         } catch {
-            alertWillAppear(message: apiManager.errorMessage(error))
+            alertWillAppear(alert, apiManager.errorMessage(error))
         }
     }
     
@@ -439,4 +427,10 @@ private struct LayoutConstants {
 private struct NumberConstants {
     static let numberOfItemsInSection = 8
 
+}
+
+private enum CoreLocationErrorMessage {
+    static let denied = "애플리케이션을 실행하기 위해서는 위치 정보 제공이 필요합니다. 설정 > 열목날씨 > 위치에서 애플리케이션의 위치 사용 설정을 허용해주시기를 바랍니다."
+    static let restricted = "보호자 통제와 같은 활성화 제한으로 인해 사용자가 애플리케이션의 상태를 변경할 수 없습니다."
+    static let fail = "위치 설정 오류가 발생하였습니다."
 }
