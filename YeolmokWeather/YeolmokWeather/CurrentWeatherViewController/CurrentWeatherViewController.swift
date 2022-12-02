@@ -114,16 +114,13 @@ final class CurrentWeatherViewController: UIViewController {
         return tableView
     }()
     
-    private let alert: UIAlertController = {
+    private lazy var alert: UIAlertController = {
         let alert = UIAlertController(title: "오류", message: "", preferredStyle: .alert)
         
-        return alert
-    }()
-    
-    private let okAction: UIAlertAction = {
         let action = UIAlertAction(title: "확인", style: .default)
+        alert.addAction(action)
         
-        return action
+        return alert
     }()
     
     
@@ -193,23 +190,36 @@ extension CurrentWeatherViewController {
         
         weatherForecastTableView.dataSource = self
         weatherForecastTableView.delegate = self
-        
-        alert.addAction(okAction)
     }
     
+    @MainActor
+    private func alertWillAppear(message: String) {
+        if !alert.isBeingPresented {
+            alert.message = message
+            present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    @MainActor
     private func setCityName(with cityName: String) {
         currentCity.setCityName(with: cityName)
         self.cityNameLabel.text = currentCity.name
     }
     
+    @MainActor
     private func setCurrentWeather(weather: String, temperature: Double) {
         currentCity.setCurrentWeather(weather: weather, temperature: temperature)
         
-        self.weatherLabel.text = currentCity.weather
+        weatherLabel.text = currentCity.weather
         
         if let temperature = currentCity.temperature {
-            self.temperatureLabel.text = String(Int(temperature)) + AppText.celsiusString
+            temperatureLabel.text = String(Int(temperature)) + AppText.celsiusString
         }
+    }
+    
+    @MainActor
+    private func setBackgroundImage(with imageName: String) {
+        weatherBackgroundImageView.image = UIImage(named: imageName)
     }
 }
 
@@ -234,22 +244,13 @@ extension CurrentWeatherViewController: CLLocationManagerDelegate {
         case .authorizedWhenInUse:
             manager.requestLocation()
         case .denied:
-            if !alert.isBeingPresented {
-                alert.message = AppText.AlertMessage.denied
-                present(alert, animated: true, completion: nil)
-            }
+            alertWillAppear(message: AppText.AlertMessage.denied)
         case .notDetermined:
             manager.requestWhenInUseAuthorization()
         case .restricted:
-            if !alert.isBeingPresented {
-                alert.message = AppText.AlertMessage.restricted
-                present(alert, animated: true, completion: nil)
-            }
+            alertWillAppear(message: AppText.AlertMessage.restricted)
         @unknown default:
-            if !alert.isBeingPresented {
-                alert.message = AppText.AlertMessage.fail
-                present(alert, animated: true, completion: nil)
-            }
+            alertWillAppear(message: AppText.AlertMessage.fail)
         }
     }
     
@@ -267,52 +268,38 @@ extension CurrentWeatherViewController {
         guard let currentLocation = currentLocation else { return }
         
         guard let url: URL = apiManager.getReverseGeocodingURL(with: currentLocation) else { return }
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            self?.requestCityName(with: url)
+        
+        Task {
+            await requestCityName(with: url)
         }
     }
     
-    private func requestCityName(with url: URL) {
-        apiManager.requestData(with: url, completion: { [weak self] result in
-            switch result {
-            case .success(let data):
-                guard let self = self, let city = DecodingManager.decode(with: data, modelType: [CityName].self) else { return }
-                
-                DispatchQueue.main.async {
-                    self.setCityName(with: city[.zero].koreanNameOfCity.cityName ?? city[.zero].name)
-                }
-                
-                self.verifyAndRequestWeatherData(city[.zero].name)
-                
-            case .failure(let error):
-                switch error {
-                default:
-                    guard let self = self else { return }
-                    DispatchQueue.main.async {
-                        if !self.alert.isBeingPresented {
-                            self.alert.message = self.apiManager.errorHandler(error)
-                            self.present(self.alert, animated: true, completion: nil)
-                        }
-                    }
-                }
-            }
-        })
+    private func requestCityName(with url: URL) async {
+        do {
+            let data = try await apiManager.requestData(with: url)
+            guard let city = DecodingManager.decode(with: data, modelType: [CityName].self) else { return }
+            setCityName(with: city[.zero].koreanNameOfCity.cityName ?? city[.zero].name)
+            verifyAndRequestWeatherData(city[.zero].name)
+        } catch {
+            alertWillAppear(message: apiManager.errorMessage(error))
+        }
+        
     }
     
     private func verifyAndRequestWeatherData(_ cityName: String) {
         let regex = try? NSRegularExpression(pattern: AppText.pattern)
         if let _ = regex?.firstMatch(in: cityName, range: NSRange(location: 0, length: cityName.count)) {
             guard let url: URL = self.apiManager.getCityWeatherURL(with: cityName) else { return }
-            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-                self?.requestWeatherDataOfCity(with: url)
-                self?.requestWeatherForecast(with: cityName)
+            Task {
+                await requestWeather(with: url)
+                await requestWeatherForecast(with: cityName)
             }
         } else {
             let refinedCityName = refineCityName(cityName)
             guard let url: URL = self.apiManager.getCityWeatherURL(with: refinedCityName) else { return }
-            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-                self?.requestWeatherDataOfCity(with: url)
-                self?.requestWeatherForecast(with: refinedCityName)
+            Task {
+                await requestWeather(with: url)
+                await requestWeatherForecast(with: refinedCityName)
             }
         }
     }
@@ -330,54 +317,35 @@ extension CurrentWeatherViewController {
         return cityName
     }
     
-    private func requestWeatherDataOfCity(with url: URL) {
-        apiManager.requestData(with: url) { [weak self] result in
-            switch result {
-            case .success(let data):
-                guard let self = self, let currentWeatherOfCity = DecodingManager.decode(with: data, modelType: WeatherOfCity.self) else { return }
-                
-                DispatchQueue.main.async {
-                    self.weatherBackgroundImageView.image = UIImage(named: FetchImageName.setUpBackgroundImage(weather: currentWeatherOfCity.weather[.zero].id))
-                    self.setCurrentWeather(weather: currentWeatherOfCity.weather[.zero].description, temperature: currentWeatherOfCity.main.temp)
-                }
-            case .failure(let error):
-                    guard let self = self else { return }
-                    DispatchQueue.main.async {
-                        if !self.alert.isBeingPresented {
-                            self.alert.message = self.apiManager.errorHandler(error)
-                            self.present(self.alert, animated: true, completion: nil)
-                        }
-                    }
-            }
+    private func requestWeather(with url: URL) async {
+        do {
+            let data = try await apiManager.requestData(with: url)
+            guard let currentWeather = DecodingManager.decode(with: data, modelType: WeatherOfCity.self) else { return }
+            setBackgroundImage(with: FetchImageName.setUpBackgroundImage(weather: currentWeather.weather[.zero].id))
+            setCurrentWeather(weather: currentWeather.weather[.zero].description, temperature: currentWeather.main.temp)
+        } catch(let error){
+            alertWillAppear(message: apiManager.errorMessage(error))
         }
     }
     
-    private func requestWeatherForecast(with cityName: String) {
+    private func requestWeatherForecast(with cityName: String) async {
         guard let url: URL = apiManager.getWeatherForecastURL(with: cityName) else { return }
-        apiManager.requestData(with: url) { [weak self] result in
-            switch result {
-            case .success(let data):
-                guard let self = self, let forecastWeatherOfCity = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
+        do {
+            let data = try await apiManager.requestData(with: url)
+            guard let forecast = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
             
-                // 24시간 동안의 예보
-                self.setUpDayForecast(with: forecastWeatherOfCity)
-                
-                // 내일부터 3일간의 예보
-                self.appendForecastsTomorrow(with: forecastWeatherOfCity)
-                
-                DispatchQueue.main.async {
-                    self.todayWeatherForecastCollectionView.reloadData()
-                    self.weatherForecastTableView.reloadData()
-                }
-            case .failure(let error):
-                guard let self = self else { return }
-                DispatchQueue.main.async {
-                    if !self.alert.isBeingPresented {
-                        self.alert.message = self.apiManager.errorHandler(error)
-                        self.present(self.alert, animated: true, completion: nil)
-                    }
-                }
+            // 24시간 동안의 예보
+            setUpDayForecast(with: forecast)
+            
+            // 내일부터 3일간의 예보
+            appendForecastsTomorrow(with: forecast)
+            
+            DispatchQueue.main.async {
+                self.todayWeatherForecastCollectionView.reloadData()
+                self.weatherForecastTableView.reloadData()
             }
+        } catch {
+            alertWillAppear(message: apiManager.errorMessage(error))
         }
     }
     

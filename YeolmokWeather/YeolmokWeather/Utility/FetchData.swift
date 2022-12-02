@@ -10,7 +10,6 @@ import CoreLocation
 
 /// OpenWeather API 호출 관련
 struct FetchData {
-    private let getMethodString = "GET"
     private let apiKey = Bundle.main.infoDictionary?["API_KEY"] as? String
     
     /**
@@ -31,7 +30,7 @@ struct FetchData {
     /// 에러 종류에 따라 Alert으로 띄울 메시지 반환
     /// - Parameter error: FetchError
     /// - Returns: 에러 메시지
-    func errorHandler(_ error: FetchError) -> String {
+    func errorMessage(_ error: Error) -> String {
         switch error {
         case FetchError.apiKeyError:
             return ErrorMessage.apiKeyError
@@ -94,36 +93,21 @@ struct FetchData {
     }
     
     // API 호출
-    func requestData(with url: URL, completion: @escaping (Result<Data, FetchError>) -> Void) {
-        var request = URLRequest(url: url)
-        request.httpMethod = getMethodString
-        
-        let session: URLSession = URLSession(configuration: .default)
-        let dataTask: URLSessionDataTask = session.dataTask(with: request, completionHandler: { (data, response, error) in
-            guard error == nil else {
-                completion(.failure(FetchError.internetConnectionProblem))
-                return
+    func requestData(with url: URL) async throws -> Data {
+        let request = URLRequest(url: url)
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let response = response as? HTTPURLResponse else { throw FetchError.undefined }
+        if !(response.statusCode == 200) {
+            switch response.statusCode {
+            case 401:
+                throw FetchError.apiKeyError
+            case 404:
+                throw FetchError.cityNameError
+            default:
+                throw FetchError.undefined
             }
-            
-            guard let data = data else {
-                completion(.failure(FetchError.didNotReceiveData))
-                return
-            }
-            
-            guard let response = response as? HTTPURLResponse else { return }
-            if !(response.statusCode == 200) {
-                switch response.statusCode {
-                case 401:
-                    completion(.failure(FetchError.apiKeyError))
-                case 404:
-                    completion(.failure(FetchError.cityNameError))
-                default:
-                    completion(.failure(FetchError.undefined))
-                }
-            }
-            completion(.success(data))
-        })
-        dataTask.resume()
+        }
+        return data
     }
 }
 
