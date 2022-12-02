@@ -414,7 +414,7 @@ extension CurrentWeatherViewController: UITableViewDataSource, UITableViewDelega
 }
 
 // MARK: - Magic Number
-private struct LayoutConstants {
+private enum LayoutConstants {
     static let standardGap: CGFloat = 8
     static let largeGap: CGFloat = 15
     static let stackViewWidthMultiplier: CGFloat = 0.6
@@ -424,7 +424,7 @@ private struct LayoutConstants {
     static let tableViewHeight: CGFloat = collectionViewHeight * 3
 }
 
-private struct NumberConstants {
+private enum NumberConstants {
     static let numberOfItemsInSection = 8
 
 }

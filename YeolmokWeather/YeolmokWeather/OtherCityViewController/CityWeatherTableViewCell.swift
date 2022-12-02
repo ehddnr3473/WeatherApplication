@@ -173,13 +173,13 @@ extension CityWeatherTableViewCell: UICollectionViewDataSource, UICollectionView
 }
 
 // MARK: - Magic Number
-private struct LayoutConstants {
+private enum LayoutConstants {
     static let standardGap: CGFloat = 15
     static let bookMarkSize: CGFloat = 30
     static let quarterOfCenterY: CGFloat = 50
 }
 
-private struct NumberConstants {
+private enum NumberConstants {
     static let numberOfItem = 8
     static let sizeOfItem = 100
 }

@@ -1,5 +1,5 @@
 //
-//  TabBar.swift
+//  TabBarController.swift
 //  YeolmokWeather
 //
 //  Created by 김동욱 on 2022/10/04.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TabBar: UITabBarController {
+class TabBarController: UITabBarController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,7 +29,7 @@ class TabBar: UITabBarController {
     }
 }
 
-private struct NumberConstants {
+private enum NumberConstants {
     static let first = 0
     static let second = 1
 }

@@ -111,11 +111,11 @@ extension WeatherForecastTableViewCell: UICollectionViewDataSource, UICollection
     }
 }
 
-private struct LayoutConstraint {
+private enum LayoutConstraint {
     static let standardGap: CGFloat = 8
 }
 
-private struct NumberConstants {
+private enum NumberConstants {
     static let numberOfItem = 8
     static let widthOfItem = 80
     static let heightOfItem = 100

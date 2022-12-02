@@ -327,7 +327,7 @@ extension OtherCityViewController: UITextFieldDelegate {
 }
 
 // MARK: - Magic Number
-private struct LayoutConstants {
+private enum LayoutConstants {
     static let standardGap: CGFloat = 8
     static let textFieldHeight: CGFloat = 30
     static let heightMultiplier: CGFloat = 0.7
@@ -336,11 +336,11 @@ private struct LayoutConstants {
     static let tableViewItemHeight: CGFloat = 200
 }
 
-private struct AnimationConstants {
+private enum AnimationConstants {
     static let duration: TimeInterval = 0.2
 }
 
-private struct NumberConstants {
+private enum NumberConstants {
     static let fromEightToEnd = 8...
 }
 

@@ -22,7 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // 13 이전의 경우에는 SceneDelegate에서 해주었던 작업을 그대로 진행
         window = UIWindow()
         
-        let tabBarController = TabBar()
+        let tabBarController = TabBarController()
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
         

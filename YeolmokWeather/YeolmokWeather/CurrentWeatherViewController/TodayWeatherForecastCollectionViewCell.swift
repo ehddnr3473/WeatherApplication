@@ -90,7 +90,7 @@ class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
     }
 }
 
-private struct LayoutConstraint {
+private enum LayoutConstraint {
     static let smallGap: CGFloat = 5
     static let standardGap: CGFloat = 10
     static let imageWidth: CGFloat = 0.3
