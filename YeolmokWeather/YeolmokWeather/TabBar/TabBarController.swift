@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TabBarController: UITabBarController {
+final class TabBarController: UITabBarController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,14 +19,24 @@ class TabBarController: UITabBarController {
         let currentWeatherViewController = CurrentWeatherViewController()
         let otherCityViewController = OtherCityViewController()
         
-        currentWeatherViewController.tabBarItem = UITabBarItem(title: AppText.weatherTitle, image: UIImage(systemName: AppText.weatherIcon), tag: NumberConstants.first)
-        otherCityViewController.tabBarItem = UITabBarItem(title: AppText.cityTitle, image: UIImage(systemName: AppText.cityIcon), tag: NumberConstants.second)
+        currentWeatherViewController.tabBarItem = UITabBarItem(title: TitleConstants.weather, image: UIImage(systemName: ImageName.weather), tag: NumberConstants.first)
+        otherCityViewController.tabBarItem = UITabBarItem(title: TitleConstants.city, image: UIImage(systemName: ImageName.city), tag: NumberConstants.second)
         
         viewControllers = [currentWeatherViewController, otherCityViewController]
         setViewControllers(viewControllers, animated: true)
 
         tabBar.tintColor = .white
     }
+}
+
+private enum TitleConstants {
+    static let weather = "Weather"
+    static let city = "City"
+}
+
+private enum ImageName {
+    static let weather = "sun.max.circle.fill"
+    static let city = "plus.circle.fill"
 }
 
 private enum NumberConstants {

@@ -123,12 +123,27 @@ final class CurrentWeatherViewController: UIViewController {
         return alert
     }()
     
+    private var activityIndicatorView: UIActivityIndicatorView = {
+        let activityIndicatorView = UIActivityIndicatorView(style: .large)
+        activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
+           
+        activityIndicatorView.startAnimating()
+        activityIndicatorView.color = .white
+           
+        return activityIndicatorView
+    }()
+    
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setUpUI()
         configure()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        activityIndicatorView.center = currentWeatherStackView.center
     }
 }
 
@@ -141,7 +156,7 @@ extension CurrentWeatherViewController {
     }
     
     private func setUpHierachy() {
-        [weatherBackgroundImageView, currentWeatherStackView, todayWeatherForecastCollectionView, titleLabel, weatherForecastTableView].forEach {
+        [weatherBackgroundImageView, currentWeatherStackView, todayWeatherForecastCollectionView, titleLabel, weatherForecastTableView, activityIndicatorView].forEach {
             view.addSubview($0)
         }
         
@@ -180,6 +195,8 @@ extension CurrentWeatherViewController {
     }
     
     private func configure() {
+        activityIndicatorView.startAnimating()
+        
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         appDelegate.restrictRotation = .portrait
         requestAuthorization()
@@ -191,14 +208,12 @@ extension CurrentWeatherViewController {
         weatherForecastTableView.delegate = self
     }
     
-    @MainActor
-    private func setCityName(with cityName: String) {
+    @MainActor private func setCityName(with cityName: String) {
         currentCity.setCityName(with: cityName)
         self.cityNameLabel.text = currentCity.name
     }
     
-    @MainActor
-    private func setCurrentWeather(weather: String, temperature: Double) {
+    @MainActor private func setCurrentWeather(weather: String, temperature: Double) {
         currentCity.setCurrentWeather(weather: weather, temperature: temperature)
         
         weatherLabel.text = currentCity.weather
@@ -208,9 +223,14 @@ extension CurrentWeatherViewController {
         }
     }
     
-    @MainActor
-    private func setBackgroundImage(with imageName: String) {
+    @MainActor private func setBackgroundImage(with imageName: String) {
         weatherBackgroundImageView.image = UIImage(named: imageName)
+    }
+    
+    @MainActor private func reloadAndStopIndicator() {
+        todayWeatherForecastCollectionView.reloadData()
+        weatherForecastTableView.reloadData()
+        activityIndicatorView.stopAnimating()
     }
 }
 
@@ -275,7 +295,7 @@ extension CurrentWeatherViewController {
     }
     
     private func verifyAndRequestWeatherData(_ cityName: String) {
-        let regex = try? NSRegularExpression(pattern: AppText.pattern)
+        let regex = try? NSRegularExpression(pattern: StringConstants.pattern)
         if let _ = regex?.firstMatch(in: cityName, range: NSRange(location: 0, length: cityName.count)) {
             guard let url: URL = self.apiManager.getCityWeatherURL(with: cityName) else { return }
             Task {
@@ -328,10 +348,7 @@ extension CurrentWeatherViewController {
             // 내일부터 3일간의 예보
             appendForecastsTomorrow(with: forecast)
             
-            DispatchQueue.main.async {
-                self.todayWeatherForecastCollectionView.reloadData()
-                self.weatherForecastTableView.reloadData()
-            }
+            reloadAndStopIndicator()
         } catch {
             alertWillAppear(alert, apiManager.errorMessage(error))
         }
@@ -427,6 +444,10 @@ private enum LayoutConstants {
 private enum NumberConstants {
     static let numberOfItemsInSection = 8
 
+}
+
+private enum StringConstants {
+    static let pattern = "^[A-Za-z]{0,}$"
 }
 
 private enum CoreLocationErrorMessage {

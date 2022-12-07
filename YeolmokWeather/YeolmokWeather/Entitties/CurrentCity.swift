@@ -97,7 +97,7 @@ struct CurrentCity {
     private func dayToString(from date: Date) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.timeZone = .current
-        dateFormatter.dateFormat = AppText.dateFormat
+        dateFormatter.dateFormat = StringConstants.dateFormat
         
         return dateFormatter.string(from: date)
     }
@@ -112,4 +112,8 @@ private enum NumberConstants {
     static let numberOfItemsInSection = 8
     static let fromZeroToSeven = 0...7
     static let fromEightToEnd = 8...
+}
+
+private enum StringConstants {
+    static let dateFormat = "dd"
 }

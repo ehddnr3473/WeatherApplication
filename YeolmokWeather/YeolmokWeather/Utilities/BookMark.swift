@@ -14,7 +14,7 @@ struct BookMark {
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         guard let context = appDelegate?.persistentContainer.viewContext else { return nil }
 
-        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: AppText.ModelText.entityName)
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: CoreDataModel.entityName)
         let resultArray = try? context.fetch(fetchRequest)
         
         return resultArray
@@ -24,10 +24,10 @@ struct BookMark {
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         guard let context = appDelegate?.persistentContainer.viewContext else { return }
 
-        guard let entity = NSEntityDescription.entity(forEntityName: AppText.ModelText.entityName, in: context) else { return }
+        guard let entity = NSEntityDescription.entity(forEntityName: CoreDataModel.entityName, in: context) else { return }
 
         let object = NSManagedObject(entity: entity, insertInto: context)
-        object.setValue(name, forKey: AppText.ModelText.attributeName)
+        object.setValue(name, forKey: CoreDataModel.attributeName)
         
         try? context.save()
     }
@@ -46,4 +46,9 @@ struct BookMark {
         
         try? context.save()
     }
+}
+
+enum CoreDataModel {
+    static let entityName = "City"
+    static let attributeName = "name"
 }

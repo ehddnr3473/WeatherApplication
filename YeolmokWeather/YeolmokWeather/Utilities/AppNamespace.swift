@@ -17,3 +17,7 @@ enum AppStyles {
         static let backgroundColor = UIColor.clear.withAlphaComponent(0.5)
     }
 }
+
+enum AppText {
+    static let celsiusString = String(UnicodeScalar(0x00002103)!)
+}

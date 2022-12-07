@@ -110,7 +110,7 @@ final class OtherCityViewController: UIViewController {
     private func fetchBookMarkCity() {
         guard let resultArray = BookMark.fetchCity() else { return }
         for index in resultArray.indices {
-            guard let cityName = resultArray[index].value(forKey: AppText.ModelText.attributeName) as? String else { return }
+            guard let cityName = resultArray[index].value(forKey: CoreDataModel.attributeName) as? String else { return }
             storedCities.append(cityName)
             other.appendCityWithName(cityName)
             DispatchQueue.global(qos: .userInitiated).async { [weak self] in
@@ -172,6 +172,10 @@ extension OtherCityViewController {
         searchTextField.text = ""
         searchTextField.resignFirstResponder()
     }
+    
+    @MainActor private func reloadtableView() {
+        cityWeatherTableView.reloadData()
+    }
 }
 
 // MARK: - REQUEST
@@ -188,10 +192,7 @@ extension OtherCityViewController {
             let data = try await apiManager.requestData(with: url)
             guard let weather = DecodingManager.decode(with: data, modelType: WeatherOfCity.self) else { return }
             other.appendCityWithWeahter(weather)
-            
-            DispatchQueue.main.async {
-                self.cityWeatherTableView.reloadData()
-            }
+            reloadtableView()
         } catch {
             alertWillAppear(alert, apiManager.errorMessage(error))
         }
@@ -210,10 +211,7 @@ extension OtherCityViewController {
             guard var forecast = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
             forecast.list.removeSubrange(NumberConstants.fromEightToEnd)
             self.other.appendCityWithForecast(forecast)
-            
-            DispatchQueue.main.async {
-                self.cityWeatherTableView.reloadData()
-            }
+            reloadtableView()
         } catch {
             alertWillAppear(alert, apiManager.errorMessage(error))
         }
@@ -277,7 +275,7 @@ extension OtherCityViewController: UITableViewDelegate, UITableViewDataSource {
     
     private func removeCell(at indexPath: IndexPath, to tableView: UITableView) {
         other.removeCity(at: indexPath.row)
-        cityWeatherTableView.reloadData()
+        reloadtableView()
     }
 }
 
@@ -286,9 +284,9 @@ extension OtherCityViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         let cityName: String = textField.text?.capitalized ?? ""
         if verifyCityName(cityName) {
-            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-                self?.requestCurrentWeatherOfCity(cityName)
-                self?.requestForecastWeatherOfCity(cityName)
+            Task {
+                requestCurrentWeatherOfCity(cityName)
+                requestForecastWeatherOfCity(cityName)
             }
             textField.text = ""
             textField.resignFirstResponder()

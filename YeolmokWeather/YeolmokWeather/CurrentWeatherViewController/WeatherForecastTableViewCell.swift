@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 /// 3일간의 예보를 나타내는 Custom Cell
-class WeatherForecastTableViewCell: UITableViewCell {
+final class WeatherForecastTableViewCell: UITableViewCell {
     static let identifier = "WeatherForecastTableViewCell"
     private var forecast: Forecast?
     

@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 
 /// 각 도시의 현재 날씨와 약 24시간 동안의 예보를 나타내는 Custom Cell
-class CityWeatherTableViewCell: UITableViewCell {
+final class CityWeatherTableViewCell: UITableViewCell {
     static let identifier = "CityWeatherTableViewCell"
     private var forecast: Forecast?
     
@@ -19,7 +19,7 @@ class CityWeatherTableViewCell: UITableViewCell {
         button.translatesAutoresizingMaskIntoConstraints = false
         
         button.tintColor = .lightGray
-        button.setImage(UIImage(named: "star")?.withRenderingMode(.alwaysTemplate), for: UIControl.State.normal)
+        button.setImage(UIImage(named: ImageName.star)?.withRenderingMode(.alwaysTemplate), for: UIControl.State.normal)
         button.addTarget(self, action: #selector(touchUpBookMarkButton(_:)), for: UIControl.Event.touchUpInside)
         
         return button
@@ -83,7 +83,7 @@ class CityWeatherTableViewCell: UITableViewCell {
         
         forecast = nil
         
-        bookMarkButton.setImage(UIImage(named: "star")?.withRenderingMode(.alwaysTemplate), for: UIControl.State.normal)
+        bookMarkButton.setImage(UIImage(named: ImageName.star)?.withRenderingMode(.alwaysTemplate), for: UIControl.State.normal)
         bookMarkButton.tintColor = .lightGray
         bookMarkButton.isSelected = false
     }
@@ -182,4 +182,8 @@ private enum LayoutConstants {
 private enum NumberConstants {
     static let numberOfItem = 8
     static let sizeOfItem = 100
+}
+
+private enum ImageName {
+    static let star = "star"
 }
