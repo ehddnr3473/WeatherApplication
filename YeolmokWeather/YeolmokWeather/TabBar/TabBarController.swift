@@ -17,12 +17,12 @@ final class TabBarController: UITabBarController {
     
     private func setUp() {
         let currentWeatherViewController = CurrentWeatherViewController()
-        let otherCityViewController = OtherCityViewController()
+        let otherCitiesViewController = OtherCitiesViewController()
         
         currentWeatherViewController.tabBarItem = UITabBarItem(title: TitleConstants.weather, image: UIImage(systemName: ImageName.weather), tag: NumberConstants.first)
-        otherCityViewController.tabBarItem = UITabBarItem(title: TitleConstants.city, image: UIImage(systemName: ImageName.city), tag: NumberConstants.second)
+        otherCitiesViewController.tabBarItem = UITabBarItem(title: TitleConstants.city, image: UIImage(systemName: ImageName.city), tag: NumberConstants.second)
         
-        viewControllers = [currentWeatherViewController, otherCityViewController]
+        viewControllers = [currentWeatherViewController, otherCitiesViewController]
         setViewControllers(viewControllers, animated: true)
 
         tabBar.tintColor = .white

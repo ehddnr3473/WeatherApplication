@@ -1,5 +1,5 @@
 //
-//  OtherCityWeather.swift
+//  WeatherOfCity.swift
 //  Weather
 //
 //  Created by 김동욱 on 2022/08/06.

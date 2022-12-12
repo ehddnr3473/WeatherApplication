@@ -9,3 +9,6 @@
 "Weather" = "날씨";
 "City" = "도시";
 "Forecast" = "예보";
+"City weather" = "도시 날씨";
+"Placeholder" = "도시명을 영어로 검색";
+"Cancel" = "취소";

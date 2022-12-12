@@ -1,5 +1,5 @@
 //
-//  OtherCityViewController.swift
+//  OtherCitiesViewController.swift
 //  Weather
 //
 //  Created by 김동욱 on 2022/08/04.
@@ -13,7 +13,7 @@ import CoreData
  - 도시 이름을 이용하여 현재 날씨 데이터와 예보 데이터를 받아옴.
  - Core Data의 Persistence를 이용하여 viewDidLoad()시 저장한 도시 이름을 받아와서 검색
  */
-final class OtherCityViewController: UIViewController {
+final class OtherCitiesViewController: UIViewController {
     
     // MARK: - Properties
     private let apiManager = FetchData()
@@ -120,7 +120,7 @@ final class OtherCityViewController: UIViewController {
 }
 
 // MARK: - View
-extension OtherCityViewController {
+extension OtherCitiesViewController {
     private func setUpUI() {
         setUpHierachy()
         setUpLayout()
@@ -177,7 +177,7 @@ extension OtherCityViewController {
 }
 
 // MARK: - REQUEST
-extension OtherCityViewController {
+extension OtherCitiesViewController {
     private func requestCurrentWeatherOfCity(_ cityName: String) {
         guard let url: URL = apiManager.getCityWeatherURL(with: cityName) else { return }
         Task {
@@ -217,7 +217,7 @@ extension OtherCityViewController {
 }
 
 // MARK: - TableView
-extension OtherCityViewController: UITableViewDelegate, UITableViewDataSource {
+extension OtherCitiesViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CityWeatherTableViewCell.identifier, for: indexPath) as? CityWeatherTableViewCell else { return UITableViewCell() }
         
@@ -278,7 +278,7 @@ extension OtherCityViewController: UITableViewDelegate, UITableViewDataSource {
 }
 
 // MARK: - TextFieldDelegate
-extension OtherCityViewController: UITextFieldDelegate {
+extension OtherCitiesViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         let cityName: String = textField.text?.capitalized ?? ""
         if verifyCityName(cityName) {
@@ -308,26 +308,30 @@ extension OtherCityViewController: UITextFieldDelegate {
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        UIView.animate(withDuration: AnimationConstants.duration) { [weak self] in
-            self?.trailingOfSearchTextField.constant = -LayoutConstants.largeGap
-            self?.view.layoutIfNeeded()
+        UIView.animate(withDuration: AnimationConstants.duration) {
+            if AppText.language == "kr" {
+                self.trailingOfSearchTextField.constant = -LayoutConstants.krLargeGap
+            } else {
+                self.trailingOfSearchTextField.constant = -LayoutConstants.enLargeGap
+            }
+            self.view.layoutIfNeeded()
         }
     }
     
     func textFieldDidEndEditing(_ textField: UITextField, reason: UITextField.DidEndEditingReason) {
-        UIView.animate(withDuration: AnimationConstants.duration) { [weak self] in
-            self?.trailingOfSearchTextField.constant = -LayoutConstants.standardGap
-            self?.view.layoutIfNeeded()
+        UIView.animate(withDuration: AnimationConstants.duration) {
+            self.trailingOfSearchTextField.constant = -LayoutConstants.standardGap
+            self.view.layoutIfNeeded()
         }
     }
 }
 
 // MARK: - Magic Number
 private enum StringConstants {
-    static let mainLabelText: String = "도시 날씨"
-    static let searchTextFieldPlaceholder: String = "도시명을 영어로 검색"
-    static let cancelButtonTitle: String = "취소"
-    static let backgroundImageName = "OtherCityBackground"
+    static let mainLabelText = "City weather".localized
+    static let searchTextFieldPlaceholder = "Placeholder".localized
+    static let cancelButtonTitle = "Cancel".localized
+    static let backgroundImageName = "OtherCitiesBackground"
 }
 
 private enum LayoutConstants {
@@ -335,7 +339,8 @@ private enum LayoutConstants {
     static let textFieldHeight: CGFloat = 30
     static let heightMultiplier: CGFloat = 0.7
     static let titleLeading: CGFloat = 15
-    static let largeGap: CGFloat = 50
+    static let krLargeGap: CGFloat = 50
+    static let enLargeGap: CGFloat = 60
     static let tableViewItemHeight: CGFloat = 200
 }
 

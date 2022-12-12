@@ -9,3 +9,6 @@
 "Weather" = "Weather";
 "City" = "City";
 "Forecast" = "Forecast";
+"City weather" = "City weather";
+"Placeholder" = "The city name in English.";
+"Cancel" = "Cancel";
