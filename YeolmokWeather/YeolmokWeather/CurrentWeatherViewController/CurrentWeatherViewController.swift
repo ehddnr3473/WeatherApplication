@@ -96,7 +96,7 @@ final class CurrentWeatherViewController: UIViewController {
         
         label.textColor = .white
         label.font = .boldSystemFont(ofSize: 20)
-        label.text = "3일간의 예보"
+        label.text = "Forecast".localized
         
         return label
     }()
@@ -364,7 +364,7 @@ extension CurrentWeatherViewController {
         currentCity.setUpDayForecast(with: forecast)
     }
     
-    // For 3일 간의 예보
+    // For 3일간의 예보
     private func appendForecastsTomorrow(with forecast: Forecast) {
         currentCity.appendForecastsTomorrow(with: forecast)
     }

@@ -31,8 +31,8 @@ final class TabBarController: UITabBarController {
 }
 
 private enum TitleConstants {
-    static let weather = "Weather"
-    static let city = "City"
+    static let weather = "Weather".localized
+    static let city = "City".localized
 }
 
 private enum ImageName {

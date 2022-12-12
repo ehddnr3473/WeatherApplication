@@ -45,7 +45,7 @@ struct CurrentCity {
         self.forecast = forecast
     }
     
-    // For 3일 간의 예보
+    // For 3일간의 예보
     mutating func appendForecastsTomorrow(with forecast: Forecast) {
         var forecast = forecast
         for index in forecast.list.indices {

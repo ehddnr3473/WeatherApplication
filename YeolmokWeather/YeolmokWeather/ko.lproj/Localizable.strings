@@ -1,0 +1,11 @@
+/* 
+  Localizable.strings
+  YeolmokWeather
+
+  Created by 김동욱 on 2022/12/13.
+  
+*/
+
+"Weather" = "날씨";
+"City" = "도시";
+"Forecast" = "예보";
