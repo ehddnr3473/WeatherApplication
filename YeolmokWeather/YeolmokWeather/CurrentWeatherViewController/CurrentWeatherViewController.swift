@@ -17,20 +17,20 @@ import CoreLocation
 final class CurrentWeatherViewController: UIViewController {
     
     // MARK: - Properties
-    private var apiManager = FetchData()
+    private let apiManager = FetchData()
     private var currentCity = CurrentCity()
     
-    private var locationManager = CLLocationManager()
+    private let locationManager = CLLocationManager()
     private var currentLocation: CLLocationCoordinate2D?
     
-    private var weatherBackgroundImageView: UIImageView = {
+    private let weatherBackgroundImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         return imageView
     }()
     
-    private var currentWeatherStackView: UIStackView = {
+    private let currentWeatherStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -42,7 +42,7 @@ final class CurrentWeatherViewController: UIViewController {
         return stackView
     }()
     
-    private var cityNameLabel: UILabel = {
+    private let cityNameLabel: UILabel = {
         let label = UILabel()
         
         label.textColor = .white
@@ -52,7 +52,7 @@ final class CurrentWeatherViewController: UIViewController {
         return label
     }()
     
-    private var temperatureLabel: UILabel = {
+    private let temperatureLabel: UILabel = {
         let label = UILabel()
         
         label.textColor = .white
@@ -62,7 +62,7 @@ final class CurrentWeatherViewController: UIViewController {
         return label
     }()
     
-    private var weatherLabel: UILabel = {
+    private let weatherLabel: UILabel = {
         let label = UILabel()
         
         label.textColor = .white
@@ -72,7 +72,7 @@ final class CurrentWeatherViewController: UIViewController {
         return label
     }()
     
-    private var todayWeatherForecastCollectionView: UICollectionView = {
+    private let todayWeatherForecastCollectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.scrollDirection = .horizontal
         flowLayout.sectionInset = .init(top: 0, left: 20, bottom: 0, right: 20)
@@ -90,7 +90,7 @@ final class CurrentWeatherViewController: UIViewController {
         return collectionView
     }()
     
-    private var titleLabel: UILabel = {
+    private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -101,7 +101,7 @@ final class CurrentWeatherViewController: UIViewController {
         return label
     }()
     
-    private var weatherForecastTableView: UITableView = {
+    private let weatherForecastTableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -123,7 +123,7 @@ final class CurrentWeatherViewController: UIViewController {
         return alert
     }()
     
-    private var activityIndicatorView: UIActivityIndicatorView = {
+    private let activityIndicatorView: UIActivityIndicatorView = {
         let activityIndicatorView = UIActivityIndicatorView(style: .large)
         activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
            

@@ -13,7 +13,7 @@ final class WeatherForecastTableViewCell: UITableViewCell {
     static let identifier = "WeatherForecastTableViewCell"
     private var forecast: Forecast?
     
-    var dayLabel: UILabel = {
+    let dayLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -23,7 +23,7 @@ final class WeatherForecastTableViewCell: UITableViewCell {
         return label
     }()
     
-    var forecastCollectionView: UICollectionView = {
+    let forecastCollectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.scrollDirection = .horizontal
         flowLayout.sectionInset = .zero
@@ -59,13 +59,13 @@ final class WeatherForecastTableViewCell: UITableViewCell {
         super.init(coder: coder)
     }
     
-    func setUpHierachy() {
+    private func setUpHierachy() {
         [dayLabel, forecastCollectionView].forEach {
             contentView.addSubview($0)
         }
     }
     
-    func setUpLayout() {
+    private func setUpLayout() {
         NSLayoutConstraint.activate([
             dayLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             dayLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: LayoutConstraint.standardGap),

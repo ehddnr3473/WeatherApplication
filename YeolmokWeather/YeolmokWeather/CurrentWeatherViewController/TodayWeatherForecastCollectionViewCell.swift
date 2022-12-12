@@ -12,7 +12,7 @@ import UIKit
 final class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
     static let identifier = "TodayWeatherForecastCollectionViewCell"
     
-    var timeLabel: UILabel = {
+    let timeLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -23,7 +23,7 @@ final class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    var weatherImageView: UIImageView = {
+    let weatherImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -32,7 +32,7 @@ final class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
         return imageView
     }()
     
-    var weatherLabel: UILabel = {
+    let weatherLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -43,7 +43,7 @@ final class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    var temperatureLabel: UILabel = {
+    let temperatureLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -65,13 +65,13 @@ final class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
         super.init(coder: coder)
     }
     
-    func setUpHierachy() {
+    private func setUpHierachy() {
         [timeLabel, weatherImageView, weatherLabel, temperatureLabel].forEach {
             contentView.addSubview($0)
         }
     }
     
-    func setUpLayout() {
+    private func setUpLayout() {
         NSLayoutConstraint.activate([
             timeLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
             timeLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: LayoutConstraint.standardGap),

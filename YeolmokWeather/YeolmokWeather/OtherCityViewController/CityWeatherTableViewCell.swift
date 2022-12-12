@@ -25,7 +25,7 @@ final class CityWeatherTableViewCell: UITableViewCell {
         return button
     }()
     
-    var cityNameLabel: UILabel = {
+    let cityNameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -35,7 +35,7 @@ final class CityWeatherTableViewCell: UITableViewCell {
         return label
     }()
     
-    var weatherLabel: UILabel = {
+    let weatherLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -45,7 +45,7 @@ final class CityWeatherTableViewCell: UITableViewCell {
         return label
     }()
     
-    var temperatureLabel: UILabel = {
+    let temperatureLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -55,7 +55,7 @@ final class CityWeatherTableViewCell: UITableViewCell {
         return label
     }()
     
-    var forecastOfCityCollectionView: UICollectionView = {
+    let forecastOfCityCollectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.scrollDirection = .horizontal
         flowLayout.sectionInset = .zero

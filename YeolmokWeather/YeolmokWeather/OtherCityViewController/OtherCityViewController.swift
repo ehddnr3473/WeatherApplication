@@ -18,16 +18,13 @@ final class OtherCityViewController: UIViewController {
     // MARK: - Properties
     private let apiManager = FetchData()
     private var other = Other()
-    private let mainLabelText: String = "도시의 날씨"
-    private let searchTextFieldPlaceholder: String = "도시명을 영어로 검색"
-    private let cancelButtonTitle: String = "취소"
     private var storedCities: [String] = []
     
     // Layout Constraint 가변 textField
     private lazy var trailingOfSearchTextField: NSLayoutConstraint = searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstants.standardGap)
     
-    private var backgroundImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "OtherCityBackground"))
+    private let backgroundImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: StringConstants.backgroundImageName))
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         return imageView
@@ -37,7 +34,7 @@ final class OtherCityViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.text = mainLabelText
+        label.text = StringConstants.mainLabelText
         label.textColor = .white
         label.font = .boldSystemFont(ofSize: 30)
         
@@ -49,14 +46,15 @@ final class OtherCityViewController: UIViewController {
         textField.translatesAutoresizingMaskIntoConstraints = false
         
         textField.textColor = .black
-        textField.placeholder = searchTextFieldPlaceholder
-        textField.backgroundColor = .white
-        textField.layer.cornerRadius = 10
+        textField.placeholder = StringConstants.searchTextFieldPlaceholder
+        textField.backgroundColor = .clear
+        textField.autocapitalizationType = .none
+        textField.autocorrectionType = .no
+        textField.layer.cornerRadius = 8
         textField.layer.borderWidth = 2
         textField.returnKeyType = .search
         
-        let paddingView = UIView(frame: CGRect(x: .zero, y: .zero, width: 10, height: textField.frame.height))
-        textField.leftView = paddingView
+        textField.leftView = UIView(frame: CGRect(x: .zero, y: .zero, width: 10, height: textField.frame.height))
         textField.leftViewMode = UITextField.ViewMode.always
         
         return textField
@@ -66,7 +64,7 @@ final class OtherCityViewController: UIViewController {
         let button = UIButton(type: UIButton.ButtonType.roundedRect)
         button.translatesAutoresizingMaskIntoConstraints = false
         
-        button.setTitle(cancelButtonTitle, for: UIControl.State.normal)
+        button.setTitle(StringConstants.cancelButtonTitle, for: UIControl.State.normal)
         button.tintColor = .black
         
         button.addTarget(self, action: #selector(touchUpCancelButton(_:)), for: UIControl.Event.touchUpInside)
@@ -74,7 +72,7 @@ final class OtherCityViewController: UIViewController {
         return button
     }()
     
-    private var cityWeatherTableView: UITableView = {
+    private let cityWeatherTableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -325,6 +323,13 @@ extension OtherCityViewController: UITextFieldDelegate {
 }
 
 // MARK: - Magic Number
+private enum StringConstants {
+    static let mainLabelText: String = "도시 날씨"
+    static let searchTextFieldPlaceholder: String = "도시명을 영어로 검색"
+    static let cancelButtonTitle: String = "취소"
+    static let backgroundImageName = "OtherCityBackground"
+}
+
 private enum LayoutConstants {
     static let standardGap: CGFloat = 8
     static let textFieldHeight: CGFloat = 30
