@@ -69,7 +69,7 @@ struct FetchData {
         let baseURL = URL(string: "https://api.openweathermap.org")
         var urlComponents = URLComponents()
         let cityName = URLQueryItem(name: "q", value: cityName)
-        let language = URLQueryItem(name: "lang", value: "kr")
+        let language = URLQueryItem(name: "lang", value: AppText.language)
         let key = URLQueryItem(name: "appid", value: apiKey)
         let units = URLQueryItem(name: "units", value: "metric")
         
@@ -85,7 +85,7 @@ struct FetchData {
         let baseURL = URL(string: "https://api.openweathermap.org")
         var urlComponents = URLComponents()
         let cityName = URLQueryItem(name: "q", value: cityName)
-        let language = URLQueryItem(name: "lang", value: "kr")
+        let language = URLQueryItem(name: "lang", value: AppText.language)
         let key = URLQueryItem(name: "appid", value: apiKey)
         let units = URLQueryItem(name: "units", value: "metric")
         

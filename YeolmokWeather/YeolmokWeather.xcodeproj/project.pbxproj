@@ -128,6 +128,7 @@
 				6BEC6C5B289E8AE400EFF342 /* CurrentWeatherViewController */,
 				6BCED14B289CF5E800F8A305 /* Utilities */,
 				6B9242AD2898F31F00E29CF8 /* Entitties */,
+				6BE8213C29461DA900B6BB8C /* Tests */,
 				6B9242A02898EDE500E29CF8 /* Assets.xcassets */,
 				6B9242A22898EDE500E29CF8 /* LaunchScreen.storyboard */,
 				6B9242A52898EDE500E29CF8 /* Info.plist */,
@@ -140,7 +141,6 @@
 		6B9242AD2898F31F00E29CF8 /* Entitties */ = {
 			isa = PBXGroup;
 			children = (
-				6BA4F0C829176CF200102A6F /* CurrentCity.swift */,
 				6BA4F0CA2917783500102A6F /* AnotherCity.swift */,
 				6B01EEEC289A74DF007C5B30 /* TypeOfWeather.swift */,
 				6B6EB49F289DA087009A80AD /* WeatherOfCity.swift */,
@@ -171,12 +171,20 @@
 			path = Utilities;
 			sourceTree = "<group>";
 		};
+		6BE8213C29461DA900B6BB8C /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
 		6BEC6C5B289E8AE400EFF342 /* CurrentWeatherViewController */ = {
 			isa = PBXGroup;
 			children = (
 				6B92429B2898EDE300E29CF8 /* CurrentWeatherViewController.swift */,
 				6BEAF02C28A1370500D0BB6D /* TodayWeatherForecastCollectionViewCell.swift */,
 				6B9242AB2898EED000E29CF8 /* WeatherForecastTableViewCell.swift */,
+				6BA4F0C829176CF200102A6F /* CurrentCity.swift */,
 			);
 			path = CurrentWeatherViewController;
 			sourceTree = "<group>";

@@ -26,6 +26,7 @@ final class TabBarController: UITabBarController {
         setViewControllers(viewControllers, animated: true)
 
         tabBar.tintColor = .white
+        tabBar.unselectedItemTintColor = .black
     }
 }
 

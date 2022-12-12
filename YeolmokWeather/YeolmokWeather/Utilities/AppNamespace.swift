@@ -20,4 +20,11 @@ enum AppStyles {
 
 enum AppText {
     static let celsiusString = String(UnicodeScalar(0x00002103)!)
+    static var language: String {
+        if Locale.current.languageCode == "ko" {
+            return "kr"
+        } else {
+            return "en"
+        }
+    }
 }

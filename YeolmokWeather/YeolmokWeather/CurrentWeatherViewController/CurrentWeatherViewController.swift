@@ -166,8 +166,6 @@ extension CurrentWeatherViewController {
     }
     
     private func setUpLayout() {
-        let safeGuideLine = view.safeAreaLayoutGuide
-        
         NSLayoutConstraint.activate([
             weatherBackgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
             weatherBackgroundImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -175,7 +173,7 @@ extension CurrentWeatherViewController {
             weatherBackgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             currentWeatherStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            currentWeatherStackView.topAnchor.constraint(equalTo: safeGuideLine.topAnchor),
+            currentWeatherStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             currentWeatherStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: LayoutConstants.stackViewWidthMultiplier),
             currentWeatherStackView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: LayoutConstants.stackViewHeightMultiplier),
             
@@ -285,13 +283,20 @@ extension CurrentWeatherViewController {
     private func requestCityName(with url: URL) async {
         do {
             let data = try await apiManager.requestData(with: url)
-            guard let city = DecodingManager.decode(with: data, modelType: [CityName].self) else { return }
-            setCityName(with: city[.zero].koreanNameOfCity.cityName ?? city[.zero].name)
-            verifyAndRequestWeatherData(city[.zero].name)
+            guard let cityName = DecodingManager.decode(with: data, modelType: [CityName].self) else { return }
+            setCityName(with: localizationCityName(cityName))
+            verifyAndRequestWeatherData(cityName[.zero].name)
         } catch {
             alertWillAppear(alert, apiManager.errorMessage(error))
         }
-        
+    }
+    
+    private func localizationCityName(_ cityName: [CityName]) -> String {
+        if AppText.language == "kr" {
+            return cityName[.zero].koreanNameOfCity.cityName ?? cityName[.zero].name
+        } else {
+            return cityName[.zero].name
+        }
     }
     
     private func verifyAndRequestWeatherData(_ cityName: String) {
