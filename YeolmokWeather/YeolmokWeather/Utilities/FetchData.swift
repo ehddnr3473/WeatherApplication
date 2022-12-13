@@ -115,9 +115,9 @@ struct FetchData {
 
 // ErrorMessage Namespace
 private enum ErrorMessage {
-    static let apiKeyError = "알 수 없는 오류가 발생하였습니다."
-    static let cityNameError = "도시 이름을 다시 확인해주세요."
-    static let internetConnectionProblem = "인터넷 연결을 확인해주세요."
-    static let didNotReceiveData = "날씨 정보를 받아오지 못했습니다."
-    static let undefined = "알 수 없는 오류가 발생하였습니다."
+    static let apiKeyError = "ApiKeyError".localized
+    static let cityNameError = "CityNameError".localized
+    static let internetConnectionProblem = "InternetConnectionProblem".localized
+    static let didNotReceiveData = "DidNotReceiveData".localized
+    static let undefined = "Undefined".localized
 }

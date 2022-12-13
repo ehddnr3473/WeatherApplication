@@ -6,9 +6,30 @@
   
 */
 
+// UI Component
 "Weather" = "날씨";
 "City" = "도시";
 "Forecast" = "예보";
 "City weather" = "도시 날씨";
 "Placeholder" = "도시명을 영어로 검색";
 "Cancel" = "취소";
+
+// Alert & Action
+"AlertTitle" = "오류";
+"ActionTitle" = "확인";
+
+// FetchErrorMessage
+"ApikeyError" = "알 수 없는 오류가 발생하였습니다.";
+"CityNameError" = "도시 이름을 다시 확인해주세요.";
+"InternetConnectionProblem" = "인터넷 연결을 확인해주세요.";
+"DidNotReceiveData" = "날씨 정보를 받아오지 못했습니다.";
+"Undefined" = "알 수 없는 오류가 발생하였습니다.";
+
+// SearchErrorMessage
+"AppendFailMessage" = "이미 추가된 도시입니다.";
+"EmptyText" = "도시명을 입력해주세요.";
+
+// CoreLocationErrorMessage
+"Denied" = "애플리케이션을 실행하기 위해서는 위치 정보 제공이 필요합니다. 설정 > 열목날씨 > 위치에서 애플리케이션의 위치 사용 설정을 허용해주시기를 바랍니다.";
+"Restricted" = "보호자 통제와 같은 활성화 제한으로 인해 사용자가 애플리케이션의 상태를 변경할 수 없습니다.";
+"Failed" = "위치 설정 오류가 발생하였습니다.";

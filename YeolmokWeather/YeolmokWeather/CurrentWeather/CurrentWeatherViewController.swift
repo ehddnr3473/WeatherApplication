@@ -115,9 +115,9 @@ final class CurrentWeatherViewController: UIViewController {
     }()
     
     private lazy var alert: UIAlertController = {
-        let alert = UIAlertController(title: "오류", message: "", preferredStyle: .alert)
+        let alert = UIAlertController(title: "AlertTitle".localized, message: "", preferredStyle: .alert)
         
-        let action = UIAlertAction(title: "확인", style: .default)
+        let action = UIAlertAction(title: "ActionTitle".localized, style: .default)
         alert.addAction(action)
         
         return alert
@@ -139,15 +139,6 @@ final class CurrentWeatherViewController: UIViewController {
         
         setUpUI()
         configure()
-        printLocale()
-    }
-    
-    func printLocale() {
-        let identifier = Locale.current.identifier
-        let regionCode = Locale.current.regionCode!
-        let languageCode = Locale.current.languageCode!
-            
-        print("identifier: \(identifier)\nregionCode: \(regionCode)\nlanguageCode: \(languageCode)")
     }
     
     override func viewDidLayoutSubviews() {
@@ -273,7 +264,7 @@ extension CurrentWeatherViewController: CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        alertWillAppear(alert, CoreLocationErrorMessage.fail)
+        alertWillAppear(alert, CoreLocationErrorMessage.failed)
     }
 }
 
@@ -465,7 +456,7 @@ private enum StringConstants {
 }
 
 private enum CoreLocationErrorMessage {
-    static let denied = "애플리케이션을 실행하기 위해서는 위치 정보 제공이 필요합니다. 설정 > 열목날씨 > 위치에서 애플리케이션의 위치 사용 설정을 허용해주시기를 바랍니다."
-    static let restricted = "보호자 통제와 같은 활성화 제한으로 인해 사용자가 애플리케이션의 상태를 변경할 수 없습니다."
-    static let fail = "위치 설정 오류가 발생하였습니다."
+    static let denied = "Denied".localized
+    static let restricted = "Restricted".localized
+    static let failed = "Falied".localized
 }

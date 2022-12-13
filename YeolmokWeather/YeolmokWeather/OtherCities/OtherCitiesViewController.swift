@@ -87,9 +87,9 @@ final class OtherCitiesViewController: UIViewController {
     }()
     
     private lazy var alert: UIAlertController = {
-        let alert = UIAlertController(title: "오류", message: "", preferredStyle: .alert)
+        let alert = UIAlertController(title: "AlertTitle".localized, message: "", preferredStyle: .alert)
         
-        let action = UIAlertAction(title: "확인", style: .default)
+        let action = UIAlertAction(title: "ActionTitle".localized, style: .default)
         alert.addAction(action)
         
         return alert
@@ -353,7 +353,7 @@ private enum NumberConstants {
 }
 
 private enum ErrorMessage {
-    static let appendFailMessage = "이미 추가된 도시입니다."
-    static let emptyText = "도시명을 입력해주세요."
-    static let undefined = "알 수 없는 오류가 발생하였습니다."
+    static let appendFailMessage = "AppendFailMessage".localized
+    static let emptyText = "EmptyText".localized
+    static let undefined = "Undefined".localized
 }

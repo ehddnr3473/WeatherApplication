@@ -6,9 +6,30 @@
   
 */
 
+// UI Component
 "Weather" = "Weather";
 "City" = "City";
 "Forecast" = "Forecast";
 "City weather" = "City weather";
 "Placeholder" = "The city name in English.";
 "Cancel" = "Cancel";
+
+// Alert & Action
+"AlertTitle" = "Error";
+"ActionTitle" = "OK";
+
+// FetchErrorMessage
+"ApikeyError" = "A undefined error occurred. Try again.";
+"CityNameError" = "Please check the name of the city again.";
+"InternetConnectionProblem" = "Please check the network connection.";
+"DidNotReceiveData" = "Failed to get weather information.";
+"Undefined" = "A undefined error occurred. Try again.";
+
+// SearchErrorMessage
+"AppendFailMessage" = "The city has already been added.";
+"EmptyText" = "Please enter the city name.";
+
+// CoreLocationErrorMessage
+"Denied" = "You need to provide location information to run the application. Please allow the application's location usage setting in Settings > YeolmokWeather > Location.";
+"Restricted" = "Activation restrictions, such as Parental Controls, prevent users from changing the state of the application.";
+"Failed" = "A location error has occurred.";
