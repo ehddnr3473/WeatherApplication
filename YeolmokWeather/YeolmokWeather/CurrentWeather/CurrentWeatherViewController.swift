@@ -139,6 +139,15 @@ final class CurrentWeatherViewController: UIViewController {
         
         setUpUI()
         configure()
+        printLocale()
+    }
+    
+    func printLocale() {
+        let identifier = Locale.current.identifier
+        let regionCode = Locale.current.regionCode!
+        let languageCode = Locale.current.languageCode!
+            
+        print("identifier: \(identifier)\nregionCode: \(regionCode)\nlanguageCode: \(languageCode)")
     }
     
     override func viewDidLayoutSubviews() {
