@@ -11,6 +11,9 @@
 		6B14428A289BE33900BDF07D /* Decoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B144289289BE33800BDF07D /* Decoder.swift */; };
 		6B14428C289C016100BDF07D /* OtherCitiesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B14428B289C016100BDF07D /* OtherCitiesViewController.swift */; };
 		6B285EE928B206B0001A4291 /* BookMark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B285EE828B206B0001A4291 /* BookMark.swift */; };
+		6B32242F29495D6A008E4B3D /* YeolmokWeatherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B32242E29495D6A008E4B3D /* YeolmokWeatherTests.swift */; };
+		6B32243C29495D76008E4B3D /* YeolmokWeatherUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B32243B29495D76008E4B3D /* YeolmokWeatherUITests.swift */; };
+		6B32243E29495D76008E4B3D /* YeolmokWeatherUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B32243D29495D76008E4B3D /* YeolmokWeatherUITestsLaunchTests.swift */; };
 		6B4E887728EB549D00723006 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6B4E887928EB549D00723006 /* InfoPlist.strings */; };
 		6B58B49C28A181E500BA9F71 /* Forecast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B58B49B28A181E500BA9F71 /* Forecast.swift */; };
 		6B5B4CEE29479F9D008BE5B1 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6B5B4CF029479F9D008BE5B1 /* Localizable.strings */; };
@@ -36,11 +39,33 @@
 		6BF4C6F328AC9ABF009FC118 /* AppNamespace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BF4C6F228AC9ABF009FC118 /* AppNamespace.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		6B32243029495D6A008E4B3D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6B92428C2898EDE300E29CF8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6B9242932898EDE300E29CF8;
+			remoteInfo = YeolmokWeather;
+		};
+		6B32243F29495D76008E4B3D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6B92428C2898EDE300E29CF8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6B9242932898EDE300E29CF8;
+			remoteInfo = YeolmokWeather;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		6B01EEEC289A74DF007C5B30 /* TypeOfWeather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeOfWeather.swift; sourceTree = "<group>"; };
 		6B144289289BE33800BDF07D /* Decoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Decoder.swift; sourceTree = "<group>"; };
 		6B14428B289C016100BDF07D /* OtherCitiesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherCitiesViewController.swift; sourceTree = "<group>"; };
 		6B285EE828B206B0001A4291 /* BookMark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookMark.swift; sourceTree = "<group>"; };
+		6B32242C29495D6A008E4B3D /* YeolmokWeatherTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YeolmokWeatherTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6B32242E29495D6A008E4B3D /* YeolmokWeatherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YeolmokWeatherTests.swift; sourceTree = "<group>"; };
+		6B32243929495D76008E4B3D /* YeolmokWeatherUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YeolmokWeatherUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6B32243B29495D76008E4B3D /* YeolmokWeatherUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YeolmokWeatherUITests.swift; sourceTree = "<group>"; };
+		6B32243D29495D76008E4B3D /* YeolmokWeatherUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YeolmokWeatherUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		6B4E887828EB549D00723006 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6B4E887A28EB54C400723006 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6B502D772948F22900B88231 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -72,6 +97,20 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		6B32242929495D6A008E4B3D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6B32243629495D76008E4B3D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6B9242912898EDE300E29CF8 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -88,6 +127,23 @@
 				6B8CE25D293909BF00C8DC4B /* ApiKey.xcconfig */,
 			);
 			path = API_KEY;
+			sourceTree = "<group>";
+		};
+		6B32242D29495D6A008E4B3D /* YeolmokWeatherTests */ = {
+			isa = PBXGroup;
+			children = (
+				6B32242E29495D6A008E4B3D /* YeolmokWeatherTests.swift */,
+			);
+			path = YeolmokWeatherTests;
+			sourceTree = "<group>";
+		};
+		6B32243A29495D76008E4B3D /* YeolmokWeatherUITests */ = {
+			isa = PBXGroup;
+			children = (
+				6B32243B29495D76008E4B3D /* YeolmokWeatherUITests.swift */,
+				6B32243D29495D76008E4B3D /* YeolmokWeatherUITestsLaunchTests.swift */,
+			);
+			path = YeolmokWeatherUITests;
 			sourceTree = "<group>";
 		};
 		6B4E887B28EB667300723006 /* TabBar */ = {
@@ -111,6 +167,8 @@
 			isa = PBXGroup;
 			children = (
 				6B9242962898EDE300E29CF8 /* YeolmokWeather */,
+				6B32242D29495D6A008E4B3D /* YeolmokWeatherTests */,
+				6B32243A29495D76008E4B3D /* YeolmokWeatherUITests */,
 				6B9242952898EDE300E29CF8 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -119,6 +177,8 @@
 			isa = PBXGroup;
 			children = (
 				6B9242942898EDE300E29CF8 /* YeolmokWeather.app */,
+				6B32242C29495D6A008E4B3D /* YeolmokWeatherTests.xctest */,
+				6B32243929495D76008E4B3D /* YeolmokWeatherUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -134,7 +194,6 @@
 				6BEC6C5B289E8AE400EFF342 /* CurrentWeather */,
 				6BCED14B289CF5E800F8A305 /* Utilities */,
 				6B9242AD2898F31F00E29CF8 /* Entitties */,
-				6BE8213C29461DA900B6BB8C /* Tests */,
 				6B9242A02898EDE500E29CF8 /* Assets.xcassets */,
 				6B9242A22898EDE500E29CF8 /* LaunchScreen.storyboard */,
 				6B9242A52898EDE500E29CF8 /* Info.plist */,
@@ -178,13 +237,6 @@
 			path = Utilities;
 			sourceTree = "<group>";
 		};
-		6BE8213C29461DA900B6BB8C /* Tests */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Tests;
-			sourceTree = "<group>";
-		};
 		6BEC6C5B289E8AE400EFF342 /* CurrentWeather */ = {
 			isa = PBXGroup;
 			children = (
@@ -209,6 +261,42 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		6B32242B29495D6A008E4B3D /* YeolmokWeatherTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6B32243229495D6A008E4B3D /* Build configuration list for PBXNativeTarget "YeolmokWeatherTests" */;
+			buildPhases = (
+				6B32242829495D6A008E4B3D /* Sources */,
+				6B32242929495D6A008E4B3D /* Frameworks */,
+				6B32242A29495D6A008E4B3D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6B32243129495D6A008E4B3D /* PBXTargetDependency */,
+			);
+			name = YeolmokWeatherTests;
+			productName = YeolmokWeatherTests;
+			productReference = 6B32242C29495D6A008E4B3D /* YeolmokWeatherTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		6B32243829495D76008E4B3D /* YeolmokWeatherUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6B32244129495D76008E4B3D /* Build configuration list for PBXNativeTarget "YeolmokWeatherUITests" */;
+			buildPhases = (
+				6B32243529495D76008E4B3D /* Sources */,
+				6B32243629495D76008E4B3D /* Frameworks */,
+				6B32243729495D76008E4B3D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6B32244029495D76008E4B3D /* PBXTargetDependency */,
+			);
+			name = YeolmokWeatherUITests;
+			productName = YeolmokWeatherUITests;
+			productReference = 6B32243929495D76008E4B3D /* YeolmokWeatherUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		6B9242932898EDE300E29CF8 /* YeolmokWeather */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6B9242A82898EDE500E29CF8 /* Build configuration list for PBXNativeTarget "YeolmokWeather" */;
@@ -235,9 +323,17 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1340;
+				LastSwiftUpdateCheck = 1410;
 				LastUpgradeCheck = 1340;
 				TargetAttributes = {
+					6B32242B29495D6A008E4B3D = {
+						CreatedOnToolsVersion = 14.1;
+						TestTargetID = 6B9242932898EDE300E29CF8;
+					};
+					6B32243829495D76008E4B3D = {
+						CreatedOnToolsVersion = 14.1;
+						TestTargetID = 6B9242932898EDE300E29CF8;
+					};
 					6B9242932898EDE300E29CF8 = {
 						CreatedOnToolsVersion = 13.4.1;
 					};
@@ -260,11 +356,27 @@
 			projectRoot = "";
 			targets = (
 				6B9242932898EDE300E29CF8 /* YeolmokWeather */,
+				6B32242B29495D6A008E4B3D /* YeolmokWeatherTests */,
+				6B32243829495D76008E4B3D /* YeolmokWeatherUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		6B32242A29495D6A008E4B3D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6B32243729495D76008E4B3D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6B9242922898EDE300E29CF8 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -279,6 +391,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		6B32242829495D6A008E4B3D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6B32242F29495D6A008E4B3D /* YeolmokWeatherTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6B32243529495D76008E4B3D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6B32243E29495D76008E4B3D /* YeolmokWeatherUITestsLaunchTests.swift in Sources */,
+				6B32243C29495D76008E4B3D /* YeolmokWeatherUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6B9242902898EDE300E29CF8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -311,6 +440,19 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		6B32243129495D6A008E4B3D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6B9242932898EDE300E29CF8 /* YeolmokWeather */;
+			targetProxy = 6B32243029495D6A008E4B3D /* PBXContainerItemProxy */;
+		};
+		6B32244029495D76008E4B3D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6B9242932898EDE300E29CF8 /* YeolmokWeather */;
+			targetProxy = 6B32243F29495D76008E4B3D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		6B4E887928EB549D00723006 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
@@ -341,6 +483,84 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		6B32243329495D6A008E4B3D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 65KV6R2AGS;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Yeolmok.YeolmokWeatherTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/YeolmokWeather.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/YeolmokWeather";
+			};
+			name = Debug;
+		};
+		6B32243429495D6A008E4B3D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 65KV6R2AGS;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Yeolmok.YeolmokWeatherTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/YeolmokWeather.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/YeolmokWeather";
+			};
+			name = Release;
+		};
+		6B32244229495D76008E4B3D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 65KV6R2AGS;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Yeolmok.YeolmokWeatherUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = YeolmokWeather;
+			};
+			name = Debug;
+		};
+		6B32244329495D76008E4B3D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 65KV6R2AGS;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Yeolmok.YeolmokWeatherUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = YeolmokWeather;
+			};
+			name = Release;
+		};
 		6B9242A62898EDE500E29CF8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6B8CE25D293909BF00C8DC4B /* ApiKey.xcconfig */;
@@ -526,6 +746,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		6B32243229495D6A008E4B3D /* Build configuration list for PBXNativeTarget "YeolmokWeatherTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6B32243329495D6A008E4B3D /* Debug */,
+				6B32243429495D6A008E4B3D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6B32244129495D76008E4B3D /* Build configuration list for PBXNativeTarget "YeolmokWeatherUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6B32244229495D76008E4B3D /* Debug */,
+				6B32244329495D76008E4B3D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		6B92428F2898EDE300E29CF8 /* Build configuration list for PBXProject "YeolmokWeather" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
