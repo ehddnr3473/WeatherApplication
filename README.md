@@ -20,17 +20,12 @@
 <br></br>
 ## 프로젝트 기간
 - 기획 및 개발 ~ 앱스토어 배포: 2022.08.01 ~ 2022.08.24
-- 리팩토링, 업데이트: 진행중
+
 
 <br></br>
 ## 사용 API
  [OpenWeather](https://openweathermap.org)
 
-<br></br>
-## Files
-- Decoder: JSONDecoder
-- FetchData: API 호출, 데이터 Fetch
-- BookMark: CoreData의 Persistence를 이용하여 즐겨찾기 기능 구현
 
 <br></br>
 ## 동작
@@ -43,24 +38,3 @@
 
 
 <br></br>
-## 심사 reject 기록
-![reject image](./rejectImage/reject.png)
-* 심사를 미국에서 한다는 것을 생각하지 못하고, 한국의 도시를 기준으로 데이터를 가져옴. 콘텐츠는 한국어로 처리하되, 전 세계 어디에서든 앱을 실행할 수 있도록 명확하게 처리.
-
-
-<br></br>
-## 1.1 업데이트
-1. Localization: 어플 이름 한글 표기
-2. UINavigationController → UITabBarController
-3. 일부 지역에서 날씨 정보를 가져오지 못하던 문제 해결
-4. Core Location 관련하여 버그가 발생하는 코드 수정
-5. 각 도시의 예보 데이터가 뒤섞이던 버그 수정
-6. 그 외 리팩터링
-
-
-<br></br>
-## 1.2 업데이트
-1. async/await 패턴 적용
-2. UIActivityIndicatorView를 사용하여 날씨 정보 다운로드 진행 상황을 표시
-3. 그 외 리팩터링
-
