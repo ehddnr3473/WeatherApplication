@@ -16,7 +16,7 @@ import CoreData
 final class OtherCitiesViewController: UIViewController {
     
     // MARK: - Properties
-    private let apiManager = FetchData()
+    private let networkManager = NetworkManager()
     private var other = Other()
     private var storedCities: [String] = []
     
@@ -179,7 +179,7 @@ extension OtherCitiesViewController {
 // MARK: - REQUEST
 extension OtherCitiesViewController {
     private func requestCurrentWeatherOfCity(_ cityName: String) {
-        guard let url: URL = apiManager.getCityWeatherURL(with: cityName) else { return }
+        guard let url: URL = networkManager.getCurrentWeatherURL(with: cityName) else { return }
         Task {
             await requestCurrentWeather(with: url)
         }
@@ -187,17 +187,17 @@ extension OtherCitiesViewController {
     
     private func requestCurrentWeather(with url: URL) async {
         do {
-            let data = try await apiManager.requestData(with: url)
+            let data = try await networkManager.requestData(with: url)
             guard let weather = DecodingManager.decode(with: data, modelType: WeatherOfCity.self) else { return }
             other.appendCityWithWeahter(weather)
             reloadtableView()
         } catch {
-            alertWillAppear(alert, apiManager.errorMessage(error))
+            alertWillAppear(alert, networkManager.errorMessage(error))
         }
     }
     
     private func requestForecastWeatherOfCity(_ cityName: String) {
-        guard let url: URL = apiManager.getWeatherForecastURL(with: cityName) else { return }
+        guard let url: URL = networkManager.getForecastURL(with: cityName) else { return }
         Task {
             await requestForecast(with: url)
         }
@@ -205,13 +205,13 @@ extension OtherCitiesViewController {
     
     private func requestForecast(with url: URL) async {
         do {
-            let data = try await apiManager.requestData(with: url)
+            let data = try await networkManager.requestData(with: url)
             guard var forecast = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
             forecast.list.removeSubrange(NumberConstants.fromEightToEnd)
             self.other.appendCityWithForecast(forecast)
             reloadtableView()
         } catch {
-            alertWillAppear(alert, apiManager.errorMessage(error))
+            alertWillAppear(alert, networkManager.errorMessage(error))
         }
     }
 }

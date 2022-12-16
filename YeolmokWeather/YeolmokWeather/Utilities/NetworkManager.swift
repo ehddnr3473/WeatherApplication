@@ -1,5 +1,5 @@
 //
-//  FetchData.swift
+//  NetworkManager.swift
 //  Weather
 //
 //  Created by 김동욱 on 2022/08/05.
@@ -9,7 +9,7 @@ import Foundation
 import CoreLocation
 
 /// OpenWeather API 호출 관련
-struct FetchData {
+struct NetworkManager {
     private let apiKey = Bundle.main.infoDictionary?["API_KEY"] as? String
     
     /**
@@ -65,7 +65,7 @@ struct FetchData {
     /// 도시 이름으로 현재 날씨 GET
     /// - Parameter cityName: 도시 이름
     /// - Returns: API 현재 날씨 URL
-    func getCityWeatherURL(with cityName: String) -> URL? {
+    func getCurrentWeatherURL(with cityName: String) -> URL? {
         let baseURL = URL(string: "https://api.openweathermap.org")
         var urlComponents = URLComponents()
         let cityName = URLQueryItem(name: "q", value: cityName)
@@ -81,7 +81,7 @@ struct FetchData {
     /// 도시 이름으로 날씨 예보 GET
     /// - Parameter cityName: 도시 이름
     /// - Returns: API 날씨 예보 URL
-    func getWeatherForecastURL(with cityName: String) -> URL? {
+    func getForecastURL(with cityName: String) -> URL? {
         let baseURL = URL(string: "https://api.openweathermap.org")
         var urlComponents = URLComponents()
         let cityName = URLQueryItem(name: "q", value: cityName)

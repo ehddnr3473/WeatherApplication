@@ -17,7 +17,7 @@ import CoreLocation
 final class CurrentWeatherViewController: UIViewController {
     
     // MARK: - Properties
-    private let apiManager = FetchData()
+    private let networkManager = NetworkManager()
     private var currentCity = CurrentCity()
     
     private let locationManager = CLLocationManager()
@@ -273,7 +273,7 @@ extension CurrentWeatherViewController {
     private func requestCurrentWeather() {
         guard let currentLocation = currentLocation else { return }
         
-        guard let url: URL = apiManager.getReverseGeocodingURL(with: currentLocation) else { return }
+        guard let url: URL = networkManager.getReverseGeocodingURL(with: currentLocation) else { return }
         
         Task {
             await requestCityName(with: url)
@@ -282,12 +282,12 @@ extension CurrentWeatherViewController {
     
     private func requestCityName(with url: URL) async {
         do {
-            let data = try await apiManager.requestData(with: url)
+            let data = try await networkManager.requestData(with: url)
             guard let cityName = DecodingManager.decode(with: data, modelType: [CityName].self) else { return }
             setCityName(with: localizationCityName(cityName))
             verifyAndRequestWeatherData(cityName[.zero].name)
         } catch {
-            alertWillAppear(alert, apiManager.errorMessage(error))
+            alertWillAppear(alert, networkManager.errorMessage(error))
         }
     }
     
@@ -302,14 +302,14 @@ extension CurrentWeatherViewController {
     private func verifyAndRequestWeatherData(_ cityName: String) {
         let regex = try? NSRegularExpression(pattern: StringConstants.pattern)
         if let _ = regex?.firstMatch(in: cityName, range: NSRange(location: 0, length: cityName.count)) {
-            guard let url: URL = self.apiManager.getCityWeatherURL(with: cityName) else { return }
+            guard let url: URL = self.networkManager.getCurrentWeatherURL(with: cityName) else { return }
             Task {
                 await requestWeather(with: url)
                 await requestWeatherForecast(with: cityName)
             }
         } else {
             let refinedCityName = refineCityName(cityName)
-            guard let url: URL = self.apiManager.getCityWeatherURL(with: refinedCityName) else { return }
+            guard let url: URL = self.networkManager.getCurrentWeatherURL(with: refinedCityName) else { return }
             Task {
                 await requestWeather(with: url)
                 await requestWeatherForecast(with: refinedCityName)
@@ -332,19 +332,19 @@ extension CurrentWeatherViewController {
     
     private func requestWeather(with url: URL) async {
         do {
-            let data = try await apiManager.requestData(with: url)
+            let data = try await networkManager.requestData(with: url)
             guard let currentWeather = DecodingManager.decode(with: data, modelType: WeatherOfCity.self) else { return }
             setBackgroundImage(with: FetchImageName.setUpBackgroundImage(weather: currentWeather.weather[.zero].id))
             setCurrentWeather(weather: currentWeather.weather[.zero].description, temperature: currentWeather.main.temp)
         } catch(let error){
-            alertWillAppear(alert, apiManager.errorMessage(error))
+            alertWillAppear(alert, networkManager.errorMessage(error))
         }
     }
     
     private func requestWeatherForecast(with cityName: String) async {
-        guard let url: URL = apiManager.getWeatherForecastURL(with: cityName) else { return }
+        guard let url: URL = networkManager.getForecastURL(with: cityName) else { return }
         do {
-            let data = try await apiManager.requestData(with: url)
+            let data = try await networkManager.requestData(with: url)
             guard let forecast = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
             
             // 24시간 동안의 예보
@@ -355,7 +355,7 @@ extension CurrentWeatherViewController {
             
             reloadAndStopIndicator()
         } catch {
-            alertWillAppear(alert, apiManager.errorMessage(error))
+            alertWillAppear(alert, networkManager.errorMessage(error))
         }
     }
     
