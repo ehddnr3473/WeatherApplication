@@ -19,6 +19,7 @@
 		6B5B4CEE29479F9D008BE5B1 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6B5B4CF029479F9D008BE5B1 /* Localizable.strings */; };
 		6B5B4CF32947A0C9008BE5B1 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B5B4CF22947A0C9008BE5B1 /* String.swift */; };
 		6B6EB4A0289DA087009A80AD /* WeatherOfCity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B6EB49F289DA087009A80AD /* WeatherOfCity.swift */; };
+		6B712036294C650400A97C72 /* NetworkTaskTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B712035294C650400A97C72 /* NetworkTaskTests.swift */; };
 		6B71ABC72939DE75000DB772 /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B71ABC62939DE75000DB772 /* Alert.swift */; };
 		6B73813D28EB679300D98CEC /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B73813C28EB679200D98CEC /* TabBarController.swift */; };
 		6B84DA2B28A40C1A002EF4DC /* FetchImageName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B84DA2A28A40C1A002EF4DC /* FetchImageName.swift */; };
@@ -74,6 +75,8 @@
 		6B5B4CF129479FC4008BE5B1 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
 		6B5B4CF22947A0C9008BE5B1 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		6B6EB49F289DA087009A80AD /* WeatherOfCity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherOfCity.swift; sourceTree = "<group>"; };
+		6B712035294C650400A97C72 /* NetworkTaskTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTaskTests.swift; sourceTree = "<group>"; };
+		6B712037294C652500A97C72 /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
 		6B71ABC62939DE75000DB772 /* Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alert.swift; sourceTree = "<group>"; };
 		6B73813C28EB679200D98CEC /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		6B84DA2A28A40C1A002EF4DC /* FetchImageName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchImageName.swift; sourceTree = "<group>"; };
@@ -132,7 +135,9 @@
 		6B32242D29495D6A008E4B3D /* YeolmokWeatherTests */ = {
 			isa = PBXGroup;
 			children = (
+				6B712037294C652500A97C72 /* TestPlan.xctestplan */,
 				6B32242E29495D6A008E4B3D /* YeolmokWeatherTests.swift */,
+				6B712035294C650400A97C72 /* NetworkTaskTests.swift */,
 			);
 			path = YeolmokWeatherTests;
 			sourceTree = "<group>";
@@ -396,6 +401,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6B32242F29495D6A008E4B3D /* YeolmokWeatherTests.swift in Sources */,
+				6B712036294C650400A97C72 /* NetworkTaskTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
