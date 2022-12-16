@@ -16,14 +16,13 @@ struct NetworkManager {
      API 호출 관련 Custom Error
      - apiKeyError: API key 오류
      - cityNameError: 잘못된 도시 이름 오류
-     - didNotReceiveData: 데이터 오류
+     - internetConnectionProblem: 인터넷 연결 오류
      - undefined: 알 수 없는 오류
      */
-    enum FetchError: Error {
+    enum FetchError: Error, CaseIterable {
         case apiKeyError
         case cityNameError
         case internetConnectionProblem
-        case didNotReceiveData
         case undefined
     }
     
@@ -36,14 +35,10 @@ struct NetworkManager {
             return ErrorMessage.apiKeyError
         case FetchError.cityNameError:
             return ErrorMessage.cityNameError
-        case FetchError.internetConnectionProblem:
-            return ErrorMessage.internetConnectionProblem
-        case FetchError.didNotReceiveData:
-            return ErrorMessage.didNotReceiveData
         case FetchError.undefined:
             return ErrorMessage.undefined
         default:
-            return ErrorMessage.undefined
+            return ErrorMessage.internetConnectionProblem
         }
     }
     
@@ -118,6 +113,5 @@ private enum ErrorMessage {
     static let apiKeyError = "ApiKeyError".localized
     static let cityNameError = "CityNameError".localized
     static let internetConnectionProblem = "InternetConnectionProblem".localized
-    static let didNotReceiveData = "DidNotReceiveData".localized
     static let undefined = "Undefined".localized
 }

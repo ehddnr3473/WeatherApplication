@@ -22,7 +22,6 @@
 "ApikeyError" = "A undefined error occurred. Try again.";
 "CityNameError" = "Please check the name of the city again.";
 "InternetConnectionProblem" = "Please check the network connection.";
-"DidNotReceiveData" = "Failed to get weather information.";
 "Undefined" = "A undefined error occurred. Try again.";
 
 // SearchErrorMessage
