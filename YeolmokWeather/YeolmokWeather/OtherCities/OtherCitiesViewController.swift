@@ -54,6 +54,7 @@ final class OtherCitiesViewController: UIViewController, WeatherController {
         textField.layer.cornerRadius = 8
         textField.layer.borderWidth = 2
         textField.returnKeyType = .search
+        textField.keyboardType = .alphabet
         
         textField.leftView = UIView(frame: CGRect(x: .zero, y: .zero, width: 10, height: textField.frame.height))
         textField.leftViewMode = UITextField.ViewMode.always
@@ -112,9 +113,9 @@ final class OtherCitiesViewController: UIViewController, WeatherController {
             guard let cityName = resultArray[index].value(forKey: CoreDataModel.attributeName) as? String else { return }
             storedCities.append(cityName)
             model.appendCityWithName(cityName)
-            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-                self?.requestCurrentWeatherOfCity(cityName)
-                self?.requestForecastWeatherOfCity(cityName)
+            Task {
+                self.requestCurrentWeatherOfCity(cityName)
+                self.requestForecastWeatherOfCity(cityName)
             }
         }
     }

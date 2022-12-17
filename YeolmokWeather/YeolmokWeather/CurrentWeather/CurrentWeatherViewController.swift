@@ -207,7 +207,6 @@ extension CurrentWeatherViewController {
         
         weatherForecastTableView.dataSource = self
         weatherForecastTableView.delegate = self
-        
     }
     
     @MainActor private func setCityName(with cityName: String) {
