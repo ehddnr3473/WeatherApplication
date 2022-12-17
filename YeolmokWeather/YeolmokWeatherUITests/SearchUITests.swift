@@ -6,6 +6,7 @@
 //
 
 import XCTest
+@testable import YeolmokWeather
 
 final class SearchUITests: XCTestCase {
     let app = XCUIApplication()
@@ -35,10 +36,31 @@ final class SearchUITests: XCTestCase {
         
         searchButton.tap()
         
-
+        Thread.sleep(forTimeInterval: 3)
         let result = app.staticTexts["London"]
         XCTAssert(result.isHittable)
     }
+    
+    func testSearchWithUppercase() {
+        app.tabBars.buttons["도시"].tap()
+        XCTAssert(app.staticTexts["도시 날씨"].isHittable)
+
+        let searchField = app.textFields["도시명을 영어로 검색"]
+        XCTAssert(searchField.isHittable)
+
+        searchField.tap()
+        searchField.typeText("CALIFORNIA")
+
+        let searchButton = app.buttons["Search"]
+        XCTAssert(searchButton.isHittable)
+
+        searchButton.tap()
+
+        Thread.sleep(forTimeInterval: 3)
+        let result = app.staticTexts["California"]
+        XCTAssert(result.isHittable)
+    }
+    
     
     // 없는 도시 이름으로 검색
     func testSearchWithWrongCityName() {
@@ -56,7 +78,7 @@ final class SearchUITests: XCTestCase {
         
         searchButton.tap()
         
-
+        Thread.sleep(forTimeInterval: 3)
         let result = app.staticTexts["도시 이름을 다시 확인해주세요."]
         XCTAssert(result.isHittable)
     }
@@ -70,7 +92,6 @@ final class SearchUITests: XCTestCase {
         XCTAssert(searchField.isHittable)
         
         searchField.tap()
-        searchField.typeText("")
         
         let searchButton = app.keyboards.buttons["Search"]
         XCTAssert(searchButton.isHittable)
@@ -97,6 +118,7 @@ final class SearchUITests: XCTestCase {
         
         searchButton.tap()
         
+        Thread.sleep(forTimeInterval: 3)
         let firstResult = app.staticTexts["Seoul"]
         XCTAssert(firstResult.isHittable)
         
