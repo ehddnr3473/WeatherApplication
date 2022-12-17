@@ -14,14 +14,15 @@ import CoreLocation
  2. 위치 정보를 Query로 현재 위치의 도시 이름을 받아옴.
  3. 받아온 도시 이름을 Query로 현재 날씨 데이터와 예보 데이터를 받아옴.
  */
-final class CurrentWeatherViewController: UIViewController {
+final class CurrentWeatherViewController: UIViewController, WeatherController, LocationService {
+    typealias Model = CurrentCity
     
     // MARK: - Properties
-    private let networkManager = NetworkManager()
-    private var currentCity = CurrentCity()
+    var model = Model()
+    let networkManager = NetworkManager()
     
-    private let locationManager = CLLocationManager()
-    private var currentLocation: CLLocationCoordinate2D?
+    let locationManager = CLLocationManager()
+    var currentLocation: CLLocationCoordinate2D?
     
     private let weatherBackgroundImageView: UIImageView = {
         let imageView = UIImageView()
@@ -197,6 +198,8 @@ extension CurrentWeatherViewController {
         
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         appDelegate.restrictRotation = .portrait
+        
+        locationManager.delegate = self
         requestAuthorization()
         
         todayWeatherForecastCollectionView.dataSource = self
@@ -204,19 +207,20 @@ extension CurrentWeatherViewController {
         
         weatherForecastTableView.dataSource = self
         weatherForecastTableView.delegate = self
+        
     }
     
     @MainActor private func setCityName(with cityName: String) {
-        currentCity.setCityName(with: cityName)
-        self.cityNameLabel.text = currentCity.name
+        model.setCityName(with: cityName)
+        self.cityNameLabel.text = model.name
     }
     
     @MainActor private func setCurrentWeather(weather: String, temperature: Double) {
-        currentCity.setCurrentWeather(weather: weather, temperature: temperature)
+        model.setCurrentWeather(weather: weather, temperature: temperature)
         
-        weatherLabel.text = currentCity.weather
+        weatherLabel.text = model.weather
         
-        if let temperature = currentCity.temperature {
+        if let temperature = model.temperature {
             temperatureLabel.text = String(Int(temperature)) + AppText.celsiusString
         }
     }
@@ -234,19 +238,13 @@ extension CurrentWeatherViewController {
 
 // MARK: - CoreLocation
 extension CurrentWeatherViewController: CLLocationManagerDelegate {
-    private func requestAuthorization() {
-        locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.requestWhenInUseAuthorization()
-    }
-    
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         currentLocation = locations.last?.coordinate
         requestCurrentWeather()
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        currentCity.emptyForecast()
+        model.emptyForecast()
         switch manager.authorizationStatus {
         case .authorizedAlways:
             manager.requestLocation()
@@ -268,7 +266,7 @@ extension CurrentWeatherViewController: CLLocationManagerDelegate {
     }
 }
 
-// MARK: - REQUEST
+// MARK: - NetworkTask
 extension CurrentWeatherViewController {
     private func requestCurrentWeather() {
         guard let currentLocation = currentLocation else { return }
@@ -361,12 +359,12 @@ extension CurrentWeatherViewController {
     
     // For 24시간 동안의 예보
     private func setUpDayForecast(with forecast: Forecast) {
-        currentCity.setUpDayForecast(with: forecast)
+        model.setUpDayForecast(with: forecast)
     }
     
     // For 3일간의 예보
     private func appendForecastsTomorrow(with forecast: Forecast) {
-        currentCity.appendForecastsTomorrow(with: forecast)
+        model.appendForecastsTomorrow(with: forecast)
     }
 }
 
@@ -374,7 +372,7 @@ extension CurrentWeatherViewController {
 extension CurrentWeatherViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier, for: indexPath) as? TodayWeatherForecastCollectionViewCell else { return UICollectionViewCell() }
-        guard let forecast = currentCity.forecast else { return UICollectionViewCell() }
+        guard let forecast = model.forecast else { return UICollectionViewCell() }
 
         let time = Date(timeIntervalSince1970: forecast.list[indexPath.row].date)
             .formatted(Date.FormatStyle().hour(.defaultDigits(amPM: .abbreviated)))
@@ -388,7 +386,7 @@ extension CurrentWeatherViewController: UICollectionViewDataSource, UICollection
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if currentCity.forecastIsNil {
+        if model.forecastIsNil {
             return .zero
         } else {
             return NumberConstants.numberOfItemsInSection
@@ -405,21 +403,21 @@ extension CurrentWeatherViewController: UITableViewDataSource, UITableViewDelega
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: WeatherForecastTableViewCell.identifier, for: indexPath) as? WeatherForecastTableViewCell else { return UITableViewCell() }
         
-        let day = Date(timeIntervalSince1970: currentCity.forecasts[indexPath.row].list[.zero].date).formatted(Date.FormatStyle().day(.twoDigits))
+        let day = Date(timeIntervalSince1970: model.forecasts[indexPath.row].list[.zero].date).formatted(Date.FormatStyle().day(.twoDigits))
         
         cell.dayLabel.text = day
-        if indexPath.row < currentCity.count {
-            cell.setUpForecast(with: currentCity.forecasts[indexPath.row])
+        if indexPath.row < model.count {
+            cell.setUpForecast(with: model.forecasts[indexPath.row])
         }
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if currentCity.isEmpty {
+        if model.isEmpty {
             return .zero
         } else {
-            return currentCity.count
+            return model.count
         }
     }
     

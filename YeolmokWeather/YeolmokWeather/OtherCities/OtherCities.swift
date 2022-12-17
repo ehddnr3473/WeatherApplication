@@ -8,8 +8,8 @@
 import Foundation
 
 
-/// Other City Model Object
-struct Other {
+/// Other Cities Model Object
+struct OtherCities {
     var cities: [AnotherCity] = []
     
     var isEmpty: Bool {
