@@ -212,7 +212,7 @@
 				6BEC6C5C289E8AF400EFF342 /* OtherCities */,
 				6BEC6C5B289E8AE400EFF342 /* CurrentWeather */,
 				6BCED14B289CF5E800F8A305 /* Utilities */,
-				6B9242AD2898F31F00E29CF8 /* Entitties */,
+				6B9242AD2898F31F00E29CF8 /* Entities */,
 				6B9242A02898EDE500E29CF8 /* Assets.xcassets */,
 				6B9242A22898EDE500E29CF8 /* LaunchScreen.storyboard */,
 				6B9242A52898EDE500E29CF8 /* Info.plist */,
@@ -223,7 +223,7 @@
 			path = YeolmokWeather;
 			sourceTree = "<group>";
 		};
-		6B9242AD2898F31F00E29CF8 /* Entitties */ = {
+		6B9242AD2898F31F00E29CF8 /* Entities */ = {
 			isa = PBXGroup;
 			children = (
 				6BA4F0CA2917783500102A6F /* AnotherCity.swift */,
@@ -232,7 +232,7 @@
 				6BB587C8289FF0A000CBCF92 /* CityName.swift */,
 				6B58B49B28A181E500BA9F71 /* Forecast.swift */,
 			);
-			path = Entitties;
+			path = Entities;
 			sourceTree = "<group>";
 		};
 		6BCED14A289CF5C800F8A305 /* Delegate */ = {
