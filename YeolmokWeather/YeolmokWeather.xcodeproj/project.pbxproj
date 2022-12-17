@@ -11,12 +11,10 @@
 		6B14428A289BE33900BDF07D /* Decoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B144289289BE33800BDF07D /* Decoder.swift */; };
 		6B14428C289C016100BDF07D /* OtherCitiesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B14428B289C016100BDF07D /* OtherCitiesViewController.swift */; };
 		6B285EE928B206B0001A4291 /* BookMark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B285EE828B206B0001A4291 /* BookMark.swift */; };
-		6B32242F29495D6A008E4B3D /* YeolmokWeatherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B32242E29495D6A008E4B3D /* YeolmokWeatherTests.swift */; };
-		6B32243C29495D76008E4B3D /* YeolmokWeatherUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B32243B29495D76008E4B3D /* YeolmokWeatherUITests.swift */; };
-		6B32243E29495D76008E4B3D /* YeolmokWeatherUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B32243D29495D76008E4B3D /* YeolmokWeatherUITestsLaunchTests.swift */; };
 		6B4E887728EB549D00723006 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6B4E887928EB549D00723006 /* InfoPlist.strings */; };
 		6B548AFE294D442200ACD7AC /* WeatherController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B548AFD294D442200ACD7AC /* WeatherController.swift */; };
 		6B548B06294D55DF00ACD7AC /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B548B05294D55DF00ACD7AC /* LocationService.swift */; };
+		6B548B0D294D5FD300ACD7AC /* SearchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B548B0C294D5FD300ACD7AC /* SearchUITests.swift */; };
 		6B58B49C28A181E500BA9F71 /* Forecast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B58B49B28A181E500BA9F71 /* Forecast.swift */; };
 		6B5B4CEE29479F9D008BE5B1 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6B5B4CF029479F9D008BE5B1 /* Localizable.strings */; };
 		6B5B4CF32947A0C9008BE5B1 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B5B4CF22947A0C9008BE5B1 /* String.swift */; };
@@ -65,15 +63,13 @@
 		6B14428B289C016100BDF07D /* OtherCitiesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherCitiesViewController.swift; sourceTree = "<group>"; };
 		6B285EE828B206B0001A4291 /* BookMark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookMark.swift; sourceTree = "<group>"; };
 		6B32242C29495D6A008E4B3D /* YeolmokWeatherTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YeolmokWeatherTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		6B32242E29495D6A008E4B3D /* YeolmokWeatherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YeolmokWeatherTests.swift; sourceTree = "<group>"; };
 		6B32243929495D76008E4B3D /* YeolmokWeatherUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YeolmokWeatherUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		6B32243B29495D76008E4B3D /* YeolmokWeatherUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YeolmokWeatherUITests.swift; sourceTree = "<group>"; };
-		6B32243D29495D76008E4B3D /* YeolmokWeatherUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YeolmokWeatherUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		6B4E887828EB549D00723006 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6B4E887A28EB54C400723006 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6B502D772948F22900B88231 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6B548AFD294D442200ACD7AC /* WeatherController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherController.swift; sourceTree = "<group>"; };
 		6B548B05294D55DF00ACD7AC /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
+		6B548B0C294D5FD300ACD7AC /* SearchUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchUITests.swift; sourceTree = "<group>"; };
 		6B58B49B28A181E500BA9F71 /* Forecast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Forecast.swift; sourceTree = "<group>"; };
 		6B5B4CEF29479F9D008BE5B1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		6B5B4CF129479FC4008BE5B1 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -138,7 +134,6 @@
 		6B32242D29495D6A008E4B3D /* YeolmokWeatherTests */ = {
 			isa = PBXGroup;
 			children = (
-				6B32242E29495D6A008E4B3D /* YeolmokWeatherTests.swift */,
 				6B712035294C650400A97C72 /* NetworkTaskTests.swift */,
 			);
 			path = YeolmokWeatherTests;
@@ -147,8 +142,7 @@
 		6B32243A29495D76008E4B3D /* YeolmokWeatherUITests */ = {
 			isa = PBXGroup;
 			children = (
-				6B32243B29495D76008E4B3D /* YeolmokWeatherUITests.swift */,
-				6B32243D29495D76008E4B3D /* YeolmokWeatherUITestsLaunchTests.swift */,
+				6B548B0C294D5FD300ACD7AC /* SearchUITests.swift */,
 			);
 			path = YeolmokWeatherUITests;
 			sourceTree = "<group>";
@@ -412,7 +406,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6B32242F29495D6A008E4B3D /* YeolmokWeatherTests.swift in Sources */,
 				6B712036294C650400A97C72 /* NetworkTaskTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -421,8 +414,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6B32243E29495D76008E4B3D /* YeolmokWeatherUITestsLaunchTests.swift in Sources */,
-				6B32243C29495D76008E4B3D /* YeolmokWeatherUITests.swift in Sources */,
+				6B548B0D294D5FD300ACD7AC /* SearchUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

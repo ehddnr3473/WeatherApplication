@@ -294,11 +294,11 @@ extension OtherCitiesViewController: UITextFieldDelegate {
     }
     
     private func verifyCityName(_ cityName: String) -> Bool {
-        if model.isEmpty {
-            return true
-        } else if cityName == "" {
+        if cityName == "" {
             alertWillAppear(alert, ErrorMessage.emptyText)
             return false
+        } else if model.isEmpty {
+            return true
         } else if model.verifyContains(with: cityName) {
             alertWillAppear(alert, ErrorMessage.appendFailMessage)
             searchTextField.text = ""
