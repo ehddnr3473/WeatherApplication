@@ -30,13 +30,13 @@ final class NetworkTaskTests: XCTestCase {
     func testGetCurrentWeatherURL() {
         let url = networkManager.getCurrentWeatherURL(with: "seoul")
         XCTAssertNotNil(url)
-        XCTAssertEqual(url?.absoluteString, "https://api.openweathermap.org/data/2.5/weather?q=seoul&lang=kr&appid=\(apiKey)&units=metric")
+        XCTAssertEqual(url?.absoluteString, "https://api.openweathermap.org/data/2.5/weather?q=seoul&lang=\(AppText.language)&appid=\(apiKey)&units=metric")
     }
     
     func testGetForecastURL() {
         let url = networkManager.getForecastURL(with: "seoul")
         XCTAssertNotNil(url)
-        XCTAssertEqual(url?.absoluteString, "https://api.openweathermap.org/data/2.5/forecast?q=seoul&lang=kr&appid=\(apiKey)&units=metric")
+        XCTAssertEqual(url?.absoluteString, "https://api.openweathermap.org/data/2.5/forecast?q=seoul&lang=\(AppText.language)&appid=\(apiKey)&units=metric")
     }
     
     func testRequestData() async {

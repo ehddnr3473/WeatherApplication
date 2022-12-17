@@ -92,11 +92,7 @@ final class SearchUITests: XCTestCase {
         XCTAssert(searchField.isHittable)
         
         searchField.tap()
-        
-        let searchButton = app.keyboards.buttons["Search"]
-        XCTAssert(searchButton.isHittable)
-        
-        searchButton.tap()
+        app.keyboards.buttons["Search"].tap()
 
         let result = app.staticTexts["도시명을 입력해주세요."]
         XCTAssert(result.isHittable)

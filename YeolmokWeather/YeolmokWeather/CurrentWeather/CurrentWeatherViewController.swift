@@ -91,7 +91,7 @@ final class CurrentWeatherViewController: UIViewController, WeatherController, L
         return collectionView
     }()
     
-    private let titleLabel: UILabel = {
+    let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -115,7 +115,7 @@ final class CurrentWeatherViewController: UIViewController, WeatherController, L
         return tableView
     }()
     
-    private lazy var alert: UIAlertController = {
+    lazy var alert: UIAlertController = {
         let alert = UIAlertController(title: "AlertTitle".localized, message: "", preferredStyle: .alert)
         
         let action = UIAlertAction(title: "ActionTitle".localized, style: .default)

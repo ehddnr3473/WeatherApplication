@@ -1,0 +1,33 @@
+{
+  "configurations" : [
+    {
+      "id" : "3DB86587-AB66-4F8B-9630-41AABA12206C",
+      "name" : "English",
+      "options" : {
+        "language" : "en",
+        "region" : "US"
+      }
+    },
+    {
+      "id" : "0C9B3238-894F-4C18-8CA3-B14B9C3BDE30",
+      "name" : "Korean",
+      "options" : {
+        "language" : "ko",
+        "region" : "KR"
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:YeolmokWeather.xcodeproj",
+        "identifier" : "6B32242B29495D6A008E4B3D",
+        "name" : "YeolmokWeatherTests"
+      }
+    }
+  ],
+  "version" : 1
+}

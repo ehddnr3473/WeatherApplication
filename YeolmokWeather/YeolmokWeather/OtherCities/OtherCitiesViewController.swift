@@ -31,7 +31,7 @@ final class OtherCitiesViewController: UIViewController, WeatherController {
         return imageView
     }()
     
-    private lazy var titleLabel: UILabel = {
+    lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -42,7 +42,7 @@ final class OtherCitiesViewController: UIViewController, WeatherController {
         return label
     }()
     
-    private lazy var searchTextField: UITextField = {
+    lazy var searchTextField: UITextField = {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
         
@@ -62,7 +62,7 @@ final class OtherCitiesViewController: UIViewController, WeatherController {
         return textField
     }()
     
-    private lazy var cancelButton: UIButton = {
+    lazy var cancelButton: UIButton = {
         let button = UIButton(type: UIButton.ButtonType.roundedRect)
         button.translatesAutoresizingMaskIntoConstraints = false
         
@@ -88,7 +88,7 @@ final class OtherCitiesViewController: UIViewController, WeatherController {
         return tableView
     }()
     
-    private lazy var alert: UIAlertController = {
+    lazy var alert: UIAlertController = {
         let alert = UIAlertController(title: "AlertTitle".localized, message: "", preferredStyle: .alert)
         
         let action = UIAlertAction(title: "ActionTitle".localized, style: .default)

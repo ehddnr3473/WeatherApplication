@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		6B01EEED289A74DF007C5B30 /* TypeOfWeather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B01EEEC289A74DF007C5B30 /* TypeOfWeather.swift */; };
+		6B081F0C294DBD83008CE18F /* LocalizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B081F0B294DBD83008CE18F /* LocalizationTests.swift */; };
 		6B14428A289BE33900BDF07D /* Decoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B144289289BE33800BDF07D /* Decoder.swift */; };
 		6B14428C289C016100BDF07D /* OtherCitiesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B14428B289C016100BDF07D /* OtherCitiesViewController.swift */; };
 		6B285EE928B206B0001A4291 /* BookMark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B285EE828B206B0001A4291 /* BookMark.swift */; };
@@ -59,11 +60,14 @@
 
 /* Begin PBXFileReference section */
 		6B01EEEC289A74DF007C5B30 /* TypeOfWeather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeOfWeather.swift; sourceTree = "<group>"; };
+		6B081F0B294DBD83008CE18F /* LocalizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationTests.swift; sourceTree = "<group>"; };
+		6B081F0D294DC48B008CE18F /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
 		6B144289289BE33800BDF07D /* Decoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Decoder.swift; sourceTree = "<group>"; };
 		6B14428B289C016100BDF07D /* OtherCitiesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherCitiesViewController.swift; sourceTree = "<group>"; };
 		6B285EE828B206B0001A4291 /* BookMark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookMark.swift; sourceTree = "<group>"; };
 		6B32242C29495D6A008E4B3D /* YeolmokWeatherTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YeolmokWeatherTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6B32243929495D76008E4B3D /* YeolmokWeatherUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YeolmokWeatherUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6B42A53F294DD195005868E8 /* UITestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = UITestPlan.xctestplan; sourceTree = "<group>"; };
 		6B4E887828EB549D00723006 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6B4E887A28EB54C400723006 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6B502D772948F22900B88231 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -134,7 +138,9 @@
 		6B32242D29495D6A008E4B3D /* YeolmokWeatherTests */ = {
 			isa = PBXGroup;
 			children = (
+				6B081F0D294DC48B008CE18F /* TestPlan.xctestplan */,
 				6B712035294C650400A97C72 /* NetworkTaskTests.swift */,
+				6B081F0B294DBD83008CE18F /* LocalizationTests.swift */,
 			);
 			path = YeolmokWeatherTests;
 			sourceTree = "<group>";
@@ -143,6 +149,7 @@
 			isa = PBXGroup;
 			children = (
 				6B548B0C294D5FD300ACD7AC /* SearchUITests.swift */,
+				6B42A53F294DD195005868E8 /* UITestPlan.xctestplan */,
 			);
 			path = YeolmokWeatherUITests;
 			sourceTree = "<group>";
@@ -406,6 +413,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6B081F0C294DBD83008CE18F /* LocalizationTests.swift in Sources */,
 				6B712036294C650400A97C72 /* NetworkTaskTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

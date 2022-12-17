@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "FD653165-6ADD-4270-82F0-FD199EBF0487",
+      "name" : "Korean",
+      "options" : {
+        "language" : "ko"
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:YeolmokWeather.xcodeproj",
+        "identifier" : "6B32243829495D76008E4B3D",
+        "name" : "YeolmokWeatherUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
