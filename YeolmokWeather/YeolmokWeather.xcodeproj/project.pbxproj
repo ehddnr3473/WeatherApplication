@@ -80,7 +80,6 @@
 		6B5B4CF22947A0C9008BE5B1 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		6B6EB49F289DA087009A80AD /* WeatherOfCity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherOfCity.swift; sourceTree = "<group>"; };
 		6B712035294C650400A97C72 /* NetworkTaskTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTaskTests.swift; sourceTree = "<group>"; };
-		6B712037294C652500A97C72 /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
 		6B71ABC62939DE75000DB772 /* Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alert.swift; sourceTree = "<group>"; };
 		6B73813C28EB679200D98CEC /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		6B84DA2A28A40C1A002EF4DC /* FetchImageName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchImageName.swift; sourceTree = "<group>"; };
@@ -139,7 +138,6 @@
 		6B32242D29495D6A008E4B3D /* YeolmokWeatherTests */ = {
 			isa = PBXGroup;
 			children = (
-				6B712037294C652500A97C72 /* TestPlan.xctestplan */,
 				6B32242E29495D6A008E4B3D /* YeolmokWeatherTests.swift */,
 				6B712035294C650400A97C72 /* NetworkTaskTests.swift */,
 			);
