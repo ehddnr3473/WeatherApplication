@@ -211,6 +211,7 @@ extension CurrentWeatherViewController {
     }
     
     @MainActor private func setCityName(with cityName: String) {
+        activityIndicatorView.stopAnimating()
         model.setCityName(with: cityName)
         self.cityNameLabel.text = model.name
     }
@@ -232,7 +233,6 @@ extension CurrentWeatherViewController {
     @MainActor private func reloadAndStopIndicator() {
         todayWeatherForecastCollectionView.reloadData()
         weatherForecastTableView.reloadData()
-        activityIndicatorView.stopAnimating()
     }
 }
 
