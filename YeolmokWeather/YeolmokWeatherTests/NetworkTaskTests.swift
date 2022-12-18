@@ -22,28 +22,50 @@ final class NetworkTaskTests: XCTestCase {
     }
     
     func testGetReverseGeocodingURL() {
+        // given
         let location = CLLocationCoordinate2D(latitude: CLLocationDegrees(111.111), longitude: CLLocationDegrees(222.222))
+        
+        // when
         let url = networkManager.getReverseGeocodingURL(with: location)
+        
+        // then
         XCTAssertNotNil(url)
         XCTAssertEqual(url?.absoluteString, "https://api.openweathermap.org/geo/1.0/reverse?lat=111.111&lon=222.222&appid=\(apiKey)")
     }
     
     func testGetCurrentWeatherURL() {
-        let url = networkManager.getCurrentWeatherURL(with: "seoul")
+        // given
+        let cityName = "seoul"
+        
+        // when
+        let url = networkManager.getCurrentWeatherURL(with: cityName)
+        
+        // then
         XCTAssertNotNil(url)
-        XCTAssertEqual(url?.absoluteString, "https://api.openweathermap.org/data/2.5/weather?q=seoul&lang=\(AppText.language)&appid=\(apiKey)&units=metric")
+        XCTAssertEqual(url?.absoluteString,
+                       "https://api.openweathermap.org/data/2.5/weather?q=seoul&lang=\(AppText.language)&appid=\(apiKey)&units=metric")
     }
     
     func testGetForecastURL() {
-        let url = networkManager.getForecastURL(with: "seoul")
+        // given
+        let cityName = "seoul"
+        
+        // when
+        let url = networkManager.getForecastURL(with: cityName)
+        
+        // then
         XCTAssertNotNil(url)
-        XCTAssertEqual(url?.absoluteString, "https://api.openweathermap.org/data/2.5/forecast?q=seoul&lang=\(AppText.language)&appid=\(apiKey)&units=metric")
+        XCTAssertEqual(url?.absoluteString,
+                       "https://api.openweathermap.org/data/2.5/forecast?q=seoul&lang=\(AppText.language)&appid=\(apiKey)&units=metric")
     }
     
     func testRequestData() async {
+        // given
         let url = networkManager.getCurrentWeatherURL(with: "seoul")
         do {
+            // when
             let data = try await networkManager.requestData(with: url!)
+            // then
             XCTAssertNotNil(data)
         } catch {
             XCTFail("\(error)")
@@ -60,23 +82,29 @@ final class NetworkTaskTests: XCTestCase {
 //        }
 //    }
     
-    // 맥 인터넷 끊고 테스트
-//    func testInternetConnectionError() async {
-//        let url = networkManager.getForecastURL(with: "seoul")
-//        do {
-//            let _ = try await networkManager.requestData(with: url!)
-//        } catch {
-//            // URLSession.shared.data(for:)에서 Error 반환
-//            print("error: \(error)")
-//            XCTAssertEqual(error.localizedDescription, "인터넷 연결이 오프라인 상태입니다.")
-//        }
-//    }
-    
-    func testCityNameError() async {
-        let url = networkManager.getCurrentWeatherURL(with: "seoul22")
+    // 네트워크 연결 끊고 테스트
+    func testInternetConnectionError() async {
+        // given
+        let url = networkManager.getForecastURL(with: "seoul")
         do {
+            // when
             let _ = try await networkManager.requestData(with: url!)
         } catch {
+            // then
+            // URLSession.shared.data(for:)에서 Error 반환
+            print("error: \(error)")
+            XCTAssertEqual(error.localizedDescription, "인터넷 연결이 오프라인 상태입니다.")
+        }
+    }
+    
+    func testCityNameError() async {
+        // given
+        let url = networkManager.getCurrentWeatherURL(with: "seoul22")
+        do {
+            // when
+            let _ = try await networkManager.requestData(with: url!)
+        } catch {
+            // then
             XCTAssertEqual(error as? FetchError, FetchError.cityNameError)
         }
     }
