@@ -8,40 +8,37 @@
 import Foundation
 
 struct TypeOfWeather {
-    static let backgroundImage = BackgroundImage()
-    static let forecastImage = ForecastImage()
-    
-    struct BackgroundImage {
-        let clear: String = "Clear"
-        let cloudy: String = "Clouds"
-        let thunder: String = "Thunder"
-        let rainy: String = "Rainy"
-        let snow: String = "Snow"
-        let mist: String = "Mist"
-        let tornado: String = "Tornado"
-        let squalls: String = "Squalls"
-        let dust: String = "Dust"
-        let volcanicAsh: String = "VolcanicAsh"
-        let cold: String = "Cold"
-        let hot: String = "Hot"
-        let windy: String = "Windy"
-        let hail: String = "Hail"
+    enum BackgroundImage: String, CaseIterable {
+        case clear = "Clear"
+        case cloudy = "Clouds"
+        case thunder = "Thunder"
+        case rainy = "Rainy"
+        case snow = "Snow"
+        case mist = "Mist"
+        case tornado = "Tornado"
+        case squalls = "Squalls"
+        case dust = "Dust"
+        case volcanicAsh = "VolcanicAsh"
+        case cold = "Cold"
+        case hot = "Hot"
+        case windy = "Windy"
+        case hail = "Hail"
     }
     
-    struct ForecastImage {
-        let clear: String = "ClearIcon"
-        let cloudy: String = "CloudsIcon"
-        let thunder: String = "ThunderIcon"
-        let rainy: String = "RainyIcon"
-        let snow: String = "SnowIcon"
-        let mist: String = "MistIcon"
-        let tornado: String = "TornadoIcon"
-        let squalls: String = "SquallsIcon"
-        let dust: String = "DustIcon"
-        let volcanicAsh: String = "VolcanicAshIcon"
-        let cold: String = "ColdIcon"
-        let hot: String = "HotIcon"
-        let windy: String = "WindyIcon"
-        let hail: String = "HailIcon"
+    enum ForecastImage: String, CaseIterable {
+        case clear = "ClearIcon"
+        case cloudy = "CloudsIcon"
+        case thunder = "ThunderIcon"
+        case rainy = "RainyIcon"
+        case snow = "SnowIcon"
+        case mist = "MistIcon"
+        case tornado = "TornadoIcon"
+        case squalls = "SquallsIcon"
+        case dust = "DustIcon"
+        case volcanicAsh = "VolcanicAshIcon"
+        case cold = "ColdIcon"
+        case hot = "HotIcon"
+        case windy = "WindyIcon"
+        case hail = "HailIcon"
     }
 }

@@ -10,88 +10,90 @@ import Foundation
 /// 날씨 아이콘 및 배경 이미지 이름 반환
 struct FetchImageName {
     static func setForecastImage(weather: Int) -> String {
+        typealias WeatherImage = TypeOfWeather.ForecastImage
         switch weather {
         case 200...232:
-            return TypeOfWeather.forecastImage.thunder
+            return WeatherImage.thunder.rawValue
         case 300...531:
-            return TypeOfWeather.forecastImage.rainy
+            return WeatherImage.rainy.rawValue
         case 600...622:
-            return TypeOfWeather.forecastImage.snow
+            return WeatherImage.snow.rawValue
         case 701...721:
-            return TypeOfWeather.forecastImage.mist
+            return WeatherImage.mist.rawValue
         case 731:
-            return TypeOfWeather.forecastImage.dust
+            return WeatherImage.dust.rawValue
         case 741:
-            return TypeOfWeather.forecastImage.mist
+            return WeatherImage.mist.rawValue
         case 751...761:
-            return TypeOfWeather.forecastImage.dust
+            return WeatherImage.dust.rawValue
         case 762:
-            return TypeOfWeather.forecastImage.volcanicAsh
+            return WeatherImage.volcanicAsh.rawValue
         case 771...781:
-            return TypeOfWeather.forecastImage.squalls
+            return WeatherImage.squalls.rawValue
         case 800:
-            return TypeOfWeather.forecastImage.clear
+            return WeatherImage.clear.rawValue
         case 801...804:
-            return TypeOfWeather.forecastImage.cloudy
+            return WeatherImage.cloudy.rawValue
         case 900...902:
-            return TypeOfWeather.forecastImage.squalls
+            return WeatherImage.squalls.rawValue
         case 903:
-            return TypeOfWeather.forecastImage.cold
+            return WeatherImage.cold.rawValue
         case 904:
-            return TypeOfWeather.forecastImage.hot
+            return WeatherImage.hot.rawValue
         case 905:
-            return TypeOfWeather.forecastImage.windy
+            return WeatherImage.windy.rawValue
         case 906:
-            return TypeOfWeather.forecastImage.hail
+            return WeatherImage.hail.rawValue
         case 951...956:
-            return TypeOfWeather.forecastImage.clear
+            return WeatherImage.clear.rawValue
         case 957...962:
-            return TypeOfWeather.forecastImage.squalls
+            return WeatherImage.squalls.rawValue
         default:
-            return TypeOfWeather.forecastImage.clear
+            return WeatherImage.clear.rawValue
         }
     }
     
     static func setUpBackgroundImage(weather: Int) -> String {
+        typealias WeatherImage = TypeOfWeather.BackgroundImage
         switch weather {
         case 200...232:
-            return TypeOfWeather.backgroundImage.thunder
+            return WeatherImage.thunder.rawValue
         case 300...531:
-            return TypeOfWeather.backgroundImage.rainy
+            return WeatherImage.rainy.rawValue
         case 600...622:
-            return TypeOfWeather.backgroundImage.snow
+            return WeatherImage.snow.rawValue
         case 701...721:
-            return TypeOfWeather.backgroundImage.mist
+            return WeatherImage.mist.rawValue
         case 731:
-            return TypeOfWeather.backgroundImage.dust
+            return WeatherImage.dust.rawValue
         case 741:
-            return TypeOfWeather.backgroundImage.mist
+            return WeatherImage.mist.rawValue
         case 751...761:
-            return TypeOfWeather.backgroundImage.dust
+            return WeatherImage.dust.rawValue
         case 762:
-            return TypeOfWeather.backgroundImage.volcanicAsh
+            return WeatherImage.volcanicAsh.rawValue
         case 771...781:
-            return TypeOfWeather.backgroundImage.squalls
+            return WeatherImage.squalls.rawValue
         case 800:
-            return TypeOfWeather.backgroundImage.clear
+            return WeatherImage.clear.rawValue
         case 801...804:
-            return TypeOfWeather.backgroundImage.cloudy
+            return WeatherImage.cloudy.rawValue
         case 900...902:
-            return TypeOfWeather.backgroundImage.squalls
+            return WeatherImage.squalls.rawValue
         case 903:
-            return TypeOfWeather.backgroundImage.cold
+            return WeatherImage.cold.rawValue
         case 904:
-            return TypeOfWeather.backgroundImage.hot
+            return WeatherImage.hot.rawValue
         case 905:
-            return TypeOfWeather.backgroundImage.windy
+            return WeatherImage.windy.rawValue
         case 906:
-            return TypeOfWeather.backgroundImage.hail
+            return WeatherImage.hail.rawValue
         case 951...956:
-            return TypeOfWeather.backgroundImage.clear
+            return WeatherImage.clear.rawValue
         case 957...962:
-            return TypeOfWeather.backgroundImage.squalls
+            return WeatherImage.squalls.rawValue
         default:
-            return TypeOfWeather.backgroundImage.clear
+            return WeatherImage.clear.rawValue
         }
     }
 }
