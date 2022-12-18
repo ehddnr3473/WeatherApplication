@@ -22,8 +22,8 @@ struct OtherCities {
     }
     
     // Fetch Core Data & Request Weather Data
-    mutating func fetchBookMarkCity(request: (String) -> Void) {
-        guard let resultArray = BookMark.fetchCity() else { return }
+    mutating func fetchBookmarkCity(request: (String) -> Void) {
+        guard let resultArray = BookmarkManager.fetchCity() else { return }
         for index in resultArray.indices {
             guard let cityName = resultArray[index].value(forKey: CoreDataModel.attributeName) as? String else { return }
             storedCities.append(cityName)

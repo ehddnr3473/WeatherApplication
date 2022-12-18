@@ -14,13 +14,13 @@ final class CityWeatherTableViewCell: UITableViewCell {
     static let identifier = "CityWeatherTableViewCell"
     private var forecast: Forecast?
     
-    lazy var bookMarkButton: UIButton = {
+    lazy var bookmarkButton: UIButton = {
         let button = UIButton(type: UIButton.ButtonType.custom)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         button.tintColor = .lightGray
         button.setImage(UIImage(named: ImageName.star)?.withRenderingMode(.alwaysTemplate), for: UIControl.State.normal)
-        button.addTarget(self, action: #selector(touchUpBookMarkButton(_:)), for: UIControl.Event.touchUpInside)
+        button.addTarget(self, action: #selector(touchUpBookmarkButton(_:)), for: UIControl.Event.touchUpInside)
         
         return button
     }()
@@ -83,9 +83,9 @@ final class CityWeatherTableViewCell: UITableViewCell {
         
         forecast = nil
         
-        bookMarkButton.setImage(UIImage(named: ImageName.star)?.withRenderingMode(.alwaysTemplate), for: UIControl.State.normal)
-        bookMarkButton.tintColor = .lightGray
-        bookMarkButton.isSelected = false
+        bookmarkButton.setImage(UIImage(named: ImageName.star)?.withRenderingMode(.alwaysTemplate), for: UIControl.State.normal)
+        bookmarkButton.tintColor = .lightGray
+        bookmarkButton.isSelected = false
     }
     
     func setUpForecast(forecast: Forecast) {
@@ -97,20 +97,20 @@ final class CityWeatherTableViewCell: UITableViewCell {
     }
     
     private func setUpHierachy() {
-        [bookMarkButton, cityNameLabel, weatherLabel, temperatureLabel, forecastOfCityCollectionView].forEach {
+        [bookmarkButton, cityNameLabel, weatherLabel, temperatureLabel, forecastOfCityCollectionView].forEach {
             contentView.addSubview($0)
         }
     }
     
     private func setUpLayout() {
         NSLayoutConstraint.activate([
-            bookMarkButton.topAnchor.constraint(equalTo: self.topAnchor, constant: LayoutConstants.standardGap),
-            bookMarkButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: LayoutConstants.standardGap),
-            bookMarkButton.widthAnchor.constraint(equalToConstant: LayoutConstants.bookMarkSize),
-            bookMarkButton.heightAnchor.constraint(equalToConstant: LayoutConstants.bookMarkSize),
+            bookmarkButton.topAnchor.constraint(equalTo: self.topAnchor, constant: LayoutConstants.standardGap),
+            bookmarkButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: LayoutConstants.standardGap),
+            bookmarkButton.widthAnchor.constraint(equalToConstant: LayoutConstants.bookmarkSize),
+            bookmarkButton.heightAnchor.constraint(equalToConstant: LayoutConstants.bookmarkSize),
             
-            cityNameLabel.topAnchor.constraint(equalTo: bookMarkButton.topAnchor),
-            cityNameLabel.leadingAnchor.constraint(equalTo: bookMarkButton.trailingAnchor, constant: LayoutConstants.standardGap),
+            cityNameLabel.topAnchor.constraint(equalTo: bookmarkButton.topAnchor),
+            cityNameLabel.leadingAnchor.constraint(equalTo: bookmarkButton.trailingAnchor, constant: LayoutConstants.standardGap),
             
             weatherLabel.topAnchor.constraint(equalTo: cityNameLabel.bottomAnchor, constant: LayoutConstants.standardGap),
             weatherLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: LayoutConstants.standardGap),
@@ -130,15 +130,15 @@ final class CityWeatherTableViewCell: UITableViewCell {
         forecastOfCityCollectionView.delegate = self
     }
     
-    @IBAction func touchUpBookMarkButton(_ sender: UIButton) {
+    @IBAction func touchUpBookmarkButton(_ sender: UIButton) {
         sender.isSelected = !sender.isSelected
         
         if sender.isSelected {
             sender.tintColor = .systemYellow
-            BookMark.saveCity(name: cityNameLabel.text ?? "")
+            BookmarkManager.saveCity(name: cityNameLabel.text ?? "")
         } else {
             sender.tintColor = .lightGray
-            BookMark.deleteCity(name: cityNameLabel.text ?? "")
+            BookmarkManager.deleteCity(name: cityNameLabel.text ?? "")
         }
     }
 }
@@ -175,7 +175,7 @@ extension CityWeatherTableViewCell: UICollectionViewDataSource, UICollectionView
 // MARK: - Magic Number
 private enum LayoutConstants {
     static let standardGap: CGFloat = 15
-    static let bookMarkSize: CGFloat = 30
+    static let bookmarkSize: CGFloat = 30
     static let quarterOfCenterY: CGFloat = 50
 }
 

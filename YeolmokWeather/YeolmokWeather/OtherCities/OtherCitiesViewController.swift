@@ -102,7 +102,7 @@ final class OtherCitiesViewController: UIViewController, WeatherController {
 
         setUpUI()
         configure()
-        model.fetchBookMarkCity() { cityName in
+        model.fetchBookmarkCity() { cityName in
             Task {
                 self.requestCurrentWeatherOfCity(cityName)
                 self.requestForecastWeatherOfCity(cityName)
@@ -216,8 +216,8 @@ extension OtherCitiesViewController: UITableViewDelegate, UITableViewDataSource 
         // 즐겨찾기 버튼 설정
         for index in model.storedCities.indices {
             if indexPath.row < model.count, currentWeather.name == model.storedCities[index] {
-                cell.bookMarkButton.isSelected = true
-                cell.bookMarkButton.tintColor = .systemYellow
+                cell.bookmarkButton.isSelected = true
+                cell.bookmarkButton.tintColor = .systemYellow
                 break
             }
         }

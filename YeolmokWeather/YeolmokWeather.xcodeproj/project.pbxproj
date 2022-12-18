@@ -11,7 +11,7 @@
 		6B081F0C294DBD83008CE18F /* LocalizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B081F0B294DBD83008CE18F /* LocalizationTests.swift */; };
 		6B14428A289BE33900BDF07D /* Decoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B144289289BE33800BDF07D /* Decoder.swift */; };
 		6B14428C289C016100BDF07D /* OtherCitiesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B14428B289C016100BDF07D /* OtherCitiesViewController.swift */; };
-		6B285EE928B206B0001A4291 /* BookMark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B285EE828B206B0001A4291 /* BookMark.swift */; };
+		6B285EE928B206B0001A4291 /* BookmarkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B285EE828B206B0001A4291 /* BookmarkManager.swift */; };
 		6B4E887728EB549D00723006 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6B4E887928EB549D00723006 /* InfoPlist.strings */; };
 		6B548AFE294D442200ACD7AC /* WeatherController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B548AFD294D442200ACD7AC /* WeatherController.swift */; };
 		6B548B06294D55DF00ACD7AC /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B548B05294D55DF00ACD7AC /* LocationService.swift */; };
@@ -64,7 +64,7 @@
 		6B081F0D294DC48B008CE18F /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
 		6B144289289BE33800BDF07D /* Decoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Decoder.swift; sourceTree = "<group>"; };
 		6B14428B289C016100BDF07D /* OtherCitiesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherCitiesViewController.swift; sourceTree = "<group>"; };
-		6B285EE828B206B0001A4291 /* BookMark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookMark.swift; sourceTree = "<group>"; };
+		6B285EE828B206B0001A4291 /* BookmarkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarkManager.swift; sourceTree = "<group>"; };
 		6B32242C29495D6A008E4B3D /* YeolmokWeatherTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YeolmokWeatherTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6B32243929495D76008E4B3D /* YeolmokWeatherUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YeolmokWeatherUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6B42A53F294DD195005868E8 /* UITestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = UITestPlan.xctestplan; sourceTree = "<group>"; };
@@ -255,7 +255,7 @@
 			isa = PBXGroup;
 			children = (
 				6BCED14C289CF64D00F8A305 /* NetworkManager.swift */,
-				6B285EE828B206B0001A4291 /* BookMark.swift */,
+				6B285EE828B206B0001A4291 /* BookmarkManager.swift */,
 				6B144289289BE33800BDF07D /* Decoder.swift */,
 				6B84DA2A28A40C1A002EF4DC /* FetchImageName.swift */,
 				6B01EEEC289A74DF007C5B30 /* TypeOfWeather.swift */,
@@ -454,7 +454,7 @@
 				6B92429C2898EDE300E29CF8 /* CurrentWeatherViewController.swift in Sources */,
 				6B84DA2B28A40C1A002EF4DC /* FetchImageName.swift in Sources */,
 				6B548AFE294D442200ACD7AC /* WeatherController.swift in Sources */,
-				6B285EE928B206B0001A4291 /* BookMark.swift in Sources */,
+				6B285EE928B206B0001A4291 /* BookmarkManager.swift in Sources */,
 				6B548B06294D55DF00ACD7AC /* LocationService.swift in Sources */,
 				6B9242982898EDE300E29CF8 /* AppDelegate.swift in Sources */,
 				6B92429A2898EDE300E29CF8 /* SceneDelegate.swift in Sources */,

@@ -1,5 +1,5 @@
 //
-//  BookMark.swift
+//  BookmarkManager.swift
 //  Weather
 //
 //  Created by 김동욱 on 2022/08/21.
@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import CoreData
 
-struct BookMark {
+struct BookmarkManager {
     static func fetchCity() -> [NSManagedObject]? {
         let appDelegate = UIApplication.shared.delegate as? AppDelegate
         guard let context = appDelegate?.persistentContainer.viewContext else { return nil }

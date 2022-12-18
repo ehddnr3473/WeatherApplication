@@ -8,6 +8,7 @@
 import XCTest
 @testable import YeolmokWeather
 
+/// 현지화가 잘 적용되었는지 English 및 Korean configuration으로 확인하는 테스트 케이스
 final class LocalizationTests: XCTestCase {
     
     func testLocalizedTextInCurrentWeather() {

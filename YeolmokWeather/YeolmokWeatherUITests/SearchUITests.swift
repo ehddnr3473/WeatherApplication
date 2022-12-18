@@ -8,6 +8,7 @@
 import XCTest
 @testable import YeolmokWeather
 
+/// 검색 작업에 대해서 의도대로 작동하는지 확인하는 UI 테스트 케이스
 final class SearchUITests: XCTestCase {
     let app = XCUIApplication()
 
@@ -124,5 +125,41 @@ final class SearchUITests: XCTestCase {
         
         let secondResult = app.staticTexts["이미 추가된 도시입니다."]
         XCTAssert(secondResult.isHittable)
+    }
+    
+    // 즐겨찾기한 도시가 없다는 가정하에 테스트
+    func testBookmark() {
+        let tabBarButton = app.tabBars.buttons["도시"]
+        tabBarButton.tap()
+        XCTAssert(app.staticTexts["도시 날씨"].isHittable)
+        
+        let searchField = app.textFields["도시명을 영어로 검색"]
+        XCTAssert(searchField.isHittable)
+        
+        searchField.tap()
+        searchField.typeText("hawaii")
+        
+        app.buttons["Search"].tap()
+        
+        Thread.sleep(forTimeInterval: 3)
+        let firstResult = app.staticTexts["Hawaii"]
+        XCTAssert(firstResult.isHittable)
+        
+        let starButton = app.tables.cells.buttons["star"]
+        XCTAssert(starButton.isHittable)
+        
+        // 즐겨찾기 등록 후, 재시동하여 잘 불러오는지 확인
+        starButton.tap()
+        restart()
+        tabBarButton.tap()
+        
+        XCTAssert(app.staticTexts["Hawaii"].isHittable)
+        // 즐겨찾기 삭제하여 초기 상태로.
+        starButton.tap()
+    }
+    
+    func restart() {
+        app.terminate()
+        app.launch()
     }
 }

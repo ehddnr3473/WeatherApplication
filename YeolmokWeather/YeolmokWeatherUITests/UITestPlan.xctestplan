@@ -13,6 +13,7 @@
   },
   "testTargets" : [
     {
+      "parallelizable" : true,
       "target" : {
         "containerPath" : "container:YeolmokWeather.xcodeproj",
         "identifier" : "6B32243829495D76008E4B3D",
