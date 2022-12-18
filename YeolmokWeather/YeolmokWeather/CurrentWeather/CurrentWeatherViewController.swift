@@ -215,7 +215,7 @@ extension CurrentWeatherViewController {
     
     @MainActor private func setCityName(with cityName: String) {
         model.setCityName(with: cityName)
-        self.cityNameLabel.text = model.name
+        cityNameLabel.text = model.name
     }
     
     @MainActor private func setCurrentWeather(weather: String, temperature: Double) {
