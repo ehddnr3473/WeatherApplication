@@ -55,7 +55,7 @@ final class OtherCitiesViewController: UIViewController, WeatherController {
         textField.returnKeyType = .search
         textField.keyboardType = .alphabet
         
-        textField.leftView = UIView(frame: CGRect(x: .zero, y: .zero, width: 10, height: textField.frame.height))
+        textField.leftView = UIView(frame: CGRect(x: .zero, y: .zero, width: LayoutConstants.offset, height: textField.frame.height))
         textField.leftViewMode = UITextField.ViewMode.always
         
         return textField
@@ -304,9 +304,9 @@ extension OtherCitiesViewController: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         UIView.animate(withDuration: AnimationConstants.duration) {
             if AppText.language == "kr" {
-                self.trailingOfSearchTextField.constant = -LayoutConstants.krLargeGap
+                self.trailingOfSearchTextField.constant = -LayoutConstants.krLargeOffset
             } else {
-                self.trailingOfSearchTextField.constant = -LayoutConstants.enLargeGap
+                self.trailingOfSearchTextField.constant = -LayoutConstants.enLargeOffset
             }
             self.view.layoutIfNeeded()
         }
@@ -334,8 +334,8 @@ private enum LayoutConstants {
     static let textFieldHeight: CGFloat = 30
     static let heightMultiplier: CGFloat = 0.7
     static let titleLeading: CGFloat = 15
-    static let krLargeGap: CGFloat = 50
-    static let enLargeGap: CGFloat = 60
+    static let krLargeOffset: CGFloat = 50
+    static let enLargeOffset: CGFloat = 60
     static let tableViewItemHeight: CGFloat = 200
     static let mediumFontSize: CGFloat = 30
 }

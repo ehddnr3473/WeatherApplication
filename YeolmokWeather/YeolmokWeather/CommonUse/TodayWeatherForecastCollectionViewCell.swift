@@ -49,7 +49,7 @@ final class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
         
         label.textAlignment = .center
         label.textColor = AppStyles.Colors.mainColor
-        label.font = .boldSystemFont(ofSize: 10)
+        label.font = .boldSystemFont(ofSize: LayoutConstants.fontSize)
         
         return label
     }()
@@ -74,7 +74,7 @@ final class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
     private func setUpLayout() {
         NSLayoutConstraint.activate([
             timeLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            timeLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: LayoutConstants.standardGap),
+            timeLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: LayoutConstants.offset),
             
             weatherImageView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
             weatherImageView.topAnchor.constraint(equalTo: timeLabel.bottomAnchor, constant: LayoutConstants.smallOffset),
@@ -85,14 +85,14 @@ final class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
             weatherLabel.topAnchor.constraint(equalTo: weatherImageView.bottomAnchor, constant: LayoutConstants.smallOffset),
             
             temperatureLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            temperatureLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -LayoutConstants.standardGap)
+            temperatureLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -LayoutConstants.offset)
         ])
     }
 }
 
 private enum LayoutConstants {
     static let smallOffset: CGFloat = 5
-    static let standardGap: CGFloat = 10
+    static let offset: CGFloat = 10
     static let imageWidth: CGFloat = 0.3
     static let fontSize: CGFloat = 10
 }

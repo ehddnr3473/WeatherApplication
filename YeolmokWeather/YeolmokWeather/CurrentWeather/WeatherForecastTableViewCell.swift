@@ -18,7 +18,7 @@ final class WeatherForecastTableViewCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         
         label.textColor = AppStyles.Colors.mainColor
-        label.font = .boldSystemFont(ofSize: 15)
+        label.font = .boldSystemFont(ofSize: LayoutConstants.fontSize)
         
         return label
     }()
@@ -68,10 +68,10 @@ final class WeatherForecastTableViewCell: UITableViewCell {
     private func setUpLayout() {
         NSLayoutConstraint.activate([
             dayLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-            dayLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: LayoutConstants.standardGap),
+            dayLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: LayoutConstants.offset),
             
             forecastCollectionView.topAnchor.constraint(equalTo: self.topAnchor),
-            forecastCollectionView.leadingAnchor.constraint(equalTo: dayLabel.trailingAnchor, constant: LayoutConstants.standardGap),
+            forecastCollectionView.leadingAnchor.constraint(equalTo: dayLabel.trailingAnchor, constant: LayoutConstants.offset),
             forecastCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             forecastCollectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
         ])
@@ -113,7 +113,8 @@ extension WeatherForecastTableViewCell: UICollectionViewDataSource, UICollection
 
 // MARK: - Magic Number
 private enum LayoutConstants {
-    static let standardGap: CGFloat = 8
+    static let offset: CGFloat = 8
+    static let fontSize: CGFloat = 15
 }
 
 private enum NumberConstants {

@@ -30,7 +30,7 @@ final class CityWeatherTableViewCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         
         label.textColor = AppStyles.Colors.mainColor
-        label.font = .boldSystemFont(ofSize: 30)
+        label.font = .boldSystemFont(ofSize: LayoutConstants.mediumFontSize)
         
         return label
     }()
@@ -40,7 +40,7 @@ final class CityWeatherTableViewCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         
         label.textColor = AppStyles.Colors.mainColor
-        label.font = .boldSystemFont(ofSize: 20)
+        label.font = .boldSystemFont(ofSize: LayoutConstants.smallFontSize)
         
         return label
     }()
@@ -50,7 +50,7 @@ final class CityWeatherTableViewCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         
         label.textColor = AppStyles.Colors.mainColor
-        label.font = .boldSystemFont(ofSize: 40)
+        label.font = .boldSystemFont(ofSize: LayoutConstants.largeFontSize)
         
         return label
     }()
@@ -104,18 +104,18 @@ final class CityWeatherTableViewCell: UITableViewCell {
     
     private func setUpLayout() {
         NSLayoutConstraint.activate([
-            bookmarkButton.topAnchor.constraint(equalTo: self.topAnchor, constant: LayoutConstants.standardGap),
-            bookmarkButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: LayoutConstants.standardGap),
+            bookmarkButton.topAnchor.constraint(equalTo: self.topAnchor, constant: LayoutConstants.offset),
+            bookmarkButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: LayoutConstants.offset),
             bookmarkButton.widthAnchor.constraint(equalToConstant: LayoutConstants.bookmarkSize),
             bookmarkButton.heightAnchor.constraint(equalToConstant: LayoutConstants.bookmarkSize),
             
             cityNameLabel.topAnchor.constraint(equalTo: bookmarkButton.topAnchor),
-            cityNameLabel.leadingAnchor.constraint(equalTo: bookmarkButton.trailingAnchor, constant: LayoutConstants.standardGap),
+            cityNameLabel.leadingAnchor.constraint(equalTo: bookmarkButton.trailingAnchor, constant: LayoutConstants.offset),
             
-            weatherLabel.topAnchor.constraint(equalTo: cityNameLabel.bottomAnchor, constant: LayoutConstants.standardGap),
-            weatherLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: LayoutConstants.standardGap),
+            weatherLabel.topAnchor.constraint(equalTo: cityNameLabel.bottomAnchor, constant: LayoutConstants.offset),
+            weatherLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: LayoutConstants.offset),
             
-            temperatureLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -LayoutConstants.standardGap),
+            temperatureLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -LayoutConstants.offset),
             temperatureLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -LayoutConstants.quarterOfCenterY),
             
             forecastOfCityCollectionView.topAnchor.constraint(equalTo: weatherLabel.bottomAnchor),
@@ -174,9 +174,12 @@ extension CityWeatherTableViewCell: UICollectionViewDataSource, UICollectionView
 
 // MARK: - Magic Number
 private enum LayoutConstants {
-    static let standardGap: CGFloat = 15
+    static let offset: CGFloat = 15
     static let bookmarkSize: CGFloat = 30
     static let quarterOfCenterY: CGFloat = 50
+    static let largeFontSize: CGFloat = 40
+    static let mediumFontSize: CGFloat = 30
+    static let smallFontSize: CGFloat = 20
 }
 
 private enum NumberConstants {
