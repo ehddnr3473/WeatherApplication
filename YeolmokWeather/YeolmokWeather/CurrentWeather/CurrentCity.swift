@@ -41,7 +41,6 @@ struct CurrentCity {
         if forecast.list.count > NumberConstants.numberOfItemsInSection {
             forecast.list.removeSubrange(NumberConstants.fromEightToEnd)
         }
-        
         self.forecast = forecast
     }
     

@@ -13,15 +13,17 @@ import CoreData
  - 도시 이름을 이용하여 현재 날씨 데이터와 예보 데이터를 받아옴.
  - Core Data의 Persistence를 이용하여 viewDidLoad()시 저장한 도시 이름을 받아와서 검색
  */
-final class OtherCitiesViewController: UIViewController, WeatherController {
+final class OtherCitiesViewController: UIViewController, WeatherControllable, Storeable {
     typealias Model = OtherCities
     
     // MARK: - Properties
     var model = Model()
     let networkManager = NetworkManager()
+    var storedCities = [String]()
     
-    // Layout Constraint 가변 textField
-    private lazy var trailingOfSearchTextField: NSLayoutConstraint = searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstants.offset)
+    // Layout Constraint 가변 textField: 취소 버튼이 오른쪽에서 나오는 것을 위해
+    private lazy var trailingOfSearchTextField: NSLayoutConstraint = searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor,
+                                                                                                               constant: -LayoutConstants.offset)
     
     private let backgroundImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: StringConstants.backgroundImageName))
@@ -55,7 +57,10 @@ final class OtherCitiesViewController: UIViewController, WeatherController {
         textField.returnKeyType = .search
         textField.keyboardType = .alphabet
         
-        textField.leftView = UIView(frame: CGRect(x: .zero, y: .zero, width: LayoutConstants.offset, height: textField.frame.height))
+        textField.leftView = UIView(frame: CGRect(x: .zero,
+                                                  y: .zero,
+                                                  width: LayoutConstants.offset,
+                                                  height: textField.frame.height))
         textField.leftViewMode = UITextField.ViewMode.always
         
         return textField
@@ -68,7 +73,7 @@ final class OtherCitiesViewController: UIViewController, WeatherController {
         button.setTitle(StringConstants.cancelButtonTitle, for: UIControl.State.normal)
         button.tintColor = .black
         
-        button.addTarget(self, action: #selector(touchUpCancelButton(_:)), for: UIControl.Event.touchUpInside)
+        button.addTarget(self, action: #selector(touchUpCancelButton), for: UIControl.Event.touchUpInside)
         
         return button
     }()
@@ -82,7 +87,8 @@ final class OtherCitiesViewController: UIViewController, WeatherController {
         tableView.layer.borderWidth = AppStyles.borderWidth
         tableView.layer.borderColor = AppStyles.Colors.mainColor.cgColor
         
-        tableView.register(CityWeatherTableViewCell.self, forCellReuseIdentifier: CityWeatherTableViewCell.identifier)
+        tableView.register(CityWeatherTableViewCell.self,
+                           forCellReuseIdentifier: CityWeatherTableViewCell.identifier)
         
         return tableView
     }()
@@ -102,12 +108,6 @@ final class OtherCitiesViewController: UIViewController, WeatherController {
 
         setUpUI()
         configure()
-        model.fetchBookmarkCity() { cityName in
-            Task {
-                self.requestCurrentWeatherOfCity(cityName)
-                self.requestForecastWeatherOfCity(cityName)
-            }
-        }
     }
 }
 
@@ -128,6 +128,14 @@ extension OtherCitiesViewController {
         cityWeatherTableView.dataSource = self
         cityWeatherTableView.delegate = self
         searchTextField.delegate = self
+        
+        fetchBookmarkCity() { cityName in
+            Task {
+                self.model.appendCityWithName(cityName)
+                self.requestCurrentWeatherOfCity(cityName)
+                self.requestForecastWeatherOfCity(cityName)
+            }
+        }
     }
     
     private func setUpLayout() {
@@ -156,7 +164,7 @@ extension OtherCitiesViewController {
         ])
     }
 
-    @IBAction func touchUpCancelButton(_ sender: UIButton) {
+    @objc func touchUpCancelButton() {
         searchTextField.text = ""
         searchTextField.resignFirstResponder()
     }
@@ -214,8 +222,8 @@ extension OtherCitiesViewController: UITableViewDelegate, UITableViewDataSource 
         guard let currentWeather = model.cities[indexPath.row].currentWeather else { return cell }
         
         // 즐겨찾기 버튼 설정
-        for index in model.storedCities.indices {
-            if indexPath.row < model.count, currentWeather.name == model.storedCities[index] {
+        for index in storedCities.indices {
+            if indexPath.row < model.count, currentWeather.name == storedCities[index] {
                 cell.bookmarkButton.isSelected = true
                 cell.bookmarkButton.tintColor = .systemYellow
                 break

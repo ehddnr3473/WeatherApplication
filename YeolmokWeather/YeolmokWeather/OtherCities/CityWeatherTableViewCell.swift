@@ -19,7 +19,8 @@ final class CityWeatherTableViewCell: UITableViewCell {
         button.translatesAutoresizingMaskIntoConstraints = false
         
         button.tintColor = .lightGray
-        button.setImage(UIImage(named: ImageName.star)?.withRenderingMode(.alwaysTemplate), for: UIControl.State.normal)
+        button.setImage(UIImage(named: ImageName.star)?.withRenderingMode(.alwaysTemplate),
+                        for: UIControl.State.normal)
         button.addTarget(self, action: #selector(touchUpBookmarkButton(_:)), for: UIControl.Event.touchUpInside)
         
         return button
@@ -83,7 +84,8 @@ final class CityWeatherTableViewCell: UITableViewCell {
         
         forecast = nil
         
-        bookmarkButton.setImage(UIImage(named: ImageName.star)?.withRenderingMode(.alwaysTemplate), for: UIControl.State.normal)
+        bookmarkButton.setImage(UIImage(named: ImageName.star)?.withRenderingMode(.alwaysTemplate),
+                                for: UIControl.State.normal)
         bookmarkButton.tintColor = .lightGray
         bookmarkButton.isSelected = false
     }
@@ -130,7 +132,7 @@ final class CityWeatherTableViewCell: UITableViewCell {
         forecastOfCityCollectionView.delegate = self
     }
     
-    @IBAction func touchUpBookmarkButton(_ sender: UIButton) {
+    @objc func touchUpBookmarkButton(_ sender: UIButton) {
         sender.isSelected = !sender.isSelected
         
         if sender.isSelected {

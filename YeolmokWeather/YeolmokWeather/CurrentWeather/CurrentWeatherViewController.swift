@@ -14,7 +14,7 @@ import CoreLocation
  2. 위치 정보를 Query로 현재 위치의 도시 이름을 받아옴.
  3. 받아온 도시 이름을 Query로 현재 날씨 데이터와 예보 데이터를 받아옴.
  */
-final class CurrentWeatherViewController: UIViewController, WeatherController, LocationService {
+final class CurrentWeatherViewController: UIViewController, WeatherControllable, LocationService {
     typealias Model = CurrentCity
     
     // MARK: - Properties
@@ -89,7 +89,8 @@ final class CurrentWeatherViewController: UIViewController, WeatherController, L
         collectionView.layer.borderWidth = AppStyles.borderWidth
         collectionView.layer.borderColor = AppStyles.Colors.mainColor.cgColor
         
-        collectionView.register(TodayWeatherForecastCollectionViewCell.self, forCellWithReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier)
+        collectionView.register(TodayWeatherForecastCollectionViewCell.self,
+                                forCellWithReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier)
         
         return collectionView
     }()
@@ -213,16 +214,14 @@ extension CurrentWeatherViewController {
     }
     
     @MainActor private func setCityName(with cityName: String) {
-        activityIndicatorView.stopAnimating()
         model.setCityName(with: cityName)
         self.cityNameLabel.text = model.name
     }
     
     @MainActor private func setCurrentWeather(weather: String, temperature: Double) {
+        activityIndicatorView.stopAnimating()
         model.setCurrentWeather(weather: weather, temperature: temperature)
-        
         weatherLabel.text = model.weather
-        
         if let temperature = model.temperature {
             temperatureLabel.text = String(Int(temperature)) + AppText.celsiusString
         }
@@ -274,7 +273,6 @@ extension CurrentWeatherViewController {
         guard let currentLocation = currentLocation else { return }
         
         guard let url: URL = networkManager.getReverseGeocodingURL(with: currentLocation) else { return }
-        
         Task {
             await requestCityName(with: url)
         }
@@ -302,14 +300,14 @@ extension CurrentWeatherViewController {
     private func verifyAndRequestWeatherData(_ cityName: String) {
         let regex = try? NSRegularExpression(pattern: StringConstants.pattern)
         if let _ = regex?.firstMatch(in: cityName, range: NSRange(location: 0, length: cityName.count)) {
-            guard let url: URL = self.networkManager.getCurrentWeatherURL(with: cityName) else { return }
+            guard let url = networkManager.getCurrentWeatherURL(with: cityName) else { return }
             Task {
                 await requestWeather(with: url)
                 await requestWeatherForecast(with: cityName)
             }
         } else {
             let refinedCityName = refineCityName(cityName)
-            guard let url: URL = self.networkManager.getCurrentWeatherURL(with: refinedCityName) else { return }
+            guard let url = networkManager.getCurrentWeatherURL(with: refinedCityName) else { return }
             Task {
                 await requestWeather(with: url)
                 await requestWeatherForecast(with: refinedCityName)
@@ -373,8 +371,7 @@ extension CurrentWeatherViewController {
 // MARK: - CollectionView
 extension CurrentWeatherViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier, for: indexPath) as? TodayWeatherForecastCollectionViewCell else { return UICollectionViewCell() }
-        guard let forecast = model.forecast else { return UICollectionViewCell() }
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier, for: indexPath) as? TodayWeatherForecastCollectionViewCell, let forecast = model.forecast else { return UICollectionViewCell() }
 
         let time = Date(timeIntervalSince1970: forecast.list[indexPath.row].date)
             .formatted(Date.FormatStyle().hour(.defaultDigits(amPM: .abbreviated)))
@@ -452,7 +449,6 @@ private enum LayoutConstants {
 
 private enum NumberConstants {
     static let numberOfItemsInSection = 8
-
 }
 
 private enum StringConstants {

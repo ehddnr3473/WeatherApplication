@@ -8,7 +8,8 @@
 import Foundation
 import CoreLocation
 
-protocol LocationService {
+/// Core Location
+protocol LocationService: AnyObject {
     var locationManager: CLLocationManager { get }
     var currentLocation: CLLocationCoordinate2D? { get set }
     

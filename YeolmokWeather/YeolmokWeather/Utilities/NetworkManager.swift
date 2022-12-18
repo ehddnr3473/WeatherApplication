@@ -89,7 +89,7 @@ struct NetworkManager {
         return urlComponents.url(relativeTo: baseURL)
     }
     
-    // API 호출
+    // 네트워크 통신
     func requestData(with url: URL) async throws -> Data {
         let request = URLRequest(url: url)
         let (data, response) = try await URLSession.shared.data(for: request)
