@@ -29,7 +29,7 @@ final class CityWeatherTableViewCell: UITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.textColor = .white
+        label.textColor = AppStyles.Colors.mainColor
         label.font = .boldSystemFont(ofSize: 30)
         
         return label
@@ -39,7 +39,7 @@ final class CityWeatherTableViewCell: UITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.textColor = .white
+        label.textColor = AppStyles.Colors.mainColor
         label.font = .boldSystemFont(ofSize: 20)
         
         return label
@@ -49,7 +49,7 @@ final class CityWeatherTableViewCell: UITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.textColor = .white
+        label.textColor = AppStyles.Colors.mainColor
         label.font = .boldSystemFont(ofSize: 40)
         
         return label

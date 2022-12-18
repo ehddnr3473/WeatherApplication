@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// 날씨 아이콘 및 배경 이미지 이름 반환
 struct FetchImageName {
     static func setForecastImage(weather: Int) -> String {
         switch weather {

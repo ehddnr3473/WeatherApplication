@@ -38,7 +38,7 @@ final class CurrentWeatherViewController: UIViewController, WeatherController, L
         stackView.axis = .vertical
         stackView.alignment = .fill
         stackView.distribution = .fillEqually
-        stackView.spacing = 8
+        stackView.spacing = LayoutConstants.offset
         
         return stackView
     }()
@@ -46,9 +46,9 @@ final class CurrentWeatherViewController: UIViewController, WeatherController, L
     private let cityNameLabel: UILabel = {
         let label = UILabel()
         
-        label.textColor = .white
+        label.textColor = AppStyles.Colors.mainColor
         label.textAlignment = .center
-        label.font = .boldSystemFont(ofSize: 30)
+        label.font = .boldSystemFont(ofSize: LayoutConstants.mediumFontSize)
         
         return label
     }()
@@ -56,9 +56,9 @@ final class CurrentWeatherViewController: UIViewController, WeatherController, L
     private let temperatureLabel: UILabel = {
         let label = UILabel()
         
-        label.textColor = .white
+        label.textColor = AppStyles.Colors.mainColor
         label.textAlignment = .center
-        label.font = .boldSystemFont(ofSize: 40)
+        label.font = .boldSystemFont(ofSize: LayoutConstants.largeFontSize)
         
         return label
     }()
@@ -66,9 +66,9 @@ final class CurrentWeatherViewController: UIViewController, WeatherController, L
     private let weatherLabel: UILabel = {
         let label = UILabel()
         
-        label.textColor = .white
+        label.textColor = AppStyles.Colors.mainColor
         label.textAlignment = .center
-        label.font = .boldSystemFont(ofSize: 20)
+        label.font = .boldSystemFont(ofSize: LayoutConstants.smallFontSize)
         
         return label
     }()
@@ -76,7 +76,10 @@ final class CurrentWeatherViewController: UIViewController, WeatherController, L
     private let todayWeatherForecastCollectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.scrollDirection = .horizontal
-        flowLayout.sectionInset = .init(top: 0, left: 20, bottom: 0, right: 20)
+        flowLayout.sectionInset = .init(top: .zero,
+                                        left: LayoutConstants.collectionViewSideInset,
+                                        bottom: .zero,
+                                        right: LayoutConstants.collectionViewSideInset)
         
         let collectionView = UICollectionView(frame: .zero , collectionViewLayout: flowLayout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -95,9 +98,9 @@ final class CurrentWeatherViewController: UIViewController, WeatherController, L
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.textColor = .white
-        label.font = .boldSystemFont(ofSize: 20)
-        label.text = "Forecast".localized
+        label.textColor = AppStyles.Colors.mainColor
+        label.font = .boldSystemFont(ofSize: LayoutConstants.smallFontSize)
+        label.text = LocalizedText.forecast
         
         return label
     }()
@@ -116,9 +119,9 @@ final class CurrentWeatherViewController: UIViewController, WeatherController, L
     }()
     
     lazy var alert: UIAlertController = {
-        let alert = UIAlertController(title: "AlertTitle".localized, message: "", preferredStyle: .alert)
+        let alert = UIAlertController(title: LocalizedText.alertTitle, message: "", preferredStyle: .alert)
         
-        let action = UIAlertAction(title: "ActionTitle".localized, style: .default)
+        let action = UIAlertAction(title: LocalizedText.actionTitle, style: .default)
         alert.addAction(action)
         
         return alert
@@ -178,17 +181,17 @@ extension CurrentWeatherViewController {
             currentWeatherStackView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: LayoutConstants.stackViewWidthMultiplier),
             currentWeatherStackView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: LayoutConstants.stackViewHeightMultiplier),
             
-            todayWeatherForecastCollectionView.topAnchor.constraint(equalTo: currentWeatherStackView.bottomAnchor, constant: LayoutConstants.standardGap),
-            todayWeatherForecastCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.standardGap),
-            todayWeatherForecastCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstants.standardGap),
+            todayWeatherForecastCollectionView.topAnchor.constraint(equalTo: currentWeatherStackView.bottomAnchor, constant: LayoutConstants.offset),
+            todayWeatherForecastCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.offset),
+            todayWeatherForecastCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstants.offset),
             todayWeatherForecastCollectionView.heightAnchor.constraint(equalToConstant: LayoutConstants.collectionViewHeight),
             
-            titleLabel.topAnchor.constraint(equalTo: todayWeatherForecastCollectionView.bottomAnchor, constant: LayoutConstants.standardGap),
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.largeGap),
+            titleLabel.topAnchor.constraint(equalTo: todayWeatherForecastCollectionView.bottomAnchor, constant: LayoutConstants.offset),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.largeOffset),
             
-            weatherForecastTableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: LayoutConstants.standardGap),
-            weatherForecastTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.standardGap),
-            weatherForecastTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstants.standardGap),
+            weatherForecastTableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: LayoutConstants.offset),
+            weatherForecastTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.offset),
+            weatherForecastTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstants.offset),
             weatherForecastTableView.heightAnchor.constraint(equalToConstant: LayoutConstants.tableViewHeight)
         ])
     }
@@ -434,13 +437,17 @@ extension CurrentWeatherViewController: UITableViewDataSource, UITableViewDelega
 
 // MARK: - Magic Number
 private enum LayoutConstants {
-    static let standardGap: CGFloat = 8
-    static let largeGap: CGFloat = 15
+    static let offset: CGFloat = 8
+    static let largeOffset: CGFloat = 15
     static let stackViewWidthMultiplier: CGFloat = 0.6
     static let stackViewHeightMultiplier: CGFloat = 0.2
     static let collectionViewHeight: CGFloat = 100
     static let collectionViewWidth: CGFloat = collectionViewHeight
     static let tableViewHeight: CGFloat = collectionViewHeight * 3
+    static let largeFontSize: CGFloat = 40
+    static let mediumFontSize: CGFloat = 30
+    static let smallFontSize: CGFloat = 20
+    static let collectionViewSideInset: CGFloat = 20
 }
 
 private enum NumberConstants {
@@ -456,4 +463,10 @@ private enum CoreLocationErrorMessage {
     static let denied = "Denied".localized
     static let restricted = "Restricted".localized
     static let failed = "Falied".localized
+}
+
+private enum LocalizedText {
+    static let forecast = "Forecast".localized
+    static let alertTitle = "AlertTitle".localized
+    static let actionTitle = "ActionTitle".localized
 }

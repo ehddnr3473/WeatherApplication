@@ -135,6 +135,14 @@
 			path = API_KEY;
 			sourceTree = "<group>";
 		};
+		6B0E6D43294EA78F0063AAC1 /* CommonUse */ = {
+			isa = PBXGroup;
+			children = (
+				6BEAF02C28A1370500D0BB6D /* TodayWeatherForecastCollectionViewCell.swift */,
+			);
+			path = CommonUse;
+			sourceTree = "<group>";
+		};
 		6B32242D29495D6A008E4B3D /* YeolmokWeatherTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -208,6 +216,7 @@
 				6B4E887B28EB667300723006 /* TabBar */,
 				6BCED14A289CF5C800F8A305 /* Delegate */,
 				6B009E0928999A5900CD0FEF /* API_KEY */,
+				6B0E6D43294EA78F0063AAC1 /* CommonUse */,
 				6BEC6C5C289E8AF400EFF342 /* OtherCities */,
 				6BEC6C5B289E8AE400EFF342 /* CurrentWeather */,
 				6BCED14B289CF5E800F8A305 /* Utilities */,
@@ -226,7 +235,6 @@
 			isa = PBXGroup;
 			children = (
 				6BA4F0CA2917783500102A6F /* AnotherCity.swift */,
-				6B01EEEC289A74DF007C5B30 /* TypeOfWeather.swift */,
 				6B6EB49F289DA087009A80AD /* WeatherOfCity.swift */,
 				6BB587C8289FF0A000CBCF92 /* CityName.swift */,
 				6B58B49B28A181E500BA9F71 /* Forecast.swift */,
@@ -246,11 +254,12 @@
 		6BCED14B289CF5E800F8A305 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				6B144289289BE33800BDF07D /* Decoder.swift */,
 				6BCED14C289CF64D00F8A305 /* NetworkManager.swift */,
-				6B84DA2A28A40C1A002EF4DC /* FetchImageName.swift */,
-				6BF4C6F228AC9ABF009FC118 /* AppNamespace.swift */,
 				6B285EE828B206B0001A4291 /* BookMark.swift */,
+				6B144289289BE33800BDF07D /* Decoder.swift */,
+				6B84DA2A28A40C1A002EF4DC /* FetchImageName.swift */,
+				6B01EEEC289A74DF007C5B30 /* TypeOfWeather.swift */,
+				6BF4C6F228AC9ABF009FC118 /* AppNamespace.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -259,7 +268,6 @@
 			isa = PBXGroup;
 			children = (
 				6B92429B2898EDE300E29CF8 /* CurrentWeatherViewController.swift */,
-				6BEAF02C28A1370500D0BB6D /* TodayWeatherForecastCollectionViewCell.swift */,
 				6B9242AB2898EED000E29CF8 /* WeatherForecastTableViewCell.swift */,
 				6BA4F0C829176CF200102A6F /* CurrentCity.swift */,
 			);

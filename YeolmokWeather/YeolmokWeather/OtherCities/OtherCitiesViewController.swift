@@ -19,10 +19,9 @@ final class OtherCitiesViewController: UIViewController, WeatherController {
     // MARK: - Properties
     var model = Model()
     let networkManager = NetworkManager()
-    private var storedCities: [String] = []
     
     // Layout Constraint 가변 textField
-    private lazy var trailingOfSearchTextField: NSLayoutConstraint = searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstants.standardGap)
+    private lazy var trailingOfSearchTextField: NSLayoutConstraint = searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstants.offset)
     
     private let backgroundImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: StringConstants.backgroundImageName))
@@ -36,8 +35,8 @@ final class OtherCitiesViewController: UIViewController, WeatherController {
         label.translatesAutoresizingMaskIntoConstraints = false
         
         label.text = StringConstants.mainLabelText
-        label.textColor = .white
-        label.font = .boldSystemFont(ofSize: 30)
+        label.textColor = AppStyles.Colors.mainColor
+        label.font = .boldSystemFont(ofSize: LayoutConstants.mediumFontSize)
         
         return label
     }()
@@ -51,8 +50,8 @@ final class OtherCitiesViewController: UIViewController, WeatherController {
         textField.backgroundColor = .clear
         textField.autocapitalizationType = .none
         textField.autocorrectionType = .no
-        textField.layer.cornerRadius = 8
-        textField.layer.borderWidth = 2
+        textField.layer.cornerRadius = AppStyles.cornerRadius
+        textField.layer.borderWidth = AppStyles.borderWidth
         textField.returnKeyType = .search
         textField.keyboardType = .alphabet
         
@@ -103,16 +102,7 @@ final class OtherCitiesViewController: UIViewController, WeatherController {
 
         setUpUI()
         configure()
-        fetchBookMarkCity()
-    }
-    
-    // Core Data fetch
-    private func fetchBookMarkCity() {
-        guard let resultArray = BookMark.fetchCity() else { return }
-        for index in resultArray.indices {
-            guard let cityName = resultArray[index].value(forKey: CoreDataModel.attributeName) as? String else { return }
-            storedCities.append(cityName)
-            model.appendCityWithName(cityName)
+        model.fetchBookMarkCity() { cityName in
             Task {
                 self.requestCurrentWeatherOfCity(cityName)
                 self.requestForecastWeatherOfCity(cityName)
@@ -141,29 +131,27 @@ extension OtherCitiesViewController {
     }
     
     private func setUpLayout() {
-        let safeGuideLine = view.safeAreaLayoutGuide
-        
         NSLayoutConstraint.activate([
             backgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
             backgroundImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             backgroundImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             backgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
-            titleLabel.topAnchor.constraint(equalTo: safeGuideLine.topAnchor, constant: LayoutConstants.standardGap),
+            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: LayoutConstants.offset),
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.titleLeading),
             
-            searchTextField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: LayoutConstants.standardGap),
-            searchTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.standardGap),
+            searchTextField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: LayoutConstants.offset),
+            searchTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.offset),
             trailingOfSearchTextField,
             searchTextField.heightAnchor.constraint(equalToConstant: LayoutConstants.textFieldHeight),
             
             cancelButton.topAnchor.constraint(equalTo: searchTextField.topAnchor),
             cancelButton.bottomAnchor.constraint(equalTo: searchTextField.bottomAnchor),
-            cancelButton.leadingAnchor.constraint(equalTo: searchTextField.trailingAnchor, constant: LayoutConstants.standardGap),
+            cancelButton.leadingAnchor.constraint(equalTo: searchTextField.trailingAnchor, constant: LayoutConstants.offset),
             
-            cityWeatherTableView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: LayoutConstants.standardGap),
-            cityWeatherTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.standardGap),
-            cityWeatherTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstants.standardGap),
+            cityWeatherTableView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: LayoutConstants.offset),
+            cityWeatherTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.offset),
+            cityWeatherTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstants.offset),
             cityWeatherTableView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: LayoutConstants.heightMultiplier)
         ])
     }
@@ -210,7 +198,7 @@ extension OtherCitiesViewController {
             let data = try await networkManager.requestData(with: url)
             guard var forecast = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
             forecast.list.removeSubrange(NumberConstants.fromEightToEnd)
-            self.model.appendCityWithForecast(forecast)
+            model.appendCityWithForecast(forecast)
             reloadtableView()
         } catch {
             alertWillAppear(alert, networkManager.errorMessage(error))
@@ -225,13 +213,16 @@ extension OtherCitiesViewController: UITableViewDelegate, UITableViewDataSource 
         
         guard let currentWeather = model.cities[indexPath.row].currentWeather else { return cell }
         
-        for index in storedCities.indices {
-            if indexPath.row < model.count, currentWeather.name == storedCities[index] {
+        // 즐겨찾기 버튼 설정
+        for index in model.storedCities.indices {
+            if indexPath.row < model.count, currentWeather.name == model.storedCities[index] {
                 cell.bookMarkButton.isSelected = true
                 cell.bookMarkButton.tintColor = .systemYellow
                 break
             }
         }
+        
+        // 날씨 데이터 설정
         cell.cityNameLabel.text = currentWeather.name
         cell.weatherLabel.text = currentWeather.weather[.zero].description
         cell.temperatureLabel.text = String(Int(currentWeather.main.temp)) + AppText.celsiusString
@@ -309,6 +300,7 @@ extension OtherCitiesViewController: UITextFieldDelegate {
         }
     }
     
+    // 취소 버튼 오른쪽에서 나타나는 애니메이션
     func textFieldDidBeginEditing(_ textField: UITextField) {
         UIView.animate(withDuration: AnimationConstants.duration) {
             if AppText.language == "kr" {
@@ -320,9 +312,10 @@ extension OtherCitiesViewController: UITextFieldDelegate {
         }
     }
     
+    // 취소 버튼 오른쪽으로 사라지는 애니메이션
     func textFieldDidEndEditing(_ textField: UITextField, reason: UITextField.DidEndEditingReason) {
         UIView.animate(withDuration: AnimationConstants.duration) {
-            self.trailingOfSearchTextField.constant = -LayoutConstants.standardGap
+            self.trailingOfSearchTextField.constant = -LayoutConstants.offset
             self.view.layoutIfNeeded()
         }
     }
@@ -337,13 +330,14 @@ private enum StringConstants {
 }
 
 private enum LayoutConstants {
-    static let standardGap: CGFloat = 8
+    static let offset: CGFloat = 8
     static let textFieldHeight: CGFloat = 30
     static let heightMultiplier: CGFloat = 0.7
     static let titleLeading: CGFloat = 15
     static let krLargeGap: CGFloat = 50
     static let enLargeGap: CGFloat = 60
     static let tableViewItemHeight: CGFloat = 200
+    static let mediumFontSize: CGFloat = 30
 }
 
 private enum AnimationConstants {

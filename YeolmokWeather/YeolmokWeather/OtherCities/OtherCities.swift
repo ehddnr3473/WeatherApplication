@@ -8,9 +8,10 @@
 import Foundation
 
 
-/// Other Cities Model Object
+/// Other Cities Model
 struct OtherCities {
-    var cities: [AnotherCity] = []
+    var cities = [AnotherCity]()
+    var storedCities = [String]()
     
     var isEmpty: Bool {
         cities.isEmpty
@@ -18,6 +19,17 @@ struct OtherCities {
     
     var count: Int {
         cities.count
+    }
+    
+    // Fetch Core Data & Request Weather Data
+    mutating func fetchBookMarkCity(request: (String) -> Void) {
+        guard let resultArray = BookMark.fetchCity() else { return }
+        for index in resultArray.indices {
+            guard let cityName = resultArray[index].value(forKey: CoreDataModel.attributeName) as? String else { return }
+            storedCities.append(cityName)
+            appendCityWithName(cityName)
+            request(cityName)
+        }
     }
     
     var verifyNil: Bool {

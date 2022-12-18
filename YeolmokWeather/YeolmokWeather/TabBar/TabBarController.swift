@@ -25,7 +25,7 @@ final class TabBarController: UITabBarController {
         viewControllers = [currentWeatherViewController, otherCitiesViewController]
         setViewControllers(viewControllers, animated: true)
 
-        tabBar.tintColor = .white
+        tabBar.tintColor = AppStyles.Colors.mainColor
         tabBar.unselectedItemTintColor = .gray
     }
 }

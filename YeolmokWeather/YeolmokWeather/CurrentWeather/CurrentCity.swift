@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// Current Weather Model Object
+/// Current Weather Model
 struct CurrentCity {
     var name: String?
     var weather: String?
@@ -108,6 +108,7 @@ struct CurrentCity {
     }
 }
 
+// MARK: - Magic Number
 private enum NumberConstants {
     static let numberOfItemsInSection = 8
     static let fromZeroToSeven = 0...7
