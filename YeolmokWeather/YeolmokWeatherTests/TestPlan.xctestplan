@@ -18,6 +18,7 @@
     }
   ],
   "defaultOptions" : {
+    "codeCoverage" : false,
     "testTimeoutsEnabled" : true
   },
   "testTargets" : [
