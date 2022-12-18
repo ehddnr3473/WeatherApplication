@@ -33,7 +33,7 @@
  <img src="/Document/Images/mvc.png">
 </p>
 
-- **Controller**가 delegate, dataSource, target 등 많은 책임을 가지게 되어 여러 부분에서 사용하는 공통부분을 Service로 분리해주고, 모델 계층에서 관련 비즈니스 로직과 데이터 변환을 수행했습니다.
+- **Controller**가 delegate, dataSource, target 등 많은 책임을 가지게 되어 여러 부분에서 사용하는 공통부분을 Service로 분리해주고, 모델 계층에서 관련 비즈니스 로직과 데이터 변환을 수행.
 
 
 <br></br>
