@@ -130,8 +130,8 @@ extension OtherCitiesViewController {
         searchTextField.delegate = self
         
         fetchBookmarkCity() { cityName in
+            self.model.appendCityWithName(cityName)
             Task {
-                self.model.appendCityWithName(cityName)
                 self.requestCurrentWeatherOfCity(cityName)
                 self.requestForecastWeatherOfCity(cityName)
             }
