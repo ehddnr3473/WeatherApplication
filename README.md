@@ -10,9 +10,11 @@
 - 다른 도시를 검색해서 날씨를 확인할 수 있음.
 
 
+
 <br></br>
 ## 프로젝트 기간
 - 기획 및 개발 ~ 앱스토어 배포: 2022.08.01 ~ 2022.08.24
+- 이후 리팩터링 및 업데이트
 
 
 <br></br>
@@ -28,6 +30,7 @@
 |테스트|XCTest|
 
 
+
 <br></br>
 ## 아키텍처
 <p align="center">
@@ -36,12 +39,13 @@
 
 - **Controller**가 delegate, dataSource, target 등 많은 책임을 가지게 되어 여러 부분에서 사용하는 공통부분을 Service로 분리해주고, **Model**에서 관련 비즈니스 로직과 데이터 변환을 수행.
 
+
 <br></br>
 ## 뷰 및 동작
 <p align="center">
+ <img src="https://user-images.githubusercontent.com/55693272/209145762-01afc931-a3e7-4218-a1a7-ab68b70b7abb.mp4" width="24%">
  <img src="/Document/Images/snow.png" width="24%">
  <img src="/Document/PreviewImage/1.3/6.7/6.7_3.png" width="24%">
- <img src="/Document/PreviewImage/1.3/6.7/6.7_2.png" width="24%">
  <img src="/Document/PreviewImage/1.3/6.7/6.7_4.png" width="24%">
 </p>
 
@@ -53,6 +57,7 @@
   - 도시 이름을 이용하여 현재 날씨 데이터와 예보 데이터를 받아옴.
 
 
+
 <br></br>
 ## 테스트
 
@@ -62,6 +67,7 @@
 
 ### UI 테스트
 - 도시 검색 작업에 대해서 의도대로 작동하는지 확인하는 UI 테스트 케이스를 작성
+
 
 
 <br></br>
