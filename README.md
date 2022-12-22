@@ -37,7 +37,14 @@
 - **Controller**가 delegate, dataSource, target 등 많은 책임을 가지게 되어 여러 부분에서 사용하는 공통부분을 Service로 분리해주고, **Model**에서 관련 비즈니스 로직과 데이터 변환을 수행.
 
 <br></br>
-## 동작
+## 뷰 및 동작
+<p align="center">
+ <img src="/Document/Images/snow.png" width="24%">
+ <img src="/Document/PreviewImage/1.3/6.7/6.7_3.png" width="24%">
+ <img src="/Document/PreviewImage/1.3/6.7/6.7_2.png" width="24%">
+ <img src="/Document/PreviewImage/1.3/6.7/6.7_4.png" width="24%">
+</p>
+
 * 현재 위치한 도시
   - CoreLocation을 통해 사용자의 위치 정보를 받아옴.
   - 위치 정보를 이용하여 현재 위치의 도시 이름을 받아옴.
