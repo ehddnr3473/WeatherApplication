@@ -25,6 +25,7 @@
 |동시성 프로그래밍|Swift Concurrency|
 |위치 정보|Core Location|
 |로컬 데이터 저장소| Core Data의 Persistence|
+|테스트|XCTest|
 
 
 <br></br>
@@ -33,8 +34,7 @@
  <img src="/Document/Images/mvc.png">
 </p>
 
-- **Controller**가 delegate, dataSource, target 등 많은 책임을 가지게 되어 여러 부분에서 사용하는 공통부분을 Service로 분리해주고, 모델 계층에서 관련 비즈니스 로직과 데이터 변환을 수행.
-
+- **Controller**가 delegate, dataSource, target 등 많은 책임을 가지게 되어 여러 부분에서 사용하는 공통부분을 Service로 분리해주고, **Model**에서 관련 비즈니스 로직과 데이터 변환을 수행.
 
 <br></br>
 ## 동작
@@ -47,7 +47,6 @@
 
 
 <br></br>
-
 ## 테스트
 
 ### 유닛 테스트
