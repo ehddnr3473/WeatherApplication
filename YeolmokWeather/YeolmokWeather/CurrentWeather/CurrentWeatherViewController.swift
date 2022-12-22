@@ -340,7 +340,7 @@ extension CurrentWeatherViewController {
     }
     
     private func requestWeatherForecast(with cityName: String) async {
-        guard let url: = networkManager.getForecastURL(with: cityName) else { return }
+        guard let url = networkManager.getForecastURL(with: cityName) else { return }
         do {
             let data = try await networkManager.requestData(with: url)
             guard let forecast = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
