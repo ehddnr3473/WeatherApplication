@@ -13,7 +13,7 @@ import CoreData
  - 도시 이름을 이용하여 현재 날씨 데이터와 예보 데이터를 받아옴.
  - Core Data의 Persistence를 이용하여 viewDidLoad()시 저장한 도시 이름을 받아와서 검색
  */
-final class OtherCitiesViewController: UIViewController, WeatherControllable, Storeable {
+final class OtherCitiesViewController: UIViewController, WeatherControllable, Storable {
     typealias Model = OtherCities
     
     // MARK: - Properties
