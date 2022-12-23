@@ -32,7 +32,8 @@
 
 
 <br></br>
-## 아키텍처 및 애플리케이션 상세 구조
+## 아키텍처 및 상세 구조
+### 아키텍처
 <p align="center">
  <img src="/Document/Images/mvc.png">
 </p>
@@ -40,13 +41,12 @@
 - **Controller**가 delegate, dataSource, target, 그리고 까다로운 비즈니스 로직 등 많은 책임을 가지게 됨. 
 - 따라서 아래의 상세 구조와 같이, 여러 부분에서 사용하는 공통부분을 Service로 분리해주고, **Model**에서 관련 비즈니스 로직과 데이터 변환을 수행.
 
+
 <br></br>
-<details>
- <summary>애플리케이션 상세 구조</summary>
+### 애플리케이션 상세 구조
  <p align="center">
   <img src="/Document/Images/DetailedStructure.png">
  </p>
-</details>
 
 
 <br></br>
@@ -64,8 +64,10 @@
   - CoreLocation을 통해 사용자의 위치 정보를 받아옴.
   - 위치 정보를 이용하여 현재 위치의 도시 이름을 받아옴.
   - 받아온 도시 이름을 이용하여 현재 날씨 데이터와 예보 데이터를 받아옴.
+  - 데이터 가공 후 **View** 업데이트
 * 다른 도시 검색 
   - 도시 이름을 이용하여 현재 날씨 데이터와 예보 데이터를 받아옴.
+  - 데이터 가공 후 **View** 업데이트
 
 
 
