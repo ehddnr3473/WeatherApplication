@@ -32,12 +32,21 @@
 
 
 <br></br>
-## 아키텍처
+## 아키텍처 및 애플리케이션 상세 구조
 <p align="center">
  <img src="/Document/Images/mvc.png">
 </p>
 
-- **Controller**가 delegate, dataSource, target 등 많은 책임을 가지게 되어 여러 부분에서 사용하는 공통부분을 Service로 분리해주고, **Model**에서 관련 비즈니스 로직과 데이터 변환을 수행.
+- **Controller**가 delegate, dataSource, target, 그리고 까다로운 비즈니스 로직 등 많은 책임을 가지게 됨. 
+- 따라서 아래의 상세 구조와 같이, 여러 부분에서 사용하는 공통부분을 Service로 분리해주고, **Model**에서 관련 비즈니스 로직과 데이터 변환을 수행.
+
+<br></br>
+<details>
+ <summary>애플리케이션 상세 구조</summary>
+ <p align="center">
+  <img src="/Document/Images/DetailedStructure.png">
+ </p>
+</details>
 
 
 <br></br>
@@ -48,6 +57,8 @@
  <img src="/Document/PreviewImage/1.3/6.7/6.7_3.png" width="24%">
  <img src="/Document/PreviewImage/1.3/6.7/6.7_4.png" width="24%">
 </p>
+
+**시뮬레이터 녹화가 안보이시면 아이콘을 눌러서 볼 수 있습니다.**
 
 * 현재 위치한 도시
   - CoreLocation을 통해 사용자의 위치 정보를 받아옴.
