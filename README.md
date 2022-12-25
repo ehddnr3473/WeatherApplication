@@ -43,7 +43,7 @@
 
 
 <br></br>
-### 애플리케이션 상세 구조
+### 상세 구조
  <p align="center">
   <img src="/Document/Images/DetailedStructure.png">
  </p>
