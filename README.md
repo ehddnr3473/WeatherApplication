@@ -52,7 +52,7 @@
 <br></br>
 ## 뷰 및 동작
 <p align="center">
- <img src="https://user-images.githubusercontent.com/55693272/209291637-fdbd6b9d-f008-4d27-b09c-5a7772a497ce.mp4" width="24%">
+ <img src="/Document/SimulatorRecording/1.3/Simulator Recording.gif" width="24%">
  <img src="/Document/Images/snow.png" width="24%">
  <img src="/Document/PreviewImage/1.3/6.7/6.7_3.png" width="24%">
  <img src="/Document/PreviewImage/1.3/6.7/6.7_4.png" width="24%">
