@@ -114,6 +114,7 @@ final class CurrentWeatherViewController: UIViewController, WeatherControllable,
         tableView.layer.cornerRadius = AppStyles.cornerRadius
         tableView.layer.borderWidth = AppStyles.borderWidth
         tableView.layer.borderColor = AppStyles.Colors.mainColor.cgColor
+        tableView.isScrollEnabled = false
         
         tableView.register(WeatherForecastTableViewCell.self, forCellReuseIdentifier: WeatherForecastTableViewCell.identifier)
         return tableView
