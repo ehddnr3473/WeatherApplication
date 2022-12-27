@@ -269,12 +269,12 @@ extension OtherCitiesViewController: UITableViewDelegate, UITableViewDataSource 
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             removeCell(at: indexPath, to: tableView)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
         }
     }
     
     private func removeCell(at indexPath: IndexPath, to tableView: UITableView) {
         model.removeCity(at: indexPath.row)
-        reloadtableView()
     }
 }
 
