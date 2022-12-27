@@ -290,7 +290,7 @@ extension CurrentWeatherViewController {
     }
     
     private func localizationCityName(_ cityName: [CityName]) -> String {
-        if AppText.language == "kr" {
+        if AppText.language == AppText.korea {
             return cityName[.zero].koreanNameOfCity.cityName ?? cityName[.zero].name
         } else {
             return cityName[.zero].name

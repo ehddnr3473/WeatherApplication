@@ -311,7 +311,7 @@ extension OtherCitiesViewController: UITextFieldDelegate {
     // 취소 버튼 오른쪽에서 나타나는 애니메이션
     func textFieldDidBeginEditing(_ textField: UITextField) {
         UIView.animate(withDuration: AnimationConstants.duration) {
-            if AppText.language == "kr" {
+            if AppText.language == AppText.korea {
                 self.trailingOfSearchTextField.constant = -LayoutConstants.krLargeOffset
             } else {
                 self.trailingOfSearchTextField.constant = -LayoutConstants.enLargeOffset
