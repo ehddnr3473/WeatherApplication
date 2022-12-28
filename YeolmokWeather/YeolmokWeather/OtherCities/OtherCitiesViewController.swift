@@ -16,10 +16,15 @@ import CoreData
 final class OtherCitiesViewController: UIViewController, WeatherControllable, Storable {
     typealias Model = OtherCities
     
+    enum Section: CaseIterable {
+        case main
+    }
+    
     // MARK: - Properties
     var model = Model()
     let networkManager = NetworkManager()
     var storedCities = [String]()
+    private var dataSource: UITableViewDiffableDataSource<Section, AnotherCity>!
     
     // Layout Constraint 가변 textField: 취소 버튼이 오른쪽에서 나오는 것을 위해
     private lazy var trailingOfSearchTextField: NSLayoutConstraint = searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor,
@@ -108,6 +113,7 @@ final class OtherCitiesViewController: UIViewController, WeatherControllable, St
 
         setUpUI()
         configure()
+        configureDataSource()
     }
 }
 
@@ -125,15 +131,12 @@ extension OtherCitiesViewController {
     }
     
     private func configure() {
-        cityWeatherTableView.dataSource = self
         cityWeatherTableView.delegate = self
         searchTextField.delegate = self
         
         fetchBookmarkCity() { cityName in
-            self.model.appendCityWithName(cityName)
             Task {
-                self.requestCurrentWeatherOfCity(cityName)
-                self.requestForecastWeatherOfCity(cityName)
+                await requestCityWeather(cityName)
             }
         }
     }
@@ -168,86 +171,80 @@ extension OtherCitiesViewController {
         searchTextField.text = ""
         searchTextField.resignFirstResponder()
     }
-    
-    @MainActor private func reloadtableView() {
-        cityWeatherTableView.reloadData()
-    }
 }
 
 // MARK: - REQUEST
 extension OtherCitiesViewController {
-    private func requestCurrentWeatherOfCity(_ cityName: String) {
-        guard let url = networkManager.getCurrentWeatherURL(with: cityName) else { return }
-        Task {
-            await requestCurrentWeather(with: url)
-        }
+    private func requestCityWeather(_ cityName: String) async {
+        guard let currentWeatherURL = networkManager.getCurrentWeatherURL(with: cityName),
+                let forecastWeatherURL = networkManager.getForecastURL(with: cityName) else { return }
+        
+        guard let currentWeather = await requestCurrentWeather(with: currentWeatherURL),
+                let forecastWeather = await requestForecast(with: forecastWeatherURL) else { return }
+        
+        let city = AnotherCity(name: cityName, currentWeather: currentWeather, forecastWeather: forecastWeather)
+        model.appendCity(city)
+        apply()
     }
     
-    private func requestCurrentWeather(with url: URL) async {
+    private func requestCurrentWeather(with url: URL) async -> WeatherOfCity? {
         do {
             let data = try await networkManager.requestData(with: url)
-            guard let weather = DecodingManager.decode(with: data, modelType: WeatherOfCity.self) else { return }
-            model.appendCityWithWeahter(weather)
-            reloadtableView()
+            guard let weather = DecodingManager.decode(with: data, modelType: WeatherOfCity.self) else { return nil }
+            return weather
         } catch {
             alertWillAppear(alert, networkManager.errorMessage(error))
+            return nil
         }
     }
     
-    private func requestForecastWeatherOfCity(_ cityName: String) {
-        guard let url = networkManager.getForecastURL(with: cityName) else { return }
-        Task {
-            await requestForecast(with: url)
-        }
-    }
-    
-    private func requestForecast(with url: URL) async {
+    private func requestForecast(with url: URL) async -> Forecast? {
         do {
             let data = try await networkManager.requestData(with: url)
-            guard var forecast = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
+            guard var forecast = DecodingManager.decode(with: data, modelType: Forecast.self) else { return nil }
             forecast.list.removeSubrange(NumberConstants.fromEightToEnd)
-            model.appendCityWithForecast(forecast)
-            reloadtableView()
+            return forecast
         } catch {
             alertWillAppear(alert, networkManager.errorMessage(error))
+            return nil
         }
     }
 }
 
 // MARK: - TableView
-extension OtherCitiesViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: CityWeatherTableViewCell.identifier, for: indexPath) as? CityWeatherTableViewCell else { return UITableViewCell() }
+extension OtherCitiesViewController: UITableViewDelegate {
+    private func apply() {
+        let cities = model.cities
+        var snapshot = NSDiffableDataSourceSnapshot<Section, AnotherCity>()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(cities)
         
-        guard let currentWeather = model.cities[indexPath.row].currentWeather else { return cell }
-        
-        // 즐겨찾기 버튼 설정
-        for index in storedCities.indices {
-            if indexPath.row < model.count, currentWeather.name == storedCities[index] {
-                cell.bookmarkButton.isSelected = true
-                cell.bookmarkButton.tintColor = .systemYellow
-                break
-            }
-        }
-        
-        // 날씨 데이터 설정
-        cell.cityNameLabel.text = currentWeather.name
-        cell.weatherLabel.text = currentWeather.weather[.zero].description
-        cell.temperatureLabel.text = String(Int(currentWeather.main.temp)) + AppText.celsiusString
-        
-        guard let forecastWeather = model.cities[indexPath.row].forecastWeather else { return cell }
-        cell.setUpForecast(forecast: forecastWeather)
-        
-        return cell
+        dataSource.apply(snapshot, animatingDifferences: true)
     }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if model.isEmpty {
-            return .zero
-        } else if model.verifyNil {
-            return model.count
-        } else {
-            return .zero
+    
+    private func configureDataSource() {
+        dataSource = UITableViewDiffableDataSource<Section, AnotherCity>(tableView: cityWeatherTableView) { [weak self] (tableView: UITableView, indexPath: IndexPath, itemIdentifier: AnotherCity) -> UITableViewCell? in
+            // configure and return cell
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: CityWeatherTableViewCell.identifier, for: indexPath) as? CityWeatherTableViewCell, let self = self else { return nil }
+            let currentWeather = self.model.cities[indexPath.row].currentWeather
+            
+            // 즐겨찾기 버튼 설정
+            for index in self.storedCities.indices {
+                if indexPath.row < self.model.count, currentWeather.name == self.storedCities[index] {
+                    cell.bookmarkButton.isSelected = true
+                    cell.bookmarkButton.tintColor = .systemYellow
+                    break
+                }
+            }
+            
+            // 날씨 데이터 설정
+            cell.cityNameLabel.text = currentWeather.name
+            cell.weatherLabel.text = currentWeather.weather[.zero].description
+            cell.temperatureLabel.text = String(Int(currentWeather.main.temp)) + AppText.celsiusString
+            
+            let forecastWeather = self.model.cities[indexPath.row].forecastWeather
+            cell.setUpForecast(forecast: forecastWeather)
+            return cell
         }
     }
     
@@ -261,21 +258,6 @@ extension OtherCitiesViewController: UITableViewDelegate, UITableViewDataSource 
         cell.layer.borderWidth = AppStyles.borderWidth
         cell.layer.borderColor = AppStyles.Colors.mainColor.cgColor
     }
-    
-    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            deleteCity(at: indexPath)
-            tableView.deleteRows(at: [indexPath], with: .automatic)
-        }
-    }
-    
-    private func deleteCity(at indexPath: IndexPath) {
-        model.removeCity(at: indexPath.row)
-    }
 }
 
 // MARK: - TextFieldDelegate
@@ -284,8 +266,7 @@ extension OtherCitiesViewController: UITextFieldDelegate {
         let cityName: String = textField.text?.capitalized ?? ""
         if verifyCityName(cityName) {
             Task {
-                requestCurrentWeatherOfCity(cityName)
-                requestForecastWeatherOfCity(cityName)
+                await requestCityWeather(cityName)
             }
             textField.text = ""
             textField.resignFirstResponder()
