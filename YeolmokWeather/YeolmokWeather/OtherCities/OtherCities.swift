@@ -20,46 +20,12 @@ struct OtherCities {
         cities.count
     }
     
-    var verifyNil: Bool {
-        if cities.filter({ $0.currentWeather == nil || $0.forecastWeather == nil }).count == 0 {
-            return true
-        } else {
-            return false
-        }
-    }
-    
     func verifyContains(with cityName: String) -> Bool {
         cities.contains(where: { $0.name == cityName })
     }
     
-    mutating func appendCityWithName(_ cityName: String) {
-        cities.append(AnotherCity(name: cityName))
-    }
-    
-    mutating func appendCityWithWeahter(_ weatherOfCity: WeatherOfCity) {
-        if cities.contains(where: { $0.name == weatherOfCity.name }) {
-            for index in cities.indices {
-                if weatherOfCity.name == cities[index].name {
-                    cities[index].currentWeather = weatherOfCity
-                    break
-                }
-            }
-        } else {
-            cities.append(AnotherCity(name: weatherOfCity.name, currentWeather: weatherOfCity))
-        }
-    }
-    
-    mutating func appendCityWithForecast(_ forecastWeatherOfCity: Forecast) {
-        if cities.contains(where: { $0.name == forecastWeatherOfCity.city.name }) {
-            for index in cities.indices {
-                if forecastWeatherOfCity.city.name == cities[index].name {
-                    cities[index].forecastWeather = forecastWeatherOfCity
-                    break
-                }
-            }
-        } else {
-            cities.append(AnotherCity(name: forecastWeatherOfCity.city.name, forecastWeather: forecastWeatherOfCity))
-        }
+    mutating func appendCity(_ city: AnotherCity) {
+        cities.append(city)
     }
     
     mutating func removeCity(at index: Int) {
