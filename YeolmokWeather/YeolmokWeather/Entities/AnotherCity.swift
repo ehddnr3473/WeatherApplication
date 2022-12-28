@@ -9,8 +9,17 @@ import Foundation
 
 /// Cell에 표시할 각 도시의 날씨 정보
 /// Other City Model Entity
-struct AnotherCity {
+struct AnotherCity: Hashable {
     let name: String
-    var currentWeather: WeatherOfCity?
-    var forecastWeather: Forecast?
+    let identifier = UUID()
+    var currentWeather: WeatherOfCity
+    var forecastWeather: Forecast
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(identifier)
+    }
+    
+    static func == (lhs: AnotherCity, rhs: AnotherCity) -> Bool {
+        lhs.identifier == rhs.identifier
+    }
 }
