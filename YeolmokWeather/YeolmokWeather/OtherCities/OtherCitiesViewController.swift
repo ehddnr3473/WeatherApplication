@@ -16,10 +16,6 @@ import CoreData
 final class OtherCitiesViewController: UIViewController, WeatherControllable, Storable {
     typealias Model = OtherCities
     
-    enum Section: CaseIterable {
-        case main
-    }
-    
     // MARK: - Properties
     var model = Model()
     let networkManager = NetworkManager()
