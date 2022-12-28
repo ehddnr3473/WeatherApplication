@@ -82,7 +82,7 @@
 
 
 <br></br>
-## 개선 내용 히스토리
+## 개선 히스토리
 |내용|블로그 링크|
 |---|---|
 |Swift Concurrency|[Async/await](https://yeolmok.tistory.com/3)|
