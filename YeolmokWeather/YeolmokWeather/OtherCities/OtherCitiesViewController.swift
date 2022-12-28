@@ -16,6 +16,10 @@ import CoreData
 final class OtherCitiesViewController: UIViewController, WeatherControllable, Storable {
     typealias Model = OtherCities
     
+    enum Section: CaseIterable {
+        case main
+    }
+    
     // MARK: - Properties
     var model = Model()
     let networkManager = NetworkManager()
@@ -214,7 +218,6 @@ extension OtherCitiesViewController: UITableViewDelegate {
         var snapshot = NSDiffableDataSourceSnapshot<Section, AnotherCity>()
         snapshot.appendSections([.main])
         snapshot.appendItems(cities)
-        
         dataSource.apply(snapshot, animatingDifferences: true)
     }
     
@@ -223,6 +226,7 @@ extension OtherCitiesViewController: UITableViewDelegate {
             // configure and return cell
             guard let cell = tableView.dequeueReusableCell(withIdentifier: CityWeatherTableViewCell.identifier, for: indexPath) as? CityWeatherTableViewCell, let self = self else { return nil }
             let currentWeather = self.model.cities[indexPath.row].currentWeather
+            let forecastWeather = self.model.cities[indexPath.row].forecastWeather
             
             // 즐겨찾기 버튼 설정
             for index in self.storedCities.indices {
@@ -237,8 +241,6 @@ extension OtherCitiesViewController: UITableViewDelegate {
             cell.cityNameLabel.text = currentWeather.name
             cell.weatherLabel.text = currentWeather.weather[.zero].description
             cell.temperatureLabel.text = String(Int(currentWeather.main.temp)) + AppText.celsiusString
-            
-            let forecastWeather = self.model.cities[indexPath.row].forecastWeather
             cell.setUpForecast(forecast: forecastWeather)
             return cell
         }

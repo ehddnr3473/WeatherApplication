@@ -29,7 +29,3 @@ enum AppText {
         }
     }
 }
-
-enum Section: CaseIterable {
-    case main
-}
