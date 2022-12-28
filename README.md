@@ -52,7 +52,7 @@
 <br></br>
 ## 뷰 및 동작
 <p align="center">
- <img src="/Document/SimulatorRecording/1.3/Simulator Recording.gif" width="24%">
+ <img src="/Document/SimulatorRecording/1.3/Simulator Recording ver2.0.gif" width="24%">
  <img src="/Document/Images/snow.png" width="24%">
  <img src="/Document/PreviewImage/1.3/6.7/6.7_3.png" width="24%">
  <img src="/Document/PreviewImage/1.3/6.7/6.7_4.png" width="24%">
@@ -86,3 +86,4 @@
 |내용|블로그 링크|
 |---|---|
 |Swift Concurrency 적용|[Async/await](https://yeolmok.tistory.com/3)|
+|Diffable DataSource|_|
