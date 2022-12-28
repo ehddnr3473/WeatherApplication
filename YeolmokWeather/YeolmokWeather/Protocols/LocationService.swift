@@ -11,7 +11,6 @@ import CoreLocation
 /// Core Location
 protocol LocationService: AnyObject {
     var locationManager: CLLocationManager { get }
-    var currentLocation: CLLocationCoordinate2D? { get set }
     
     func requestAuthorization()
 }
