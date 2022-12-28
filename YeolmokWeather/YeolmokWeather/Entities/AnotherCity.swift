@@ -12,8 +12,8 @@ import Foundation
 struct AnotherCity: Hashable {
     let name: String
     let identifier = UUID()
-    var currentWeather: WeatherOfCity
-    var forecastWeather: Forecast
+    let currentWeather: WeatherOfCity
+    let forecastWeather: Forecast
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(identifier)
