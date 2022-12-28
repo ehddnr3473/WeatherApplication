@@ -22,7 +22,6 @@ final class CurrentWeatherViewController: UIViewController, WeatherControllable,
     let networkManager = NetworkManager()
     
     let locationManager = CLLocationManager()
-    var currentLocation: CLLocationCoordinate2D?
     
     private let weatherBackgroundImageView: UIImageView = {
         let imageView = UIImageView()
@@ -209,7 +208,7 @@ extension CurrentWeatherViewController {
         
         todayWeatherForecastCollectionView.dataSource = self
         todayWeatherForecastCollectionView.delegate = self
-        
+
         weatherForecastTableView.dataSource = self
         weatherForecastTableView.delegate = self
     }
@@ -232,7 +231,7 @@ extension CurrentWeatherViewController {
         weatherBackgroundImageView.image = UIImage(named: imageName)
     }
     
-    @MainActor private func reloadAndStopIndicator() {
+    @MainActor private func reload() {
         todayWeatherForecastCollectionView.reloadData()
         weatherForecastTableView.reloadData()
     }
@@ -241,8 +240,11 @@ extension CurrentWeatherViewController {
 // MARK: - CoreLocation
 extension CurrentWeatherViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        currentLocation = locations.last?.coordinate
-        requestCurrentWeather()
+        guard let currentLocation = locations.last?.coordinate else { return }
+        guard let url = networkManager.getReverseGeocodingURL(with: currentLocation) else { return }
+        Task {
+            await requestCityName(with: url)
+        }
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
@@ -270,15 +272,6 @@ extension CurrentWeatherViewController: CLLocationManagerDelegate {
 
 // MARK: - NetworkTask
 extension CurrentWeatherViewController {
-    private func requestCurrentWeather() {
-        guard let currentLocation = currentLocation else { return }
-        
-        guard let url = networkManager.getReverseGeocodingURL(with: currentLocation) else { return }
-        Task {
-            await requestCityName(with: url)
-        }
-    }
-    
     private func requestCityName(with url: URL) async {
         do {
             let data = try await networkManager.requestData(with: url)
@@ -347,25 +340,13 @@ extension CurrentWeatherViewController {
             guard let forecast = DecodingManager.decode(with: data, modelType: Forecast.self) else { return }
             
             // 24시간 동안의 예보
-            setUpDayForecast(with: forecast)
-            
+            model.setUpDayForecast(with: forecast)
             // 내일부터 3일간의 예보
-            appendForecastsTomorrow(with: forecast)
-            
-            reloadAndStopIndicator()
+            model.appendForecastsTomorrow(with: forecast)
+            reload()
         } catch {
             alertWillAppear(alert, networkManager.errorMessage(error))
         }
-    }
-    
-    // For 24시간 동안의 예보
-    private func setUpDayForecast(with forecast: Forecast) {
-        model.setUpDayForecast(with: forecast)
-    }
-    
-    // For 3일간의 예보
-    private func appendForecastsTomorrow(with forecast: Forecast) {
-        model.appendForecastsTomorrow(with: forecast)
     }
 }
 
@@ -403,13 +384,9 @@ extension CurrentWeatherViewController: UITableViewDataSource, UITableViewDelega
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: WeatherForecastTableViewCell.identifier, for: indexPath) as? WeatherForecastTableViewCell else { return UITableViewCell() }
         
-        let day = Date(timeIntervalSince1970: model.forecasts[indexPath.row].list[.zero].date).formatted(Date.FormatStyle().day(.twoDigits))
-        
+        let day = Date(timeIntervalSince1970: self.model.forecasts[indexPath.row].list[.zero].date).formatted(Date.FormatStyle().day(.twoDigits))
         cell.dayLabel.text = day
-        if indexPath.row < model.count {
-            cell.setUpForecast(with: model.forecasts[indexPath.row])
-        }
-        
+        cell.setUpForecast(with: self.model.forecasts[indexPath.row])
         return cell
     }
     
