@@ -87,3 +87,17 @@
 |---|---|
 |Swift Concurrency|[Async/await](https://yeolmok.tistory.com/3)|
 |Diffable DataSource|[Diffable DataSource](https://yeolmok.tistory.com/7)|
+
+
+
+<br></br>
+## 버전 기록
+|업데이트 버전|노션 링크|
+|---|---|
+|reject|[노션 링크](https://delirious-podium-f4f.notion.site/reject-451dca846185403f87665798fbf3a2af)|
+|1.0 문제 해결 기록|[노션 링크](https://delirious-podium-f4f.notion.site/1-0-664236726f244c148f5514b948b3be97)|
+|1.1|[노션 링크](https://delirious-podium-f4f.notion.site/1-1-654d10b917d44591a9ba2457099f31db)|
+|1.2|[노션 링크](https://delirious-podium-f4f.notion.site/1-2-e70f0e726ba44e98b8edd4f1de6c32c7)|
+|1.3|[노션 링크](https://delirious-podium-f4f.notion.site/1-3-18276131434c44138bd870aecbacb943)|
+|2.0|[노션 링크](https://delirious-podium-f4f.notion.site/2-0-905fe82ae0914820bde638ba21f46c94)|
+</p>
