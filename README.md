@@ -100,5 +100,5 @@
 |1.1|22.10.13|[노션 링크](https://delirious-podium-f4f.notion.site/1-1-654d10b917d44591a9ba2457099f31db)|
 |1.2|22.12.08|[노션 링크](https://delirious-podium-f4f.notion.site/1-2-e70f0e726ba44e98b8edd4f1de6c32c7)|
 |1.3|22.12.20|[노션 링크](https://delirious-podium-f4f.notion.site/1-3-18276131434c44138bd870aecbacb943)|
-|2.0|22.12.30(예정)|[노션 링크](https://delirious-podium-f4f.notion.site/2-0-905fe82ae0914820bde638ba21f46c94)|
+|2.0|22.12.29|[노션 링크](https://delirious-podium-f4f.notion.site/2-0-905fe82ae0914820bde638ba21f46c94)|
 </p>
