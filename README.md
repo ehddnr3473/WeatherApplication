@@ -85,8 +85,9 @@
 ## 개선 히스토리
 |내용|블로그 링크|
 |---|---|
-|Swift Concurrency|[Async/await](https://yeolmok.tistory.com/3)|
-|Diffable DataSource|[Diffable DataSource](https://yeolmok.tistory.com/7)|
+|Swift Concurrency|[블로그 링크](https://yeolmok.tistory.com/3)|
+|Localization|[블로그 링크](https://yeolmok.tistory.com/6)|
+|Diffable DataSource|[블로그 링크](https://yeolmok.tistory.com/7)|
 
 
 
