@@ -53,7 +53,7 @@
 ## 뷰 및 동작
 <p align="center">
  <img src="/Document/SimulatorRecording/1.3/Simulator Recording ver2.0.gif" width="24%">
- <img src="/Document/Images/snow.png" width="24%">
+ <img src="/Document/Images/clouds.png" width="24%">
  <img src="/Document/PreviewImage/1.3/6.7/6.7_3.png" width="24%">
  <img src="/Document/PreviewImage/1.3/6.7/6.7_4.png" width="24%">
 </p>
