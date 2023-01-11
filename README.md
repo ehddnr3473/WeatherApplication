@@ -78,6 +78,10 @@
 
 ### UI 테스트
 - 도시 검색 작업에 대해서 의도대로 작동하는지 확인하는 UI 테스트 케이스를 작성
+- 아래는 즐겨찾기 등록 후, 재진입하여 잘 불러오는지를 확인하고, 다음 테스트를 위해 즐겨찾기를 삭제하여 초기 상태로 되돌려놓는 테스트 케이스
+<p align="center">
+ <img src = "/Document/SimulatorRecording/1.3/UI Test Simulator Recording.gif" width="24%">
+</p>
 
 
 
