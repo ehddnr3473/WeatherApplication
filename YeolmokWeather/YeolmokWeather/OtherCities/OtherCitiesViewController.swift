@@ -118,19 +118,19 @@ final class OtherCitiesViewController: UIViewController, WeatherControllable, St
 }
 
 // MARK: - View
-extension OtherCitiesViewController {
-    private func setUpUI() {
+private extension OtherCitiesViewController {
+    func setUpUI() {
         setUpHierachy()
         setUpLayout()
     }
     
-    private func setUpHierachy() {
+    func setUpHierachy() {
         [backgroundImageView, titleLabel, searchTextField, cancelButton, cityWeatherTableView].forEach {
             view.addSubview($0)
         }
     }
     
-    private func configure() {
+    func configure() {
         cityWeatherTableView.delegate = self
         searchTextField.delegate = self
         
@@ -141,7 +141,7 @@ extension OtherCitiesViewController {
         }
     }
     
-    private func setUpLayout() {
+    func setUpLayout() {
         NSLayoutConstraint.activate([
             backgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
             backgroundImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
