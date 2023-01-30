@@ -174,8 +174,8 @@ extension OtherCitiesViewController {
 }
 
 // MARK: - REQUEST
-extension OtherCitiesViewController {
-    private func requestCityWeather(_ cityName: String) async {
+private extension OtherCitiesViewController {
+    func requestCityWeather(_ cityName: String) async {
         guard let currentWeatherURL = networkManager.getCurrentWeatherURL(with: cityName),
                 let forecastWeatherURL = networkManager.getForecastURL(with: cityName) else { return }
         
@@ -187,7 +187,7 @@ extension OtherCitiesViewController {
         apply()
     }
     
-    private func requestCurrentWeather(with url: URL) async -> WeatherOfCity? {
+    func requestCurrentWeather(with url: URL) async -> WeatherOfCity? {
         do {
             let data = try await networkManager.requestData(with: url)
             guard let weather = DecodingManager.decode(with: data, modelType: WeatherOfCity.self) else { return nil }
@@ -198,7 +198,7 @@ extension OtherCitiesViewController {
         }
     }
     
-    private func requestForecast(with url: URL) async -> Forecast? {
+    func requestForecast(with url: URL) async -> Forecast? {
         do {
             let data = try await networkManager.requestData(with: url)
             guard var forecast = DecodingManager.decode(with: data, modelType: Forecast.self) else { return nil }
