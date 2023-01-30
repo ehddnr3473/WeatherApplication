@@ -153,14 +153,14 @@ final class CurrentWeatherViewController: UIViewController, WeatherControllable,
 }
 
 // MARK: - View
-extension CurrentWeatherViewController {
-    private func setUpUI() {
+private extension CurrentWeatherViewController {
+    func setUpUI() {
         view.backgroundColor = .black
         setUpHierachy()
         setUpLayout()
     }
     
-    private func setUpHierachy() {
+    func setUpHierachy() {
         [weatherBackgroundImageView, currentWeatherStackView, todayWeatherForecastCollectionView, titleLabel, weatherForecastTableView, activityIndicatorView].forEach {
             view.addSubview($0)
         }
@@ -170,7 +170,7 @@ extension CurrentWeatherViewController {
         }
     }
     
-    private func setUpLayout() {
+    func setUpLayout() {
         NSLayoutConstraint.activate([
             weatherBackgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
             weatherBackgroundImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -197,7 +197,7 @@ extension CurrentWeatherViewController {
         ])
     }
     
-    private func configure() {
+    func configure() {
         activityIndicatorView.startAnimating()
         
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
@@ -213,12 +213,12 @@ extension CurrentWeatherViewController {
         weatherForecastTableView.delegate = self
     }
     
-    @MainActor private func setCityName(with cityName: String) {
+    @MainActor func setCityName(with cityName: String) {
         model.setCityName(with: cityName)
         cityNameLabel.text = model.name
     }
     
-    @MainActor private func setCurrentWeather(weather: String, temperature: Double) {
+    @MainActor func setCurrentWeather(weather: String, temperature: Double) {
         activityIndicatorView.stopAnimating()
         model.setCurrentWeather(weather: weather, temperature: temperature)
         weatherLabel.text = model.weather
@@ -227,11 +227,11 @@ extension CurrentWeatherViewController {
         }
     }
     
-    @MainActor private func setBackgroundImage(with imageName: String) {
+    @MainActor func setBackgroundImage(with imageName: String) {
         weatherBackgroundImageView.image = UIImage(named: imageName)
     }
     
-    @MainActor private func reload() {
+    @MainActor func reload() {
         todayWeatherForecastCollectionView.reloadData()
         weatherForecastTableView.reloadData()
     }
@@ -271,8 +271,8 @@ extension CurrentWeatherViewController: CLLocationManagerDelegate {
 }
 
 // MARK: - NetworkTask
-extension CurrentWeatherViewController {
-    private func requestCityName(with url: URL) async {
+private extension CurrentWeatherViewController {
+    func requestCityName(with url: URL) async {
         do {
             let data = try await networkManager.requestData(with: url)
             guard let cityName = DecodingManager.decode(with: data, modelType: [CityName].self) else { return }
@@ -283,7 +283,7 @@ extension CurrentWeatherViewController {
         }
     }
     
-    private func localizationCityName(_ cityName: [CityName]) -> String {
+    func localizationCityName(_ cityName: [CityName]) -> String {
         if AppText.language == AppText.korea {
             return cityName[.zero].koreanNameOfCity.cityName ?? cityName[.zero].name
         } else {
@@ -291,7 +291,7 @@ extension CurrentWeatherViewController {
         }
     }
     
-    private func verifyAndRequestWeatherData(_ cityName: String) {
+    func verifyAndRequestWeatherData(_ cityName: String) {
         let regex = try? NSRegularExpression(pattern: StringConstants.pattern)
         if let _ = regex?.firstMatch(in: cityName, range: NSRange(location: 0, length: cityName.count)) {
             guard let url = networkManager.getCurrentWeatherURL(with: cityName) else { return }
@@ -309,7 +309,7 @@ extension CurrentWeatherViewController {
         }
     }
     
-    private func refineCityName(_ cityName: String) -> String {
+    func refineCityName(_ cityName: String) -> String {
         var cityName = cityName
         let startIndex = cityName.startIndex
         
@@ -322,7 +322,7 @@ extension CurrentWeatherViewController {
         return cityName
     }
     
-    private func requestWeather(with url: URL) async {
+    func requestWeather(with url: URL) async {
         do {
             let data = try await networkManager.requestData(with: url)
             guard let currentWeather = DecodingManager.decode(with: data, modelType: WeatherOfCity.self) else { return }
@@ -333,7 +333,7 @@ extension CurrentWeatherViewController {
         }
     }
     
-    private func requestWeatherForecast(with cityName: String) async {
+    func requestWeatherForecast(with cityName: String) async {
         guard let url = networkManager.getForecastURL(with: cityName) else { return }
         do {
             let data = try await networkManager.requestData(with: url)
