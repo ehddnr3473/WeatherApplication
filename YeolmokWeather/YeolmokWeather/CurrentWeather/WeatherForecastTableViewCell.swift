@@ -46,6 +46,10 @@ final class WeatherForecastTableViewCell: UITableViewCell {
         configure()
     }
     
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         forecast = nil
@@ -54,18 +58,17 @@ final class WeatherForecastTableViewCell: UITableViewCell {
     func setUpForecast(with forecast: Forecast) {
         self.forecast = forecast
     }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
-    
-    private func setUpHierachy() {
+}
+
+// MARK: - View
+private extension WeatherForecastTableViewCell {
+    func setUpHierachy() {
         [dayLabel, forecastCollectionView].forEach {
             contentView.addSubview($0)
         }
     }
     
-    private func setUpLayout() {
+    func setUpLayout() {
         NSLayoutConstraint.activate([
             dayLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             dayLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: LayoutConstants.offset),
