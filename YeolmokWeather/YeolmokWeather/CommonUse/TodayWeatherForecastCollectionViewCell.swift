@@ -66,7 +66,7 @@ final class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
     }
 }
 
-// MARK: - SetUp View
+// MARK: - View
 private extension TodayWeatherForecastCollectionViewCell {
     private func setUpHierachy() {
         [timeLabel, weatherImageView, weatherLabel, temperatureLabel].forEach {
