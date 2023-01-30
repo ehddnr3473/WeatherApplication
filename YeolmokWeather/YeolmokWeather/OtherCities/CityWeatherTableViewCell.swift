@@ -79,6 +79,10 @@ final class CityWeatherTableViewCell: UITableViewCell {
         configure()
     }
     
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         
@@ -93,18 +97,17 @@ final class CityWeatherTableViewCell: UITableViewCell {
     func setUpForecast(forecast: Forecast) {
         self.forecast = forecast
     }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
-    
-    private func setUpHierachy() {
+}
+
+// MARK: - View
+private extension CityWeatherTableViewCell {
+    func setUpHierachy() {
         [bookmarkButton, cityNameLabel, weatherLabel, temperatureLabel, forecastOfCityCollectionView].forEach {
             contentView.addSubview($0)
         }
     }
     
-    private func setUpLayout() {
+    func setUpLayout() {
         NSLayoutConstraint.activate([
             bookmarkButton.topAnchor.constraint(equalTo: self.topAnchor, constant: LayoutConstants.offset),
             bookmarkButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: LayoutConstants.offset),
@@ -127,7 +130,7 @@ final class CityWeatherTableViewCell: UITableViewCell {
         ])
     }
     
-    private func configure() {
+    func configure() {
         forecastOfCityCollectionView.dataSource = self
         forecastOfCityCollectionView.delegate = self
     }
