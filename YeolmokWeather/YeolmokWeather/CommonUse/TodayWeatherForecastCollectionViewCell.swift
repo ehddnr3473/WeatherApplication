@@ -64,7 +64,10 @@ final class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
-    
+}
+
+// MARK: - SetUp View
+private extension TodayWeatherForecastCollectionViewCell {
     private func setUpHierachy() {
         [timeLabel, weatherImageView, weatherLabel, temperatureLabel].forEach {
             contentView.addSubview($0)
