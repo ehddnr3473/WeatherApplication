@@ -156,11 +156,11 @@ final class CurrentWeatherViewController: UIViewController, WeatherControllable,
 private extension CurrentWeatherViewController {
     func setUpUI() {
         view.backgroundColor = .black
-        setUpHierachy()
+        setUpHierarchy()
         setUpLayout()
     }
     
-    func setUpHierachy() {
+    func setUpHierarchy() {
         [weatherBackgroundImageView, currentWeatherStackView, todayWeatherForecastCollectionView, titleLabel, weatherForecastTableView, activityIndicatorView].forEach {
             view.addSubview($0)
         }

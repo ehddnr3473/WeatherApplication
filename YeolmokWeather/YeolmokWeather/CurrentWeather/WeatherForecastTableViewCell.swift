@@ -41,7 +41,7 @@ final class WeatherForecastTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        setUpHierachy()
+        setUpHierarchy()
         setUpLayout()
         configure()
     }
@@ -62,7 +62,7 @@ final class WeatherForecastTableViewCell: UITableViewCell {
 
 // MARK: - View
 private extension WeatherForecastTableViewCell {
-    func setUpHierachy() {
+    func setUpHierarchy() {
         [dayLabel, forecastCollectionView].forEach {
             contentView.addSubview($0)
         }

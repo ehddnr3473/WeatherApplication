@@ -57,7 +57,7 @@ final class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        setUpHierachy()
+        setUpHierarchy()
         setUpLayout()
     }
     
@@ -68,7 +68,7 @@ final class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
 
 // MARK: - View
 private extension TodayWeatherForecastCollectionViewCell {
-    private func setUpHierachy() {
+    private func setUpHierarchy() {
         [timeLabel, weatherImageView, weatherLabel, temperatureLabel].forEach {
             contentView.addSubview($0)
         }

@@ -74,7 +74,7 @@ final class CityWeatherTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        setUpHierachy()
+        setUpHierarchy()
         setUpLayout()
         configure()
     }
@@ -101,7 +101,7 @@ final class CityWeatherTableViewCell: UITableViewCell {
 
 // MARK: - View
 private extension CityWeatherTableViewCell {
-    func setUpHierachy() {
+    func setUpHierarchy() {
         [bookmarkButton, cityNameLabel, weatherLabel, temperatureLabel, forecastOfCityCollectionView].forEach {
             contentView.addSubview($0)
         }

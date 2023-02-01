@@ -120,11 +120,11 @@ final class OtherCitiesViewController: UIViewController, WeatherControllable, St
 // MARK: - View
 private extension OtherCitiesViewController {
     func setUpUI() {
-        setUpHierachy()
+        setUpHierarchy()
         setUpLayout()
     }
     
-    func setUpHierachy() {
+    func setUpHierarchy() {
         [backgroundImageView, titleLabel, searchTextField, cancelButton, cityWeatherTableView].forEach {
             view.addSubview($0)
         }
