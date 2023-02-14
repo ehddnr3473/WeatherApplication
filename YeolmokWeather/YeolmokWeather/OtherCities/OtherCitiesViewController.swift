@@ -37,7 +37,7 @@ final class OtherCitiesViewController: UIViewController, WeatherControllable, St
         return imageView
     }()
     
-    lazy var titleLabel: UILabel = {
+    private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -48,7 +48,7 @@ final class OtherCitiesViewController: UIViewController, WeatherControllable, St
         return label
     }()
     
-    lazy var searchTextField: UITextField = {
+    private let searchTextField: UITextField = {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
         
@@ -71,14 +71,12 @@ final class OtherCitiesViewController: UIViewController, WeatherControllable, St
         return textField
     }()
     
-    lazy var cancelButton: UIButton = {
+    private let cancelButton: UIButton = {
         let button = UIButton(type: UIButton.ButtonType.roundedRect)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         button.setTitle(StringConstants.cancelButtonTitle, for: UIControl.State.normal)
         button.tintColor = .black
-        
-        button.addTarget(self, action: #selector(touchUpCancelButton), for: UIControl.Event.touchUpInside)
         
         return button
     }()
@@ -133,6 +131,7 @@ private extension OtherCitiesViewController {
     func configure() {
         cityWeatherTableView.delegate = self
         searchTextField.delegate = self
+        cancelButton.addTarget(self, action: #selector(touchUpCancelButton), for: UIControl.Event.touchUpInside)
         
         fetchBookmarkCity() { cityName in
             Task {
