@@ -37,7 +37,7 @@ final class OtherCitiesViewController: UIViewController, WeatherControllable, St
         return imageView
     }()
     
-    private let titleLabel: UILabel = {
+    let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -48,7 +48,7 @@ final class OtherCitiesViewController: UIViewController, WeatherControllable, St
         return label
     }()
     
-    private let searchTextField: UITextField = {
+    let searchTextField: UITextField = {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
         
@@ -71,7 +71,7 @@ final class OtherCitiesViewController: UIViewController, WeatherControllable, St
         return textField
     }()
     
-    private let cancelButton: UIButton = {
+    let cancelButton: UIButton = {
         let button = UIButton(type: UIButton.ButtonType.roundedRect)
         button.translatesAutoresizingMaskIntoConstraints = false
         
