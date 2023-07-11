@@ -15,5 +15,5 @@ extension UIViewController {
             alert.message = message
             present(alert, animated: true, completion: nil)
         }
-    } // Alert 띄우는 메서드
+    }
 }
