@@ -11,7 +11,7 @@ import CoreData
 /**
  다른 도시의 날씨
  - 도시 이름을 이용하여 현재 날씨 데이터와 예보 데이터를 받아옴.
- - Core Data의 Persistence를 이용하여 viewDidLoad()시 저장한 도시 이름을 받아와서 검색
+ - Core Data의 Persistence를 이용하여 viewDidLoad() 시 저장한 도시 이름을 받아와서 검색
  */
 final class OtherCitiesViewController: UIViewController, WeatherControllable, Storable {
     typealias Model = OtherCities
@@ -22,7 +22,7 @@ final class OtherCitiesViewController: UIViewController, WeatherControllable, St
     
     // MARK: - Properties
     var model = Model()
-    let networkManager = NetworkManager()
+    let weatherNetworkService = WeatherNetworkService()
     var storedCities = [String]()
     private var dataSource: UITableViewDiffableDataSource<Section, AnotherCity>!
     
@@ -131,12 +131,12 @@ private extension OtherCitiesViewController {
     func configure() {
         cityWeatherTableView.delegate = self
         searchTextField.delegate = self
-        cancelButton.addTarget(self, action: #selector(touchUpCancelButton), for: UIControl.Event.touchUpInside)
+        cancelButton.addTarget(self,
+                               action: #selector(touchUpCancelButton),
+                               for: UIControl.Event.touchUpInside)
         
         fetchBookmarkCity() { cityName in
-            Task {
-                await requestCityWeather(cityName)
-            }
+            Task { await requestCityWeather(cityName) }
         }
     }
     
@@ -175,8 +175,8 @@ private extension OtherCitiesViewController {
 // MARK: - REQUEST
 private extension OtherCitiesViewController {
     func requestCityWeather(_ cityName: String) async {
-        guard let currentWeatherURL = networkManager.getCurrentWeatherURL(with: cityName),
-                let forecastWeatherURL = networkManager.getForecastURL(with: cityName) else { return }
+        guard let currentWeatherURL = weatherNetworkService.getCurrentWeatherURL(with: cityName),
+                let forecastWeatherURL = weatherNetworkService.getForecastURL(with: cityName) else { return }
         
         guard let currentWeather = await requestCurrentWeather(with: currentWeatherURL),
                 let forecastWeather = await requestForecast(with: forecastWeatherURL) else { return }
@@ -188,23 +188,23 @@ private extension OtherCitiesViewController {
     
     func requestCurrentWeather(with url: URL) async -> WeatherOfCity? {
         do {
-            let data = try await networkManager.requestData(with: url)
-            guard let weather = DecodingManager.decode(with: data, modelType: WeatherOfCity.self) else { return nil }
+            let data = try await weatherNetworkService.requestData(with: url)
+            guard let weather = Decoder.decode(with: data, modelType: WeatherOfCity.self) else { return nil }
             return weather
         } catch {
-            alertWillAppear(alert, networkManager.errorMessage(error))
+            alertWillAppear(alert, weatherNetworkService.errorMessage(error))
             return nil
         }
     }
     
     func requestForecast(with url: URL) async -> Forecast? {
         do {
-            let data = try await networkManager.requestData(with: url)
-            guard var forecast = DecodingManager.decode(with: data, modelType: Forecast.self) else { return nil }
+            let data = try await weatherNetworkService.requestData(with: url)
+            guard var forecast = Decoder.decode(with: data, modelType: Forecast.self) else { return nil }
             forecast.list.removeSubrange(NumberConstants.fromEightToEnd)
             return forecast
         } catch {
-            alertWillAppear(alert, networkManager.errorMessage(error))
+            alertWillAppear(alert, weatherNetworkService.errorMessage(error))
             return nil
         }
     }
@@ -229,7 +229,7 @@ extension OtherCitiesViewController: UITableViewDelegate {
             
             // 즐겨찾기 버튼 설정
             for index in self.storedCities.indices {
-                if indexPath.row < self.model.count, currentWeather.name == self.storedCities[index] {
+                if indexPath.row < self.model.cities.count, currentWeather.name == self.storedCities[index] {
                     cell.bookmarkButton.isSelected = true
                     cell.bookmarkButton.tintColor = .systemYellow
                     break
@@ -261,23 +261,19 @@ extension OtherCitiesViewController: UITableViewDelegate {
 extension OtherCitiesViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         let cityName: String = textField.text?.capitalized ?? ""
-        if verifyCityName(cityName) {
-            Task {
-                await requestCityWeather(cityName)
-            }
+        if validateCityName(cityName) {
+            Task { await requestCityWeather(cityName) }
             textField.text = ""
             textField.resignFirstResponder()
         }
         return true
     }
     
-    private func verifyCityName(_ cityName: String) -> Bool {
-        if cityName == "" {
+    private func validateCityName(_ cityName: String) -> Bool {
+        if cityName.isEmpty {
             alertWillAppear(alert, ErrorMessage.emptyText)
             return false
-        } else if model.isEmpty {
-            return true
-        } else if model.verifyContains(with: cityName) {
+        } else if model.isContains(cityName) {
             alertWillAppear(alert, ErrorMessage.appendFailMessage)
             searchTextField.text = ""
             return false
@@ -288,31 +284,37 @@ extension OtherCitiesViewController: UITextFieldDelegate {
     
     // 취소 버튼 오른쪽에서 나타나는 애니메이션
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        UIView.animate(withDuration: AnimationConstants.duration) {
+        UIView.animate(withDuration: AnimationConstants.duration) { [self] in
             if AppText.language == AppText.korea {
-                self.trailingOfSearchTextField.constant = -LayoutConstants.krLargeOffset
+                trailingOfSearchTextField.constant = -LayoutConstants.krLargeOffset
             } else {
-                self.trailingOfSearchTextField.constant = -LayoutConstants.enLargeOffset
+                trailingOfSearchTextField.constant = -LayoutConstants.enLargeOffset
             }
-            self.view.layoutIfNeeded()
+            view.layoutIfNeeded()
         }
     }
     
     // 취소 버튼 오른쪽으로 사라지는 애니메이션
     func textFieldDidEndEditing(_ textField: UITextField, reason: UITextField.DidEndEditingReason) {
-        UIView.animate(withDuration: AnimationConstants.duration) {
-            self.trailingOfSearchTextField.constant = -LayoutConstants.offset
-            self.view.layoutIfNeeded()
+        UIView.animate(withDuration: AnimationConstants.duration) { [self] in
+            trailingOfSearchTextField.constant = -LayoutConstants.offset
+            view.layoutIfNeeded()
         }
     }
 }
 
-// MARK: - Magic Number
+// MARK: - Magic String & Number
 private enum StringConstants {
     static let mainLabelText = "City weather".localized
     static let searchTextFieldPlaceholder = "Placeholder".localized
     static let cancelButtonTitle = "Cancel".localized
     static let backgroundImageName = "OtherCitiesBackground"
+}
+
+private enum ErrorMessage {
+    static let appendFailMessage = "AppendFailMessage".localized
+    static let emptyText = "EmptyText".localized
+    static let undefined = "Undefined".localized
 }
 
 private enum LayoutConstants {
@@ -332,10 +334,4 @@ private enum AnimationConstants {
 
 private enum NumberConstants {
     static let fromEightToEnd = 8...
-}
-
-private enum ErrorMessage {
-    static let appendFailMessage = "AppendFailMessage".localized
-    static let emptyText = "EmptyText".localized
-    static let undefined = "Undefined".localized
 }
