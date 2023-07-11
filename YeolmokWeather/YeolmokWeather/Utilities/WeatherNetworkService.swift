@@ -1,5 +1,5 @@
 //
-//  NetworkManager.swift
+//  WeatherNetworkService.swift
 //  Weather
 //
 //  Created by 김동욱 on 2022/08/05.
@@ -9,7 +9,7 @@ import Foundation
 import CoreLocation
 
 /// OpenWeather API 호출 관련
-struct NetworkManager {
+struct WeatherNetworkService {
     private let apiKey = Bundle.main.infoDictionary?["API_KEY"] as? String
     
     /**
@@ -24,6 +24,13 @@ struct NetworkManager {
         case cityNameError
         case internetConnectionProblem
         case undefined
+    }
+    
+    private enum ErrorMessage {
+        static let apiKeyError = "ApiKeyError".localized
+        static let cityNameError = "CityNameError".localized
+        static let internetConnectionProblem = "InternetConnectionProblem".localized
+        static let undefined = "Undefined".localized
     }
     
     /// 에러 종류에 따라 Alert으로 띄울 메시지 반환
@@ -94,6 +101,7 @@ struct NetworkManager {
         let request = URLRequest(url: url)
         let (data, response) = try await URLSession.shared.data(for: request)
         guard let response = response as? HTTPURLResponse else { throw FetchError.undefined }
+        
         if !(response.statusCode == 200) {
             switch response.statusCode {
             case 401:
@@ -106,12 +114,4 @@ struct NetworkManager {
         }
         return data
     }
-}
-
-// ErrorMessage Namespace
-private enum ErrorMessage {
-    static let apiKeyError = "ApiKeyError".localized
-    static let cityNameError = "CityNameError".localized
-    static let internetConnectionProblem = "InternetConnectionProblem".localized
-    static let undefined = "Undefined".localized
 }

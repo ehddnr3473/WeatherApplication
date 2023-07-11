@@ -11,13 +11,13 @@ import CoreLocation
 
 /// 네트워크 작업을 통해 날씨 데이터를 잘 받아오는지 확인하는 테스트 케이스
 final class NetworkTaskTests: XCTestCase {
-    typealias FetchError = NetworkManager.FetchError
+    typealias FetchError = WeatherNetworkService.FetchError
     
-    var networkManager: NetworkManager!
+    var networkManager: WeatherNetworkService!
     let apiKey = Bundle.main.infoDictionary?["API_KEY"] as! String
     
     override func setUp() {
-        let networkManager = NetworkManager()
+        let networkManager = WeatherNetworkService()
         self.networkManager = networkManager
     }
     
@@ -74,9 +74,9 @@ final class NetworkTaskTests: XCTestCase {
     
     // API KEY 변경 후 테스트
 //    func testAPIKeyError() async {
-//        let url = networkManager.getCurrentWeatherURL(with: "seoul")
+//        let url = weatherNetworkService.getCurrentWeatherURL(with: "seoul")
 //        do {
-//            let _ = try await networkManager.requestData(with: url!)
+//            let _ = try await weatherNetworkService.requestData(with: url!)
 //        } catch {
 //            XCTAssertEqual(error as? FetchError, FetchError.apiKeyError)
 //        }
