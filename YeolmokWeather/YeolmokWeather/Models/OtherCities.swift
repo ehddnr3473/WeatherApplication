@@ -7,20 +7,10 @@
 
 import Foundation
 
-
-/// Other Cities Model
 struct OtherCities {
-    var cities = [AnotherCity]()
+    private(set) var cities = [AnotherCity]()
     
-    var isEmpty: Bool {
-        cities.isEmpty
-    }
-    
-    var count: Int {
-        cities.count
-    }
-    
-    func verifyContains(with cityName: String) -> Bool {
+    func isContains(_ cityName: String) -> Bool {
         cities.contains(where: { $0.name == cityName })
     }
     
