@@ -33,7 +33,7 @@ final class WeatherForecastTableViewCell: UITableViewCell {
         
         collectionView.backgroundColor = .clear
         
-        collectionView.register(TodayWeatherForecastCollectionViewCell.self, forCellWithReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier)
+        collectionView.register(ForecastCollectionViewCell.self, forCellWithReuseIdentifier: ForecastCollectionViewCell.identifier)
         
         return collectionView
     }()
@@ -88,13 +88,13 @@ extension WeatherForecastTableViewCell: UICollectionViewDataSource, UICollection
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TodayWeatherForecastCollectionViewCell.identifier, for: indexPath) as? TodayWeatherForecastCollectionViewCell else { return UICollectionViewCell() }
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ForecastCollectionViewCell.identifier, for: indexPath) as? ForecastCollectionViewCell else { return UICollectionViewCell() }
         guard let forecast = forecast else { return cell }
         
         let time = Date(timeIntervalSince1970: forecast.list[indexPath.row].date)
             .formatted(Date.FormatStyle().hour(.defaultDigits(amPM: .abbreviated)))
         cell.timeLabel.text = time
-        cell.weatherImageView.image = UIImage(named: FetchImageName.setForecastImage(weather: forecast.list[indexPath.row].weather[.zero].id))?.withRenderingMode(.alwaysTemplate)
+        cell.weatherImageView.image = UIImage(named: ForecastImageNameProvider.get(weather: forecast.list[indexPath.row].weather[.zero].id))?.withRenderingMode(.alwaysTemplate)
         cell.weatherLabel.text = forecast.list[indexPath.row].weather[.zero].description
         cell.temperatureLabel.text = String(Int(forecast.list[indexPath.row].main.temp)) + AppText.celsiusString
         
