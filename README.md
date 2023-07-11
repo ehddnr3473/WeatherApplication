@@ -2,7 +2,7 @@
  <img src="/Document/AppIconImage/YeolmokWeatherIcon.png" width=10%>
 </p>
 
-# 열목날씨
+# 열목날씨(YeolmokWeather)
 
 ## 개요
 날씨를 확인할 수 있게 해주는 애플리케이션 프로젝트입니다. 
@@ -11,13 +11,15 @@
 
 
 
-<br></br>
+<br>
+
 ## 프로젝트 기간
 - 기획 및 개발 ~ 앱스토어 배포: 2022.08.01 ~ 2022.08.24
 - 이후 리팩터링 및 업데이트
 
 
-<br></br>
+<br>
+
 ## 사용 기술
 |구현 내용|도구|
 |---|---|
@@ -31,7 +33,8 @@
 
 
 
-<br></br>
+<br>
+
 ## 아키텍처 및 상세 구조
 ### 아키텍처
 <p align="center">
@@ -42,14 +45,16 @@
 - 따라서 아래의 상세 구조와 같이, 여러 부분에서 사용하는 공통부분을 Service로 분리해주고, **Model**에서 관련 비즈니스 로직과 데이터 변환을 수행.
 
 
-<br></br>
+<br>
+
 ### 상세 구조
  <p align="center">
   <img src="/Document/Images/DetailedStructure.png">
  </p>
 
 
-<br></br>
+<br>
+
 ## 뷰 및 동작
 <p align="center">
  <img src="/Document/SimulatorRecording/1.3/Simulator Recording ver2.0.gif" width="24%">
@@ -69,7 +74,8 @@
 
 
 
-<br></br>
+<br>
+
 ## 테스트
 
 ### 유닛 테스트
@@ -85,7 +91,8 @@
 
 
 
-<br></br>
+<br>
+
 ## 개선 히스토리
 |내용|블로그 링크|
 |---|---|
@@ -95,7 +102,8 @@
 
 
 
-<br></br>
+<br>
+
 ## 버전 기록
 |업데이트 버전|출시 날짜|노션 링크|
 |---|---|---|
