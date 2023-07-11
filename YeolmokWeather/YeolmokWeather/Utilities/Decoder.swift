@@ -7,9 +7,7 @@
 
 import Foundation
 
-
-/// JSONDecoder
-struct DecodingManager {
+struct Decoder {
     static func decode<T: Decodable>(with data: Data, modelType: T.Type) -> T? {
         let decoder = JSONDecoder()
         let result = try? decoder.decode(T.self, from: data)
