@@ -1,5 +1,5 @@
 //
-//  TodayWeatherForecastCollectionViewCell.swift
+//  ForecastCollectionViewCell.swift
 //  Weather
 //
 //  Created by 김동욱 on 2022/08/08.
@@ -9,8 +9,8 @@ import Foundation
 import UIKit
 
 /// 예보 CollectionView를 위한 공용 Custom Cell
-final class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
-    static let identifier = "TodayWeatherForecastCollectionViewCell"
+final class ForecastCollectionViewCell: UICollectionViewCell {
+    static let identifier = "ForecastCollectionViewCell"
     
     let timeLabel: UILabel = {
         let label = UILabel()
@@ -67,7 +67,7 @@ final class TodayWeatherForecastCollectionViewCell: UICollectionViewCell {
 }
 
 // MARK: - View
-private extension TodayWeatherForecastCollectionViewCell {
+private extension ForecastCollectionViewCell {
     private func setUpHierarchy() {
         [timeLabel, weatherImageView, weatherLabel, temperatureLabel].forEach {
             contentView.addSubview($0)
