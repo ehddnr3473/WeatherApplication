@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct TypeOfWeather {
+enum TypeOfWeather {
     enum BackgroundImage: String, CaseIterable {
         case clear = "Clear"
         case cloudy = "Clouds"
