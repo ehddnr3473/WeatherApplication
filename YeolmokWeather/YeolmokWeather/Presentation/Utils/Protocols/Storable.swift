@@ -15,9 +15,9 @@ protocol Storable: AnyObject {
 }
 
 extension Storable {
-    // Fetch Core Data & Request Weather Data
+    // Fetch stored data & Request weather data.
     func fetchBookmarkCity(request: (String) -> Void) {
-        guard let resultArray = BookmarkManager.fetchCity() else { return }
+        guard let resultArray = BookmarkService.fetchCity() else { return }
         for index in resultArray.indices {
             guard let cityName = resultArray[index].value(forKey: CoreDataModel.attributeName) as? String else { return }
             storedCities.append(cityName)

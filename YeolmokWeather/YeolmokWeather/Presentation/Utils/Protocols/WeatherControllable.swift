@@ -7,10 +7,9 @@
 
 import Foundation
 
-/// 날씨 관련 Controller
 protocol WeatherControllable: AnyObject {
     associatedtype Model
     
     var model: Model { get set }
-    var networkManager: NetworkManager { get }
+    var weatherNetworkService: WeatherNetworkService { get }
 }
