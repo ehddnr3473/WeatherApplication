@@ -165,11 +165,10 @@
 		232DE44A2A5BCD8D0049BA95 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				23E1E2AA2BACFA6600A9278C /* Strings */,
 				232DE44C2A5BCDFC0049BA95 /* ApiKey.xcconfig */,
 				6B9242A02898EDE500E29CF8 /* Assets.xcassets */,
 				6B9242A52898EDE500E29CF8 /* Info.plist */,
-				6B4E887928EB549D00723006 /* InfoPlist.strings */,
-				6B5B4CF029479F9D008BE5B1 /* Localizable.strings */,
 				6B9242A22898EDE500E29CF8 /* LaunchScreen.storyboard */,
 			);
 			path = Resources;
@@ -182,6 +181,15 @@
 				6B71ABC42939DE49000DB772 /* extensions */,
 			);
 			path = Utils;
+			sourceTree = "<group>";
+		};
+		23E1E2AA2BACFA6600A9278C /* Strings */ = {
+			isa = PBXGroup;
+			children = (
+				6B4E887928EB549D00723006 /* InfoPlist.strings */,
+				6B5B4CF029479F9D008BE5B1 /* Localizable.strings */,
+			);
+			path = Strings;
 			sourceTree = "<group>";
 		};
 		6B0E6D43294EA78F0063AAC1 /* CommonUse */ = {
