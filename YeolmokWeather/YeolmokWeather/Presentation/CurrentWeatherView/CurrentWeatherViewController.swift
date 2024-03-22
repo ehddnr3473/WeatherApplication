@@ -10,7 +10,7 @@ import CoreLocation
 
 /**
  현재 위치한 도시의 날씨
- 1. Core Location을 사용해 사용자의 위치 정보를 받아옴.
+ 1. CoreLocation을 사용해 사용자의 위치 정보를 받아옴.
  2. 위치 정보를 query로 현재 위치의 도시 이름을 받아옴.
  3. 받아온 도시 이름을 query로 현재 날씨 데이터와 예보 데이터를 받아옴.
  */
@@ -219,7 +219,6 @@ private extension CurrentWeatherViewController {
     }
     
     @MainActor func setCurrentWeather(weather: String, temperature: Double) {
-        activityIndicatorView.stopAnimating()
         model.setCurrentWeather(weather: weather, temperature: temperature)
         weatherLabel.text = model.weather
         if let temperature = model.temperature {
@@ -242,7 +241,17 @@ extension CurrentWeatherViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let currentLocation = locations.last?.coordinate else { return }
         guard let url = weatherNetworkService.getReverseGeocodingURL(with: currentLocation) else { return }
-        Task { await requestCityName(with: url) }
+        
+        Task {
+            guard let cityName = await requestCityName(with: url) else { return }
+            
+            if (isPureCityName(cityName)) {
+                requestAllWeatherData(cityName)
+            } else {
+                let refinedCityName = refineCityName(cityName)
+                requestAllWeatherData(refinedCityName)
+            }
+        }
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
@@ -270,14 +279,15 @@ extension CurrentWeatherViewController: CLLocationManagerDelegate {
 
 // MARK: - NetworkTask
 private extension CurrentWeatherViewController {
-    func requestCityName(with url: URL) async {
+    func requestCityName(with url: URL) async -> String? {
         do {
             let data = try await weatherNetworkService.requestData(with: url)
-            guard let cityName = Decoder.decode(with: data, modelType: [CityName].self) else { return }
+            guard let cityName = Decoder.decode(with: data, modelType: [CityName].self) else { return nil }
             setCityName(with: localizationCityName(cityName))
-            verifyAndRequestWeatherData(cityName[.zero].name)
+            return cityName[.zero].name
         } catch {
             alertWillAppear(alert, weatherNetworkService.errorMessage(error))
+            return nil
         }
     }
     
@@ -289,20 +299,27 @@ private extension CurrentWeatherViewController {
         }
     }
     
-    func verifyAndRequestWeatherData(_ cityName: String) {
+    func isPureCityName(_ cityName: String) -> Bool {
         let regex = try? NSRegularExpression(pattern: StringConstants.pattern)
-        if let _ = regex?.firstMatch(in: cityName, range: NSRange(location: 0, length: cityName.count)) {
-            guard let url = weatherNetworkService.getCurrentWeatherURL(with: cityName) else { return }
-            Task {
-                await requestWeather(with: url)
-                await requestWeatherForecast(with: cityName)
-            }
+        if (regex?.firstMatch(in: cityName, range: NSRange(location: 0, length: cityName.count)) != nil) {
+            return true
         } else {
-            let refinedCityName = refineCityName(cityName)
-            guard let url = weatherNetworkService.getCurrentWeatherURL(with: refinedCityName) else { return }
-            Task {
-                await requestWeather(with: url)
-                await requestWeatherForecast(with: refinedCityName)
+            return false
+        }
+    }
+    
+    func requestAllWeatherData(_ cityName: String) {
+        guard let url = weatherNetworkService.getCurrentWeatherURL(with: cityName) else { return }
+        
+        Task {
+            guard let currentWeather = await requestWeather(with: url) else { return }
+            await requestWeatherForecast(with: cityName)
+            
+            DispatchQueue.main.async {
+                self.activityIndicatorView.stopAnimating()
+                self.setBackgroundImage(with: BackgroundImageNameProvider.get(weather: currentWeather.weather[.zero].id))
+                self.setCurrentWeather(weather: currentWeather.weather[.zero].description, temperature: currentWeather.main.temp)
+                self.reload()
             }
         }
     }
@@ -320,14 +337,13 @@ private extension CurrentWeatherViewController {
         return cityName
     }
     
-    func requestWeather(with url: URL) async {
+    func requestWeather(with url: URL) async -> WeatherOfCity? {
         do {
             let data = try await weatherNetworkService.requestData(with: url)
-            guard let currentWeather = Decoder.decode(with: data, modelType: WeatherOfCity.self) else { return }
-            setBackgroundImage(with: BackgroundImageNameProvider.get(weather: currentWeather.weather[.zero].id))
-            setCurrentWeather(weather: currentWeather.weather[.zero].description, temperature: currentWeather.main.temp)
+            return Decoder.decode(with: data, modelType: WeatherOfCity.self)
         } catch(let error){
             alertWillAppear(alert, weatherNetworkService.errorMessage(error))
+            return nil
         }
     }
     
@@ -341,7 +357,6 @@ private extension CurrentWeatherViewController {
             model.setUpDayForecast(with: forecast)
             // 내일부터 3일간의 예보
             model.appendForecast(with: forecast)
-            reload()
         } catch {
             alertWillAppear(alert, weatherNetworkService.errorMessage(error))
         }
