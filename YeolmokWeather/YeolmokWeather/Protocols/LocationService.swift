@@ -8,7 +8,7 @@
 import Foundation
 import CoreLocation
 
-/// Core Location
+/// CoreLocation-related protocol
 protocol LocationService: AnyObject {
     var locationManager: CLLocationManager { get }
     

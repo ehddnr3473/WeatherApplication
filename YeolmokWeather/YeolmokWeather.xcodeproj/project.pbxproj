@@ -144,11 +144,11 @@
 		232DE4482A5BCD190049BA95 /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				23E1E2AD2BAD0E3300A9278C /* UIComponents */,
 				6B4E887B28EB667300723006 /* TabBar */,
 				6BEC6C5B289E8AE400EFF342 /* CurrentWeatherView */,
 				6BEC6C5C289E8AF400EFF342 /* OtherCitiesView */,
 				232DE44D2A5BCF300049BA95 /* Utils */,
-				6B0E6D43294EA78F0063AAC1 /* CommonUse */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -177,8 +177,7 @@
 		232DE44D2A5BCF300049BA95 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				6B548AFB294D43F500ACD7AC /* Protocols */,
-				6B71ABC42939DE49000DB772 /* extensions */,
+				6B71ABC42939DE49000DB772 /* Extensions */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -192,12 +191,30 @@
 			path = Strings;
 			sourceTree = "<group>";
 		};
-		6B0E6D43294EA78F0063AAC1 /* CommonUse */ = {
+		23E1E2AD2BAD0E3300A9278C /* UIComponents */ = {
+			isa = PBXGroup;
+			children = (
+				23E1E2AE2BAD0E4200A9278C /* Cell */,
+			);
+			path = UIComponents;
+			sourceTree = "<group>";
+		};
+		23E1E2AE2BAD0E4200A9278C /* Cell */ = {
 			isa = PBXGroup;
 			children = (
 				6BEAF02C28A1370500D0BB6D /* ForecastCollectionViewCell.swift */,
 			);
-			path = CommonUse;
+			path = Cell;
+			sourceTree = "<group>";
+		};
+		23E1E2AF2BAD0E8400A9278C /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				6B548AFD294D442200ACD7AC /* WeatherControllable.swift */,
+				6B548B05294D55DF00ACD7AC /* LocationService.swift */,
+				6B98DD98294F21CD00DD8845 /* Storable.swift */,
+			);
+			path = Protocols;
 			sourceTree = "<group>";
 		};
 		6B32242D29495D6A008E4B3D /* YeolmokWeatherTests */ = {
@@ -227,23 +244,13 @@
 			path = TabBar;
 			sourceTree = "<group>";
 		};
-		6B548AFB294D43F500ACD7AC /* Protocols */ = {
-			isa = PBXGroup;
-			children = (
-				6B548AFD294D442200ACD7AC /* WeatherControllable.swift */,
-				6B548B05294D55DF00ACD7AC /* LocationService.swift */,
-				6B98DD98294F21CD00DD8845 /* Storable.swift */,
-			);
-			path = Protocols;
-			sourceTree = "<group>";
-		};
-		6B71ABC42939DE49000DB772 /* extensions */ = {
+		6B71ABC42939DE49000DB772 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
 				6B71ABC62939DE75000DB772 /* Alert.swift */,
 				6B5B4CF22947A0C9008BE5B1 /* String+Localize.swift */,
 			);
-			path = extensions;
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		6B92428B2898EDE300E29CF8 = {
@@ -272,6 +279,7 @@
 				6BCED14A289CF5C800F8A305 /* Application */,
 				232DE44A2A5BCD8D0049BA95 /* Resources */,
 				232DE4482A5BCD190049BA95 /* Presentation */,
+				23E1E2AF2BAD0E8400A9278C /* Protocols */,
 				232DE4492A5BCD310049BA95 /* Models */,
 				6BCED14B289CF5E800F8A305 /* Utilities */,
 				6B9242AD2898F31F00E29CF8 /* Entities */,
